@@ -16,7 +16,8 @@ function doPost(e){
     /* 영상: 1) 업로드 시작 */
     if(d.action==='vstart'){
       const ext=String(d.ext||'.mp4').replace(/[^.a-zA-Z0-9]/g,'').slice(0,6)||'.mp4';
-      const name=clean_(d.label)+'_영상_'+stamp_()+ext;
+      const tag=['영상','발표자료'].indexOf(d.tag)>=0?d.tag:'영상';
+      const name=clean_(d.label)+'_'+tag+'_'+stamp_()+ext;
       const r=UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',{
         method:'post',contentType:'application/json; charset=UTF-8',
         payload:JSON.stringify({name:name,mimeType:d.mime||'video/mp4',parents:[folder_().getId()]}),
