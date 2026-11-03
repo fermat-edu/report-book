@@ -280,7 +280,8 @@ KINDS.ai={name:"AI 활용 작품",short:"AI 활용 작품 제출",pre:"a_",color
      P("toon",2,"완성한 웹툰 이미지를 넣어요. (컷이 여러 장이면 순서대로)",{label:"완성한 웹툰"})]},
    {h:"AI로 창작하기 – AI 숏폼 영상",optional:true,items:[
      L("tool3","사용한 AI","예: ChatGPT, Hailuo AI, Sora, Edits"),
-     L("video","영상 링크","유튜브·인스타·구글 드라이브 공유 링크를 붙여 넣어요",{url:true}),
+     {t:"V",id:"vfile",label:"영상 파일",guide:"완성한 영상 파일을 올려요 (mp4·mov, 300MB까지). 제출할 때 선생님 제출함에 함께 저장돼요."},
+     L("video","영상 링크 (선택)","유튜브·인스타에 올렸다면 링크도 붙여 넣어요",{url:true}),
      P("story",4,"장면 순서를 적어요.\n예) 1) 재료 꺼내기 2) 냄비에 물 붓기 3) 완성된 라면 먹기",{label:"스토리보드",photo:false}),
      P("shots",2,"영상의 주요 장면을 캡처해서 넣어요.",{label:"장면 캡처"})]},
    {h:"AI 탐험지도 – AI 도구 조합하기",optional:true,items:[
@@ -347,6 +348,7 @@ function hasContent(sec){
   return sec.items.some(it=>{
     if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
     if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
+    if(it.t==="V") return !!VID;
     return val(pid(it.id)).trim()||(S_.ph[pid(it.id)]||[]).length;
   });
 }
@@ -379,6 +381,7 @@ const ln=(id,hint,label)=>'<input type="text" id="f_'+id+'" data-id="'+id+'" val
 function itemEdit(it,subs){
   const id=pid(it.id);
   switch(it.t){
+    case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div id="vidBox">'+vidBox()+'</div></div>';
     case "P": return '<div class="q">'+(it.label?'<span class="qt">'+esc(it.label)+'</span>':'')+'<p class="guide">'+esc(it.guide)+'</p>'+ta(id,it.rows,it.label||it.guide)+(it.photo?photoBox(id):"")+'</div>';
     case "L": return '<div class="tbl"><div class="row"><label class="lab" for="f_'+id+'">'+esc(it.label)+'</label><div class="val">'+ln(id,it.hint)+'</div></div></div>';
     case "S": { const s=subs.find(x=>x.id===it.id);
@@ -471,11 +474,11 @@ document.getElementById("topics").addEventListener("click",e=>{const b=e.target.
   if(k==="ai") S_.v.kind="ai";
   else if(S_.v.kind==="ai") S_.v.kind=k||null;
   else if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
-  save(); resetSendIfNeeded(); loadOwn(); renderForm();
+  save(); resetSendIfNeeded(); loadOwn(); renderForm(); loadVid();
   statusEl.textContent="‘"+topicName()+"’ 주제를 골랐어요"+(k&&!isOwn()?" → "+KINDS[k].short+"로 자동 선택했어요":"")+(!k&&!kindKey()&&!isOwn()?" · 이제 보고서 종류를 골라요":"");
   if(k&&!isOwn()){ const f=document.getElementById("form"); setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"start"}),50); }});
 document.getElementById("f_topic_etc").addEventListener("input",e=>{S_.v.topic_etc=e.target.value; save(); resetSendIfNeeded();});
-document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; save(); resetSendIfNeeded(); renderForm(); statusEl.textContent=(KINDS[b.dataset.kind]||OWNK).short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
+document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; save(); resetSendIfNeeded(); renderForm(); loadVid(); statusEl.textContent=(KINDS[b.dataset.kind]||OWNK).short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
 
 /* 소제목 늘리기·지우기 */
 form.addEventListener("click",e=>{
@@ -510,6 +513,38 @@ function shrink(file){return new Promise((res,rej)=>{const r=new FileReader(); r
   const M=1400, k=Math.min(1,M/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
   const g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height); res(c.toDataURL("image/jpeg",0.82));}; img.src=r.result;}; r.readAsDataURL(file);});}
 
+/* AI 작품 영상 파일 (IndexedDB에 저장, 제출할 때 잘게 나눠 올림) */
+let VID=null; const VMAX=300*1024*1024, CHUNK=4*1024*1024;
+const fmtMB=b=>(b/1048576).toFixed(b>10485760?0:1)+"MB";
+const vkey=()=>"video_"+pid("vfile");
+function vidBox(){ return VID?'<div class="pdfchip"><span class="tagpdf" style="background:#1d5fd1">영상</span><span class="nm">'+esc(VID.name)+' ('+fmtMB(VID.size)+')</span><button type="button" class="mini danger" id="vidDel">삭제</button></div>'
+  :'<button type="button" class="addrep" id="vidAdd">+ 영상 파일 올리기</button>'; }
+function refreshVid(){ const b=document.getElementById("vidBox"); if(b) b.innerHTML=vidBox(); }
+function loadVid(){ VID=null; if(kindKey()!=="ai"||!tk()) return; const k=vkey(); idbGet(k).then(v=>{ if(k!==vkey()) return; VID=v&&v.blob?v:null; refreshVid(); }).catch(()=>{}); }
+const vidPicker=document.createElement("input"); vidPicker.type="file"; vidPicker.accept="video/*"; vidPicker.hidden=true; document.body.appendChild(vidPicker);
+vidPicker.addEventListener("change",()=>{ const f=vidPicker.files[0]; if(!f) return;
+  if(f.size>VMAX){ statusEl.textContent="영상이 너무 커요 ("+fmtMB(f.size)+"). 300MB 이하로 줄여서(화질 낮추기·길이 줄이기) 올려 주세요."; return; }
+  VID={name:f.name,size:f.size,type:f.type||"video/mp4",blob:f}; refreshVid(); resetSendIfNeeded();
+  idbPut(vkey(),VID).then(()=>{statusEl.textContent="영상을 올렸어요 · 제출할 때 함께 보내져요";}).catch(()=>{statusEl.textContent="영상은 올렸지만 이 기기에 저장은 안 돼요. 창을 닫지 말고 바로 제출해 주세요.";}); });
+document.getElementById("form").addEventListener("click",e=>{
+  if(e.target.id==="vidAdd"){ vidPicker.value=""; vidPicker.click(); }
+  if(e.target.id==="vidDel"){ VID=null; idbPut(vkey(),null).catch(()=>{}); refreshVid(); resetSendIfNeeded(); }
+});
+async function uploadVideo(label){
+  const v=lastPdf.video; if(!v||v.done) return;
+  const post=async o=>{ const r=await fetch(SUBMIT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}); const j=await r.json(); if(!j.ok) throw new Error(j.error||"fail"); return j; };
+  if(!v.session){ const ext=(v.name.match(/\.[a-z0-9]{2,4}$/i)||[".mp4"])[0]; const j=await post({action:"vstart",label,ext,mime:v.type,size:v.size}); v.session=j.session; v.sent=0; }
+  while(v.sent<v.size){
+    statusEl.textContent="🎬 영상 올리는 중… "+Math.floor(v.sent/v.size*100)+"% ("+fmtMB(v.sent)+" / "+fmtMB(v.size)+") 창을 닫지 마세요.";
+    const end=Math.min(v.size,v.sent+CHUNK);
+    let tries=0, j;
+    for(;;){ try{ j=await post({action:"vchunk",session:v.session,start:v.sent,size:v.size,mime:v.type,data:await blobToB64(v.blob.slice(v.sent,end))}); break; }
+      catch(e){ if(++tries>=3) throw e; await new Promise(r=>setTimeout(r,1500*tries)); } }
+    v.sent=end; if(j.done) break;
+  }
+  v.done=true;
+}
+
 /* 다른 양식 보고서 파일 (주제마다 따로 저장) */
 function loadOwn(){ OWN=[]; if(!tk()) return; const t=tk();
   idbGet("own_"+t).then(l=>{ if(t!==tk()) return; OWN=Array.isArray(l)?l.filter(x=>x&&(x.buf||x.src)):[]; const el=document.getElementById("ownList"); if(el) el.innerHTML=ownList(); }).catch(()=>{}); }
@@ -538,7 +573,8 @@ resetArea.addEventListener("click",e=>{
   if(!kindKey()&&!isOwn()) return;
   if(e.target.id==="resetBtn"){resetArea.innerHTML='<span class="confirm">'+esc(isOwn()?OWNK.short:K().short)+' 내용을 지울까요? <button class="btn" id="rYes" type="button">지우기</button><button class="btn" id="rNo" type="button">취소</button></span>';}
   else if(e.target.id==="rYes"){const pre=isOwn()?oid(""):pid(""); Object.keys(S_.v).forEach(x=>{if(x.startsWith(pre)) delete S_.v[x];}); Object.keys(S_.ph).forEach(x=>{if(x.startsWith(pre)) delete S_.ph[x];});
-    if(isOwn()){OWN=[]; idbPut("own_"+tk(),[]).catch(()=>{});} dirty=true; phDirty=true; saveNow(); resetSend(); renderForm(); resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>'; statusEl.textContent="지웠어요 (학년·반·이름은 남겨 뒀어요)";}
+    if(isOwn()){OWN=[]; idbPut("own_"+tk(),[]).catch(()=>{});}
+    if(kindKey()==="ai"){VID=null; idbPut(vkey(),null).catch(()=>{});} dirty=true; phDirty=true; saveNow(); resetSend(); renderForm(); resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>'; statusEl.textContent="지웠어요 (학년·반·이름은 남겨 뒀어요)";}
   else if(e.target.id==="rNo"){resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>';}
 });
 
@@ -559,7 +595,8 @@ function buildBlocks(){
     }
     o.sec.items.forEach(it=>{
       const id=pid(it.id), g=first?14:10; first=false;
-      if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
+      if(it.t==="V"){ if(VID) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : 🎬 '+esc(VID.name)+' ('+fmtMB(VID.size)+') · 선생님 제출함에 함께 저장됨</div>',g); }
+      else if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
       else if(it.t==="L"){ if(val(id).trim()){ if(it.url){ const u=val(id).trim(); add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : <span style="color:#1d5fd1;text-decoration:underline;word-break:break-all">'+esc(u)+'</span></div>',g); B[B.length-1].link=/^https?:\/\//i.test(u)?u:"https://"+u; }
         else add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); } }
       else if(it.t==="S"){ const s=o.subs.find(x=>x.id===it.id); add("h2",'<div class="h2">'+esc(s.label+" "+it.title)+'</div>',22,{lvl:2,text:s.label+" "+it.title}); text(id,6); if(it.photo) imgs(id); }
@@ -650,7 +687,7 @@ let dlPromise=null;
 try{ if(window.claude&&typeof window.claude.use==="function") dlPromise=window.claude.use("downloads").catch(()=>null); }catch(e){}
 const pdfBtn=document.getElementById("pdfBtn"), saveBtn=document.getElementById("saveBtn"), submitBtn=document.getElementById("submitBtn");
 let lastPdf=null;
-function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;submitBtn.hidden=true;}
+function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
 function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
 saveBtn.addEventListener("click",()=>{ if(lastPdf) download(lastPdf.blob,lastPdf.name); });
 function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
@@ -667,7 +704,7 @@ pdfBtn.addEventListener("click",async()=>{
     return makeOwn();
   }
   if(!val(pid("title")).trim()) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
-  if(kindKey()==="ai"&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
+  if(kindKey()==="ai"&&!VID&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
     statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
   pdfBtn.disabled=true;
   try{
@@ -683,7 +720,7 @@ pdfBtn.addEventListener("click",async()=>{
     links.forEach(l=>{ try{ pdf.setPage(l.page+2); pdf.link(mm(76*SC),mm(l.y),210-2*mm(76*SC),mm(l.h),{url:l.url}); }catch(e){} });
     const blob=pdf.output("blob");
     const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
-    lastPdf={blob,name:topicName()+"_"+K().name+"_"+nm+".pdf",shots:all};
+    lastPdf={blob,name:topicName()+"_"+K().name+"_"+nm+".pdf",shots:all,video:(kindKey()==="ai"&&VID)?{...VID}:null};
     pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false;
     await submitToTeacher();
   }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
@@ -725,6 +762,7 @@ async function submitToTeacher(){
   statusEl.textContent="선생님께 제출하는 중… 창을 닫지 마세요.";
   const w=who();
   const label=topicName().replace(/_+/g," ").replace(/\s+/g," ").trim()+"__"+(catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"");
+  if(lastPdf.submitted&&lastPdf.video&&!lastPdf.video.done) return sendVideo(label);
   const body=JSON.stringify({label,pdf:await blobToB64(lastPdf.blob)});
   const warn=lastPdf.failed?" (파일 "+lastPdf.failed+"개는 보호된 파일이라 붙이지 못했어요. 캡처해서 사진으로 올린 뒤 다시 제출해 주세요.)":"";
   const shown=topicName()+" · "+catName()+" · "+w.g+"학년 "+w.c+"반 "+w.name;
@@ -733,6 +771,7 @@ async function submitToTeacher(){
     const j=await r.json(); if(!j.ok) throw new Error(j.error||"fail");
     lastPdf.submitted=true;
     statusEl.textContent="✅ 선생님께 제출 완료! ("+shown+")"+warn+" 카톡으로도 보내려면 노란 버튼을 누르세요.";
+    if(lastPdf.video) await sendVideo(label);
   }catch(e){
     if(e instanceof TypeError){
       try{ await fetch(SUBMIT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
@@ -741,6 +780,13 @@ async function submitToTeacher(){
     submitBtn.hidden=false;
     statusEl.textContent="⚠️ 제출하지 못했어요. 인터넷 연결을 확인하고 '다시 제출'을 눌러 주세요.";
   }
+}
+async function sendVideo(label){
+  try{ await uploadVideo(label); submitBtn.hidden=true; submitBtn.textContent="다시 제출";
+    statusEl.textContent="✅ 보고서와 영상 모두 선생님께 제출 완료!"; }
+  catch(e){ console.error(e); submitBtn.textContent="영상 다시 올리기"; submitBtn.hidden=false;
+    statusEl.textContent=String(e.message||"").includes("action")||String(e.message||"")==="no file"?"⚠️ 보고서는 제출됐지만, 선생님 제출함이 아직 영상을 받을 수 있게 바뀌지 않았어요. 선생님께 말씀드려 주세요."
+      :"⚠️ 보고서는 제출됐지만 영상은 끝까지 못 올렸어요 ("+Math.floor((lastPdf.video.sent||0)/lastPdf.video.size*100)+"%). 와이파이를 확인하고 '영상 다시 올리기'를 눌러 주세요."; }
 }
 submitBtn.addEventListener("click",async()=>{submitBtn.disabled=true; try{await submitToTeacher();}finally{submitBtn.disabled=false;}});
 
@@ -822,7 +868,7 @@ if(dm){
   setTimeout(()=>{statusEl.textContent="예시 내용으로 채웠어요. 노란 버튼을 누르면 제출 테스트가 돼요.";},0);
 }
 renderForm();
-loadOwn();
+loadOwn(); loadVid();
 idbGet("photos").then(ph=>{ if(ph&&typeof ph==="object"&&Object.keys(ph).length){ S_.ph=ph; renderForm(); } }).catch(()=>{});
 if(!dm&&Object.keys(S_.v).length>1) statusEl.textContent="저장해 둔 내용을 불러왔어요 · 이어서 쓰세요";
 })();
