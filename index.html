@@ -156,7 +156,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
   <header class="intro">
     <h1>페르마 탐구 보고서 · 독서록</h1>
     <p>① 수업에서 한 비교과 주제를 고르고 ② 보고서 종류는 주제에 맞게 저절로 골라져요. 다른 양식으로 이미 보고서를 만들었으면 ‘다른 양식으로 쓴 보고서’를 고르세요. 빈칸을 채우고 사진을 넣은 다음 노란 버튼을 누르면 PDF가 만들어지고 선생님께 자동으로 제출돼요.</p>
-    <p class="note">표지, 차례(쪽 번호), 번호 매기기, 그림 번호는 저절로 만들어져요. 쓰는 내용은 이 기기에 자동 저장돼서, 창을 닫았다가 다시 열어도 이어서 쓸 수 있어요. (다른 기기로는 이어지지 않아요)</p>
+    <p class="note">AI 리터러시는 보고서 대신 AI로 만든 완성작을 올려요. 표지, 차례(쪽 번호), 번호 매기기, 그림 번호는 저절로 만들어져요. 쓰는 내용은 이 기기에 자동 저장돼서, 창을 닫았다가 다시 열어도 이어서 쓸 수 있어요. (다른 기기로는 이어지지 않아요)</p>
   </header>
   <h2 class="step">① 비교과 주제</h2>
   <div class="topics" id="topics" role="group" aria-label="비교과 주제"></div>
@@ -196,7 +196,7 @@ const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1Db
 /* ---------- 양식 정의 ----------
    P: 제목 없는 글칸 / L: 한 줄 칸 / S: 번호 붙는 소제목 + 글칸 / R: 학생이 늘릴 수 있는 소제목들 / Q: 두 칸(문장 + 이유) */
 const P=(id,rows,guide,o={})=>({t:"P",id,rows,guide,photo:true,...o});
-const L=(id,label,hint)=>({t:"L",id,label,hint});
+const L=(id,label,hint,o={})=>({t:"L",id,label,hint,...o});
 const S=(id,title,rows,guide,o={})=>({t:"S",id,title,rows,guide,photo:true,...o});
 const R=(id,label,titleHint,guide,def)=>({t:"R",id,label,titleHint,guide,def});
 const Q=(id,aLab,aGuide,bLab,bGuide)=>({t:"Q",id,aLab,aGuide,bLab,bGuide});
@@ -266,6 +266,28 @@ const KINDS={
    {h:"내 꿈을 위해 반드시 실천할 사항 3 + 이유",items:[Q("do3","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]}
   ]}
 };
+KINDS.ai={name:"AI 활용 작품",short:"AI 활용 작품 제출",pre:"a_",color:"c-teal",major:"num",sub:"num",
+  desc:"AI 리터러시 수업에서 AI로 만든 완성작(공부 계획표, 웹툰, 숏폼 영상 등)을 올려요.",
+  subLabel:null,titleHint:"예: AI와 함께 만든 나의 공부 계획과 웹툰",
+  secs:[
+   {h:"AI로 공부하기 – 시험 대비 공부 계획표",optional:true,items:[
+     L("tool1","사용한 AI","예: ChatGPT, Notion AI"),
+     P("prompt1",4,"AI에게 보낸 프롬프트(요청문)를 그대로 복사해서 붙여 넣어요.\n예) 나는 중학교 1학년이야. 2주 뒤 중간고사 대비 공부 계획을 표로 짜 줘…",{label:"내가 쓴 프롬프트",photo:false}),
+     P("plan",3,"AI가 만들어 준 공부 계획표를 캡처해서 사진으로 넣어요. 내가 고친 부분이 있으면 적어요.",{label:"완성한 공부 계획표"})]},
+   {h:"AI로 창작하기 – AI 웹툰",optional:true,items:[
+     L("tool2","사용한 AI","예: ChatGPT 이미지 생성, Canva(말풍선)"),
+     P("prompt2",4,"캐릭터 설정, 그림체, 컷 구성을 어떻게 요청했는지 적어요.",{label:"내가 쓴 프롬프트",photo:false}),
+     P("toon",2,"완성한 웹툰 이미지를 넣어요. (컷이 여러 장이면 순서대로)",{label:"완성한 웹툰"})]},
+   {h:"AI로 창작하기 – AI 숏폼 영상",optional:true,items:[
+     L("tool3","사용한 AI","예: ChatGPT, Hailuo AI, Sora, Edits"),
+     L("video","영상 링크","유튜브·인스타·구글 드라이브 공유 링크를 붙여 넣어요",{url:true}),
+     P("story",4,"장면 순서를 적어요.\n예) 1) 재료 꺼내기 2) 냄비에 물 붓기 3) 완성된 라면 먹기",{label:"스토리보드",photo:false}),
+     P("shots",2,"영상의 주요 장면을 캡처해서 넣어요.",{label:"장면 캡처"})]},
+   {h:"AI 탐험지도 – AI 도구 조합하기",optional:true,items:[
+     P("combo",4,"어떤 AI 도구들을 어떤 순서로 썼는지, 그리고 결과물을 캡처해서 넣어요.\n예) 퍼플렉시티로 자료 찾기 → ChatGPT로 정리 → Canva로 발표 자료 만들기",{label:"사용한 도구와 결과"})]},
+   {h:"배우고 느낀 점",items:[
+     P("feel",5,"AI로 작품을 만들며 배운 점, 어려웠던 점, AI를 쓸 때 조심해야 할 점(저작권, 딥페이크, 개인정보)을 써요.",{label:"배우고 느낀 점",photo:false})]}
+  ]};
 const ORDER=["topic","subject","book"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 const GA="가나다라마바사아자차카타파하".split("");
@@ -296,7 +318,7 @@ const kindKey=()=>KINDS[S_.v.kind]?S_.v.kind:null;
 const K=()=>KINDS[kindKey()];
 /* 학원 비교과 주제 (노션 '중등부 비교과 PPT 파일 공유' 표 기준) */
 const TOPICS=[ // [id, 이름, 보고서 종류(PPT 표지 기준)]
- ["debate","디베이트 특강","book"],["ai","AI 리터러시",""],["mathlife","일상생활 속에서의 수학","subject"],["plastic","미세 플라스틱","topic"],
+ ["debate","디베이트 특강","book"],["ai","AI 리터러시","ai"],["mathlife","일상생활 속에서의 수학","subject"],["plastic","미세 플라스틱","topic"],
  ["myth","그리스로마 신화","book"],["topicreport","주제 탐구 보고서 작성하기","topic"],["prince","군주론","book"],["evolution","독서연계 진화론","book"],
  ["physphil","물리&철학","topic"],["mathpsy","수학&심리학","subject"],["chem","세상을 바꾼 화학","book"],["food","음식과 사회","book"],
  ["oil","검은 눈물, 석유","book"],["entropy","엔트로피","book"],["earth","지구 과학&경제","topic"],
@@ -384,7 +406,7 @@ function renderTopics(){
 function renderKinds(){
   renderTopics();
   const cur=S_.v.kind;
-  document.getElementById("kinds").innerHTML=[...ORDER,"own"].map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
+  document.getElementById("kinds").innerHTML=(topicKind()==="ai"?["ai"]:[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
 }
 function renderForm(){
   renderKinds();
@@ -397,7 +419,7 @@ function renderForm(){
   // 표지
   h+='<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
     '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':' inputmode="numeric"')+'></label>').join("")+'</div>'+
-    '<label class="fld">보고서 제목<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일")+'"></label>'+
+    '<label class="fld">'+(kindKey()==="ai"?"작품 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     '<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>'+
@@ -446,7 +468,9 @@ const form=document.getElementById("form");
 form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.v[t.dataset.id]=t.value; if(/_t$/.test(t.dataset.id)) refreshToc(); save(); resetSendIfNeeded();});
 document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic;
   const k=topicKind();
-  if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
+  if(k==="ai") S_.v.kind="ai";
+  else if(S_.v.kind==="ai") S_.v.kind=k||null;
+  else if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
   save(); resetSendIfNeeded(); loadOwn(); renderForm();
   statusEl.textContent="‘"+topicName()+"’ 주제를 골랐어요"+(k&&!isOwn()?" → "+KINDS[k].short+"로 자동 선택했어요":"")+(!k&&!kindKey()&&!isOwn()?" · 이제 보고서 종류를 골라요":"");
   if(k&&!isOwn()){ const f=document.getElementById("form"); setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"start"}),50); }});
@@ -536,7 +560,8 @@ function buildBlocks(){
     o.sec.items.forEach(it=>{
       const id=pid(it.id), g=first?14:10; first=false;
       if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
-      else if(it.t==="L"){ if(val(id).trim()) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); }
+      else if(it.t==="L"){ if(val(id).trim()){ if(it.url){ const u=val(id).trim(); add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : <span style="color:#1d5fd1;text-decoration:underline;word-break:break-all">'+esc(u)+'</span></div>',g); B[B.length-1].link=/^https?:\/\//i.test(u)?u:"https://"+u; }
+        else add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); } }
       else if(it.t==="S"){ const s=o.subs.find(x=>x.id===it.id); add("h2",'<div class="h2">'+esc(s.label+" "+it.title)+'</div>',22,{lvl:2,text:s.label+" "+it.title}); text(id,6); if(it.photo) imgs(id); }
       else if(it.t==="R"){ o.subs.filter(x=>x.id===it.id).forEach(s=>{const b=id+"_"+s.rk;
         if(!val(b+"_b").trim()&&!(S_.ph[b+"_b"]||[]).length&&s.blank) return;
@@ -577,7 +602,7 @@ async function paginate(blocks,onStep){
   stage.innerHTML=blocks.map(b=>b.html).join("");
   if(document.fonts){ try{ await Promise.all([document.fonts.load('400 15px "Noto Serif KR"',"가나다"),document.fonts.load('700 15px "Noto Serif KR"',"가나다"),document.fonts.load('400 15px "Noto Sans KR"',"가나다")]); await document.fonts.ready; }catch(e){} }
   await Promise.all([...stage.querySelectorAll("img")].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
-  const els=[...stage.children], out=[], toc=[];
+  const els=[...stage.children], out=[], toc=[], links=[];
   let pg=null, g=null, y=TOP;
   const finish=()=>{ if(!pg) return; g.fillStyle="#444"; g.font=(12*SC)+'px "Noto Serif KR", serif'; g.textAlign="center"; g.fillText("- "+(out.length+1)+" -",PW/2,PH-44*SC);
     out.push(pg.toDataURL("image/jpeg",0.88)); pg.width=pg.height=0; pg=null; };
@@ -600,7 +625,7 @@ async function paginate(blocks,onStep){
       let off=0;
       while(off<h){
         const left=h-off;
-        if(left<=rem()){ g.drawImage(cv,0,off,cv.width,left,0,y,cv.width,left); y+=left; break; }
+        if(left<=rem()){ g.drawImage(cv,0,off,cv.width,left,0,y,cv.width,left); if(b.link&&!off) links.push({page:out.length+1,y,h:left,url:b.link}); y+=left; break; }
         if(rem()<50*SC){ newPage(); continue; }
         let cut=findCut(cv,off,off+rem(),off+rem()-260*SC);
         if(cut<=off+10) cut=off+rem();
@@ -612,7 +637,7 @@ async function paginate(blocks,onStep){
   }
   finish();
   stage.innerHTML="";
-  return {pages:out,toc};
+  return {pages:out,toc,links};
 }
 async function fullPage(html){
   const stage=document.getElementById("pdfStage"); stage.innerHTML=html;
@@ -641,17 +666,21 @@ pdfBtn.addEventListener("click",async()=>{
     if(!OWN.length){ statusEl.textContent="보고서 파일을 먼저 올려 주세요."; const b=document.getElementById("ownAdd"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
     return makeOwn();
   }
-  if(!val(pid("title")).trim()) return goTo(pid("title"),"표지의 보고서 제목을 써 주세요.");
+  if(!val(pid("title")).trim()) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
+  if(kindKey()==="ai"&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
+    statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
   pdfBtn.disabled=true;
   try{
     statusEl.textContent="PDF 만드는 중… 잠깐만 기다려 주세요.";
-    const {pages,toc}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
+    const {pages,toc,links}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
     statusEl.textContent="표지와 차례 만드는 중…";
     const cover=await fullPage(coverHtml());
     const tocImg=await fullPage(tocPageHtml(toc));
     const all=[cover,tocImg,...pages];
     const {jsPDF}=window.jspdf; const pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
     all.forEach((u,i)=>{ if(i) pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
+    const mm=px=>px/SC*210/794; // 영상 링크는 PDF에서 누르면 열리게
+    links.forEach(l=>{ try{ pdf.setPage(l.page+2); pdf.link(mm(76*SC),mm(l.y),210-2*mm(76*SC),mm(l.h),{url:l.url}); }catch(e){} });
     const blob=pdf.output("blob");
     const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
     lastPdf={blob,name:topicName()+"_"+K().name+"_"+nm+".pdf",shots:all};
