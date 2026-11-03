@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>페르마 탐구 보고서 · 독서록</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap">
+<style>
+/* Layout: kind picker on top, then cover card, live TOC preview, section cards stacked like a booklet; sticky bottom bar */
+:root{
+  --bg:#eef3f3; --paper:#ffffff; --ink:#1f2a2c; --muted:#5f6d70; --line:#c9d3d4; --field:#f7fafa;
+  --teal:#3e9ca7; --coral:#f2827f; --green:#3fa88f; --yellow:#e9b93a; --forest:#1f5c2b; --brand:#e32626;
+  --accent:#2f8792;
+  --display:"Do Hyeon","Noto Sans KR",sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --serif:"Noto Serif KR","Batang","AppleMyungjo",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a1b; --paper:#1d2526; --ink:#e7eeee; --muted:#9fb0b2; --line:#36454a; --field:#232d2f; --accent:#6cc3cc; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a1b; --paper:#1d2526; --ink:#e7eeee; --muted:#9fb0b2; --line:#36454a; --field:#232d2f; --accent:#6cc3cc; color-scheme:dark}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+img{max-width:100%}[hidden]{display:none!important}
+.wrap{max-width:820px;margin:0 auto;padding-block:20px 130px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+.intro{display:flex;flex-direction:column;gap:6px}
+.intro h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,6vw,38px);margin:0;text-wrap:balance}
+.intro p{margin:0;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:0}
+
+.kinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kind{font:inherit;text-align:left;cursor:pointer;background:var(--paper);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.kind b{font-family:var(--display);font-weight:400;font-size:21px}
+.kind span{font-size:12.5px;color:var(--muted);line-height:1.45}
+.kind[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.kind:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pick-first{text-align:center;color:var(--muted);padding:30px 10px;border:2px dashed var(--line);border-radius:14px}
+
+.page{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ribbon{font-family:var(--display);color:#fff;font-size:24px;padding:10px 20px 12px;border-radius:0 0 60px 0;width:fit-content;max-width:calc(100% - 20px);box-sizing:border-box;line-height:1.3}
+.ribbon small{font-family:var(--body);font-size:12px;opacity:.9;margin-left:8px}
+.c-coral{background:var(--coral)} .c-green{background:var(--green)} .c-teal{background:var(--teal)} .c-dark{background:#4a4f52}
+.pbody{padding:18px 20px 22px;display:flex;flex-direction:column;gap:14px}
+.subhead{font-weight:700;font-size:15.5px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line);padding:8px 2px;display:flex;gap:8px;align-items:center}
+.subhead input{flex:1;font-weight:700}
+.guide{font-size:13px;color:var(--muted);white-space:pre-line;margin:0}
+.q{display:flex;flex-direction:column;gap:6px}
+.q .qt{font-weight:700;font-size:14.5px}
+
+.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.info label,.fld{display:flex;flex-direction:column;font-size:13px;font-weight:700;gap:4px}
+.fld .opt{font-weight:400;color:var(--muted)}
+.auto{font-size:13px;color:var(--muted);background:var(--field);border:1px dashed var(--line);border-radius:8px;padding:8px 11px}
+.auto b{color:var(--ink)}
+
+.tbl{border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+.row{display:grid;grid-template-columns:130px minmax(0,1fr);border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .lab{font-weight:700;font-size:14px;padding:12px 10px;border-right:1px solid var(--line);display:flex;align-items:center}
+.row .val{padding:8px 10px;min-width:0}
+
+input[type=text],textarea{width:100%;box-sizing:border-box;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{resize:vertical;min-height:70px;border-radius:14px}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.count{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+
+.rep{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--field) 60%,transparent)}
+.rep .subhead{border-top:0;padding-top:0}
+.repnum{white-space:nowrap}
+.addrep{font:inherit;font-weight:700;font-size:14px;color:var(--accent);background:transparent;border:1.5px dashed var(--accent);border-radius:10px;padding:10px;cursor:pointer}
+.mini{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+.mini.danger{color:var(--brand)}
+.confirm{display:flex;gap:6px;align-items:center;font-size:12.5px;flex-wrap:wrap}
+
+.photos{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.addph{font:inherit;font-size:13px;color:var(--accent);background:transparent;border:1.5px dashed var(--accent);border-radius:8px;padding:6px 12px;cursor:pointer}
+.addph:hover,.addrep:hover{background:var(--field)}
+.addph:focus-visible,.btn:focus-visible,.addrep:focus-visible,.mini:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.thumb{position:relative;width:96px;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:var(--field)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:13px;line-height:22px;padding:0;cursor:pointer}
+
+.toc{display:flex;flex-direction:column;gap:2px;font-size:14px}
+.toc .l1{font-weight:700;margin-top:6px}
+.toc .l1:first-child{margin-top:0}
+.toc .l2{padding-left:20px;color:var(--muted)}
+.toc .empty{font-style:italic;opacity:.7}
+
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar-in{max-width:820px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.status{flex:1 1 200px;min-width:0;font-size:13px;color:var(--muted)}
+.btn{font:inherit;font-weight:700;border-radius:10px;padding:11px 18px;cursor:pointer;border:1px solid var(--line);background:var(--field);color:var(--ink)}
+.btn.primary{background:#fee500;border-color:#e6cf00;color:#191600}
+.btn:disabled{opacity:.6;cursor:wait}
+.pdfs{display:flex;flex-direction:column;gap:6px}
+.pdfchip{display:flex;align-items:center;gap:8px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13.5px}
+.pdfchip .nm{flex:1;min-width:0;overflow-wrap:anywhere}
+.pdfchip .tagpdf{font-size:11px;font-weight:700;color:#fff;background:var(--brand);border-radius:4px;padding:1px 6px}
+
+.shots{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.shots-head{max-width:820px;margin:0 auto 14px;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;font-size:14px}
+.shots-head span{color:var(--muted)}
+.shot-list{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.shot-list figure{margin:0;display:flex;flex-direction:column;gap:4px}
+.shot-list img{width:100%;border:1px solid var(--line)}
+.shot-list figcaption{font-size:12px;color:var(--muted);text-align:center}
+@media (max-width:620px){
+  .kinds{grid-template-columns:1fr}
+  .kind{flex-direction:row;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .row{grid-template-columns:1fr} .row .lab{border-right:0;padding:10px 10px 0}
+  .info{grid-template-columns:1fr 1fr} .info label:last-child{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- PDF render (always light, fixed width) ---------- */
+#pdfStage{position:fixed;left:-12000px;top:0;width:794px;pointer-events:none}
+#pdfStage>*{margin:0}
+.pb{width:794px;box-sizing:border-box;padding:0 76px;background:#fff;color:#1a1a1a;font-family:var(--serif);font-size:15px;line-height:1.9}
+.pb .h1{font-size:22px;font-weight:700;padding:4px 0 8px;border-bottom:2px solid #333}
+.pb .h2{font-size:17px;font-weight:700;padding:2px 0}
+.pb .tx{white-space:pre-wrap;word-break:break-word;text-indent:0}
+.pb .ln b{font-weight:700}
+.pb .lab2{font-weight:700;font-size:15px}
+.pb .quote{border-left:4px solid #9aa6a8;background:#f3f5f5;padding:8px 14px;white-space:pre-wrap;word-break:break-word;margin:4px 0 8px}
+.pb .fig{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0}
+.pb .fig img{max-width:100%;max-height:620px;object-fit:contain;border:1px solid #d5dbdc}
+.pb .fig span{font-size:12.5px;color:#555}
+.pfull{width:794px;height:1123px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:var(--serif);position:relative;overflow:hidden}
+.pcover .ct{position:absolute;left:90px;right:90px;top:250px;text-align:center;font-size:34px;line-height:1.75;font-weight:400;letter-spacing:.04em;word-break:keep-all}
+.pcover table{position:absolute;left:50%;transform:translateX(-50%);top:640px;width:430px;border-collapse:collapse;font-family:var(--body);font-size:17px}
+.pcover th,.pcover td{border:1px solid #555;padding:9px 10px;text-align:center}
+.pcover th{width:120px;font-weight:500}
+.pcover td{word-break:keep-all}
+.pcover .brand{position:absolute;left:0;right:0;bottom:70px;text-align:center;font-family:var(--body);font-size:14px;color:#666}
+.pcover .brand b{color:#e32626}
+.ptoc{padding:110px 100px 60px}
+.ptoc h2{text-align:center;font-size:28px;font-weight:400;letter-spacing:.6em;margin:0 0 50px;padding-left:.6em}
+.ptoc .tl{display:flex;align-items:baseline;gap:8px;font-size:16px;line-height:2}
+.ptoc .tl.l1{font-weight:700;margin-top:10px}
+.ptoc .tl.l2{padding-left:26px;font-size:15px}
+.ptoc .tl .tt{word-break:keep-all;max-width:80%}
+.ptoc .tl .dots{flex:1;border-bottom:1.5px dotted #888;transform:translateY(-6px);min-width:20px}
+.ptoc .tl .pg{font-variant-numeric:tabular-nums;min-width:24px;text-align:right}
+.ptoc.small .tl{font-size:14px;line-height:1.75}.ptoc.small .tl.l1{margin-top:6px}.ptoc.small h2{margin-bottom:30px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="intro">
+    <h1>페르마 탐구 보고서 · 독서록</h1>
+    <p>먼저 아래에서 쓸 보고서 종류를 고르세요. 빈칸을 채우고 사진을 넣은 다음 노란 버튼을 누르면 PDF가 만들어지고 선생님께 자동으로 제출돼요.</p>
+    <p class="note">표지, 차례(쪽 번호), 번호 매기기, 그림 번호는 저절로 만들어져요. 쓰는 내용은 이 기기에 자동 저장돼서, 창을 닫았다가 다시 열어도 이어서 쓸 수 있어요. (다른 기기로는 이어지지 않아요)</p>
+  </header>
+  <div class="kinds" id="kinds" role="group" aria-label="보고서 종류"></div>
+  <div id="form"></div>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="status" id="status" aria-live="polite">작성 중 · 자동 저장됨</div>
+    <span id="resetArea"><button class="btn" id="resetBtn" type="button">이 보고서 지우기</button></span>
+    <button class="btn" id="submitBtn" type="button" hidden>다시 제출</button>
+    <button class="btn" id="saveBtn" type="button" hidden>파일로 저장</button>
+    <button class="btn" id="addPdfBtn" type="button" title="올린 PDF는 보고서 맨 뒤에 붙어요">자료 PDF 추가</button>
+    <button class="btn primary" id="pdfBtn" type="button">PDF 만들고 제출</button>
+  </div>
+</div>
+
+<div id="pdfStage" aria-hidden="true"></div>
+
+<div id="shots" class="shots" hidden role="dialog" aria-label="완성된 보고서">
+  <div class="shots-head">
+    <div><b>보고서 완성!</b><br><span>각 쪽 사진을 <b>길게 눌러 ‘이미지 저장’</b>한 뒤, 카카오톡 채팅방에서 사진으로 보내세요.</span></div>
+    <button class="btn" id="shotClose" type="button">닫기</button>
+  </div>
+  <div class="shot-list" id="shotList"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+(function(){
+const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
+
+/* ---------- 양식 정의 ----------
+   P: 제목 없는 글칸 / L: 한 줄 칸 / S: 번호 붙는 소제목 + 글칸 / R: 학생이 늘릴 수 있는 소제목들 / Q: 두 칸(문장 + 이유) */
+const P=(id,rows,guide,o={})=>({t:"P",id,rows,guide,photo:true,...o});
+const L=(id,label,hint)=>({t:"L",id,label,hint});
+const S=(id,title,rows,guide,o={})=>({t:"S",id,title,rows,guide,photo:true,...o});
+const R=(id,label,titleHint,guide,def)=>({t:"R",id,label,titleHint,guide,def});
+const Q=(id,aLab,aGuide,bLab,bGuide)=>({t:"Q",id,aLab,aGuide,bLab,bGuide});
+
+const KINDS={
+ topic:{name:"주제탐구보고서",short:"주제탐구 보고서",pre:"t_",color:"c-teal",major:"roman",sub:"num",
+  desc:"주제를 하나 정해 자료를 찾고, 설문·실험으로 직접 조사해요.",
+  subLabel:"세부구분 (탐구 주제)",subHint:"예: 미세플라스틱",
+  secs:[
+   {h:"요약",nonum:true,items:[
+     P("sum",5,"다른 칸을 다 쓴 다음 마지막에 써요.\n무엇을 왜 조사했고, 어떻게 조사했고, 무엇을 알게 되었는지 3~5문장으로 정리해요.",{photo:false}),
+     L("kw","핵심어","예: 플라스틱, 미세플라스틱, 환경")]},
+   {h:"서론",items:[
+     S("need","연구의 필요성과 목적",6,"이 주제를 왜 조사하고 싶었나요? 조사해서 무엇을 알아내고 싶나요?"),
+     S("q","연구문제",4,"알아보고 싶은 질문을 차례대로 적어요.\n예) 1) 학생들은 미세플라스틱을 얼마나 알고 있을까?\n     2) 미세플라스틱을 줄이려면 어떻게 해야 할까?",{photo:false}),
+     S("lim","연구의 제한점",3,"조사하면서 아쉬웠거나 부족했던 점을 써요. (예: 조사한 사람 수가 적었다)",{photo:false})]},
+   {h:"이론적 배경",items:[
+     R("theory","알아본 내용","예: 미세플라스틱이란?","책이나 인터넷에서 찾은 내용을 내 말로 정리해요. 찾은 그림은 사진으로 넣어요.",2)]},
+   {h:"연구방법",items:[
+     S("design","연구 설계",4,"어떤 순서로 조사했나요?\n예) 자료 조사 → 설문지 만들기 → 설문하기 → 결과 정리"),
+     S("data","연구 대상 및 자료 수집",4,"누구에게, 몇 명에게, 어떤 방법으로 조사했나요?\n예) ○○초등학교 5~6학년 40명에게 설문")]},
+   {h:"연구결과",items:[
+     R("result","조사 결과","예: 미세플라스틱을 알고 있나요?","조사 결과를 숫자로 써요. 그래프나 표는 캡처해서 사진으로 넣어요.",2)]},
+   {h:"결론 및 제언, 배우고 느낀 점",items:[
+     S("concl","결론",5,"조사로 알게 된 사실을 정리하고, 앞으로 우리가 할 수 있는 일을 제안해요."),
+     S("feel","배우고 느낀 점",5,"탐구하면서 새롭게 배운 점과 느낀 점을 솔직하게 써요.")]},
+   {h:"참고문헌",nonum:true,items:[
+     P("ref",4,"참고한 책이나 인터넷 주소를 적어요.\n예) 환경부, 「미세플라스틱 이야기」, 2022\n예) https://www.me.go.kr",{photo:false})]},
+   {h:"부록",nonum:true,optional:true,items:[
+     P("appx",3,"설문지처럼 더 보여 주고 싶은 자료가 있으면 사진으로 넣어요. (없으면 비워 두세요)")]}
+  ]},
+ subject:{name:"교과연계탐구보고서",short:"교과연계 탐구 보고서",pre:"s_",color:"c-green",major:"num",sub:"ga",
+  desc:"교과서에서 배운 내용 중 궁금한 것을 더 깊이 탐구해요.",
+  subLabel:"세부구분 (탐구 주제)",subHint:"예: 빛과 색",
+  secs:[
+   {h:"탐구(연구) 동기와 교과서 연계 단원",items:[
+     L("unit","연계 단원","예: 초등과학 6-1 빛과 렌즈"),
+     P("why",5,"교과서에서 무엇을 배우다가 궁금해졌나요? 왜 이 탐구를 하게 되었나요?",{label:"탐구 동기"})]},
+   {h:"탐구(연구) 내용",items:[
+     S("prior","선행 연구 고찰 및 탐구의 독창성",4,"이미 알려진 내용은 무엇이고, 내 탐구는 어떤 점이 새로운가요?"),
+     S("method","탐구 절차 및 방법",4,"어떤 방법으로 탐구했나요? (예: 인터넷 조사, 실험, 친구들과 토론)"),
+     R("inq","탐구 질문","예: 빛이 없다면 세상은 어떻게 될까?","질문에 대한 답을 찾아 정리해요. 그림이나 실험 사진을 넣어도 좋아요.",2)]},
+   {h:"탐구(연구) 결과",items:[
+     S("concl","결론",5,"탐구로 알게 된 것을 정리해요."),
+     S("use","전망 및 활용성",4,"알게 된 내용을 생활이나 미래 기술에 어떻게 쓸 수 있을까요?")]},
+   {h:"탐구(연구) 과정",items:[
+     P("proc",4,"탐구를 어떻게 진행했는지 순서대로 써요. 활동 사진을 넣어 주세요.",{label:"탐구 과정"})]},
+   {h:"배우고 느낀 점",items:[
+     P("feel",5,"탐구하면서 새롭게 배운 점과 느낀 점을 솔직하게 써요.",{label:"배우고 느낀 점"})]},
+   {h:"참고 자료",nonum:true,items:[
+     P("ref",3,"참고한 책, 영상, 인터넷 주소를 적어요.",{photo:false})]}
+  ]},
+ book:{name:"독서연계탐구보고서",short:"독서연계 탐구 보고서 (독서록)",pre:"b_",color:"c-coral",major:"num",sub:"num",
+  desc:"책을 읽고 정해진 10가지 질문에 답하며 독서록을 써요.",
+  subLabel:null,
+  secs:[
+   {h:"책 정보",nonum:true,items:[L("btitle","책 제목","예: 데미안"),L("author","지은이","예: 헤르만 헤세"),L("pub","출판사","예: ○○출판사")]},
+   {h:"저자와 이 책의 배경 소개",items:[P("bg",5,"지은이는 어떤 사람인가요? 이 책은 언제, 어떤 시대에 쓰였나요?",{label:"저자와 배경"})]},
+   {h:"이 책을 읽게 된 이유 또는 계기",items:[P("reason",4,"누가 추천했나요? 제목이나 표지가 궁금했나요?",{label:"읽게 된 이유"})]},
+   {h:"이 책의 핵심 내용과 간략한 줄거리",items:[P("story",7,"처음 – 가운데 – 끝 순서로 줄거리를 짧게 정리해요.",{label:"줄거리"})]},
+   {h:"인상 깊은 부분(기억할 문장) 1 + 이유",items:[Q("imp1","인상 깊은 부분","책에 나온 문장을 그대로 옮겨 써요. (몇 쪽인지도 적으면 좋아요)","이유","왜 이 문장이 기억에 남았나요?")]},
+   {h:"인상 깊은 부분(기억할 문장) 2 + 이유",items:[Q("imp2","인상 깊은 부분","책에 나온 문장을 그대로 옮겨 써요.","이유","왜 이 문장이 기억에 남았나요?")]},
+   {h:"인상 깊은 부분(기억할 문장) 3 + 이유",items:[Q("imp3","인상 깊은 부분","책에 나온 문장을 그대로 옮겨 써요.","이유","왜 이 문장이 기억에 남았나요?")]},
+   {h:"책을 읽은 후 새롭게 알게 된 내용과 배우고 느낀 점",items:[P("learn",6,"책을 읽고 새로 알게 된 것, 생각이 바뀐 것을 써요.",{label:"배우고 느낀 점"})]},
+   {h:"내 꿈을 위해 반드시 실천할 사항 1 + 이유",items:[L("dream","나의 꿈","예: 과학자"),Q("do1","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]},
+   {h:"내 꿈을 위해 반드시 실천할 사항 2 + 이유",items:[Q("do2","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]},
+   {h:"내 꿈을 위해 반드시 실천할 사항 3 + 이유",items:[Q("do3","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]}
+  ]}
+};
+const ORDER=["topic","subject","book"];
+const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
+const GA="가나다라마바사아자차카타파하".split("");
+
+/* ---------- 상태 ---------- */
+const KEY="fermat-report-book-v1";
+let S_={v:{},ph:{}};
+try{const r=localStorage.getItem(KEY); if(r){const o=JSON.parse(r); if(o&&o.v) S_={v:o.v||{},ph:{}};}}catch(e){}
+let saveT=null, dirty=false, phDirty=false;
+let PDFS=[];
+const statusEl=document.getElementById("status");
+const idb=(()=>{let p=null;return ()=>p||(p=new Promise((res,rej)=>{try{const r=indexedDB.open("fermat-report-book",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}}));})();
+function idbPut(k,v){return idb().then(db=>new Promise((res,rej)=>{const t=db.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);}));}
+function idbGet(k){return idb().then(db=>new Promise((res,rej)=>{const q=db.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);}));}
+function saveNow(){
+  clearTimeout(saveT); if(!dirty) return; dirty=false;
+  let textOk=true; try{localStorage.setItem(KEY,JSON.stringify({v:S_.v}));}catch(e){textOk=false;}
+  if(phDirty){ phDirty=false; idbPut("photos",S_.ph).then(()=>{statusEl.textContent=textOk?"작성 중 · 자동 저장됨":"사진만 저장됨 · 글 자동 저장이 안 되는 환경이에요";})
+     .catch(()=>{statusEl.textContent=textOk?"글은 저장됨 · 사진은 저장이 안 돼요 (창을 닫지 마세요)":"자동 저장이 안 되는 환경이에요. 창을 닫지 말고 끝까지 작성하세요.";}); }
+  else statusEl.textContent=textOk?"작성 중 · 자동 저장됨":"자동 저장이 안 되는 환경이에요. 창을 닫지 말고 끝까지 작성하세요.";
+}
+function save(photo){dirty=true; if(photo){phDirty=true; return saveNow();} clearTimeout(saveT); saveT=setTimeout(saveNow,300);}
+addEventListener("pagehide",saveNow);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)saveNow();});
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const val=id=>{const x=S_.v[id]; return typeof x==="string"?x:"";};
+const kindKey=()=>KINDS[S_.v.kind]?S_.v.kind:null;
+const K=()=>KINDS[kindKey()];
+const pid=id=>K().pre+id;
+const repKeys=id=>{const k=S_.v[pid(id)+"_keys"]; return Array.isArray(k)?k:null;};
+function ensureRep(it){ if(!repKeys(it.id)){ const a=[]; for(let i=0;i<it.def;i++) a.push(newKey()); S_.v[pid(it.id)+"_keys"]=a; } return repKeys(it.id); }
+const newKey=()=>Math.random().toString(36).slice(2,8);
+
+/* ---------- 번호와 차례 ---------- */
+function majorLabel(k,n){return k.major==="roman"?ROMAN[n-1]+".":n+".";}
+function subLabel(k,n){return k.sub==="ga"?GA[n-1]+".":n+".";}
+function hasContent(sec){
+  return sec.items.some(it=>{
+    if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
+    if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
+    return val(pid(it.id)).trim()||(S_.ph[pid(it.id)]||[]).length;
+  });
+}
+/* 섹션마다 번호 붙인 제목과 소제목 목록을 만든다 (입력 화면, 차례, PDF가 같이 씀) */
+function outline(forPdf){
+  const k=K(); let n=0; const out=[];
+  k.secs.forEach((sec,si)=>{
+    if(forPdf&&sec.optional&&!hasContent(sec)) return;
+    if(forPdf&&sec.h==="책 정보") return; // 책 정보는 표지와 1번에 들어감
+    const num=sec.nonum?"":majorLabel(k,++n);
+    let m=0; const subs=[];
+    sec.items.forEach(it=>{
+      if(it.t==="S") subs.push({id:it.id,label:subLabel(k,++m),title:it.title});
+      if(it.t==="R") ensureRep(it).forEach((r,ri)=>subs.push({id:it.id,rk:r,label:subLabel(k,++m),title:val(pid(it.id)+"_"+r+"_t").trim()||(it.label+" "+(ri+1)),blank:!val(pid(it.id)+"_"+r+"_t").trim()}));
+    });
+    out.push({si,sec,num,title:sec.h,subs});
+  });
+  return out;
+}
+
+/* ---------- 입력 화면 ---------- */
+function photoBox(id){
+  const list=S_.ph[id]||[];
+  return '<div class="photos" data-ph="'+id+'">'+
+    list.map((src,i)=>'<div class="thumb"><img src="'+src+'" alt="넣은 사진 '+(i+1)+'"><button type="button" data-del="'+id+'" data-i="'+i+'" aria-label="사진 삭제">✕</button></div>').join("")+
+    '<button type="button" class="addph" data-add="'+id+'">+ 사진 넣기</button></div>';
+}
+const ta=(id,rows,label)=>'<textarea id="f_'+id+'" data-id="'+id+'" rows="'+rows+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>'+esc(val(id))+'</textarea>';
+const ln=(id,hint,label)=>'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'" placeholder="'+esc(hint||"")+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>';
+function itemEdit(it,subs){
+  const id=pid(it.id);
+  switch(it.t){
+    case "P": return '<div class="q">'+(it.label?'<span class="qt">'+esc(it.label)+'</span>':'')+'<p class="guide">'+esc(it.guide)+'</p>'+ta(id,it.rows,it.label||it.guide)+(it.photo?photoBox(id):"")+'</div>';
+    case "L": return '<div class="tbl"><div class="row"><label class="lab" for="f_'+id+'">'+esc(it.label)+'</label><div class="val">'+ln(id,it.hint)+'</div></div></div>';
+    case "S": { const s=subs.find(x=>x.id===it.id);
+      return '<div class="q"><div class="subhead">'+esc(s.label+" "+it.title)+'</div><p class="guide">'+esc(it.guide)+'</p>'+ta(id,it.rows,it.title)+(it.photo?photoBox(id):"")+'</div>'; }
+    case "R": { const mine=subs.filter(x=>x.id===it.id);
+      return '<div class="q" data-rep="'+it.id+'">'+mine.map((s,i)=>{const b=id+"_"+s.rk;
+        return '<div class="rep"><div class="subhead"><span class="repnum">'+esc(s.label)+'</span>'+ln(b+"_t",it.titleHint,it.label+" "+(i+1)+" 제목")+
+          '<span data-delrep="'+it.id+'" data-k="'+s.rk+'"><button type="button" class="mini danger" data-ask="1">지우기</button></span></div>'+
+          '<p class="guide">'+esc(it.guide)+'</p>'+ta(b+"_b",6,it.label+" "+(i+1)+" 내용")+photoBox(b+"_b")+'</div>';}).join("")+
+        '<button type="button" class="addrep" data-addrep="'+it.id+'">+ '+esc(it.label)+' 소제목 하나 더 넣기</button></div>'; }
+    case "Q": return '<div class="q"><span class="qt">'+esc(it.aLab)+'</span><p class="guide">'+esc(it.aGuide)+'</p>'+ta(id+"_a",3,it.aLab)+
+      '<span class="qt">'+esc(it.bLab)+'</span><p class="guide">'+esc(it.bGuide)+'</p>'+ta(id+"_b",4,it.bLab)+'</div>';
+  }
+  return "";
+}
+function tocHtml(){
+  return outline(false).map(o=>'<div class="l1">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?' <span class="note">(선택)</span>':'')+'</div>'+
+    o.subs.map(s=>'<div class="l2'+(s.blank?' empty':'')+'">'+esc(s.label+" "+s.title)+'</div>').join("")).join("");
+}
+function renderKinds(){
+  const cur=kindKey();
+  document.getElementById("kinds").innerHTML=ORDER.map(k=>'<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(KINDS[k].short)+'</b><span>'+esc(KINDS[k].desc)+'</span></button>').join("");
+}
+function renderForm(){
+  renderKinds();
+  const f=document.getElementById("form");
+  if(!kindKey()){ f.innerHTML='<div class="pick-first">위에서 보고서 종류를 먼저 골라 주세요.</div>'; updAddBtn(); return; }
+  const k=K(), ol=outline(false);
+  let h='<div style="display:flex;flex-direction:column;gap:20px">';
+  // 표지
+  h+='<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
+    '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':' inputmode="numeric"')+'></label>').join("")+'</div>'+
+    '<label class="fld">보고서 제목<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일")+'"></label>'+
+    (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="'+esc(k.subHint)+'"></label>':'')+
+    '<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
+    '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>'+
+    '<div class="auto">출품부문: <b>'+esc(k.name)+'</b> · 표지와 차례는 저절로 만들어져요</div>'+
+  '</div></section>';
+  // 차례 미리보기
+  h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
+  // 본문
+  ol.forEach(o=>{
+    h+='<section class="page"><div class="ribbon '+k.color+'">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?'<small>선택</small>':'')+'</div><div class="pbody">'+o.sec.items.map(it=>itemEdit(it,o.subs)).join("")+'</div></section>';
+  });
+  // 추가 자료 PDF
+  h+='<section class="page"><div class="ribbon c-dark">추가 자료 PDF<small>선택</small></div><div class="pbody"><p class="guide">PDF 파일(활동지, 설문 결과 등)을 올리면 완성된 보고서 맨 뒤에 그대로 붙어요. 아래 바의 ‘자료 PDF 추가’ 버튼으로 올려요.</p><div class="pdfs" id="pdfList">'+pdfList()+'</div></div></section>';
+  h+='</div>';
+  f.innerHTML=h; updAddBtn();
+}
+function pdfList(){return PDFS.map((x,i)=>'<div class="pdfchip"><span class="tagpdf">PDF</span><span class="nm">'+esc(x.name)+(x.pages?' ('+x.pages+'쪽)':'')+'</span><button type="button" class="mini" data-delpdf="'+i+'">삭제</button></div>').join("")||'<p class="note">아직 올린 PDF가 없어요.</p>';}
+function refreshToc(){const t=document.getElementById("tocPrev"); if(t) t.innerHTML=tocHtml();}
+
+const form=document.getElementById("form");
+form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.v[t.dataset.id]=t.value; if(/_t$/.test(t.dataset.id)) refreshToc(); save(); resetSendIfNeeded();});
+document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; save(); resetSendIfNeeded(); renderForm(); statusEl.textContent=KINDS[b.dataset.kind].short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
+
+/* 소제목 늘리기·지우기 */
+form.addEventListener("click",e=>{
+  const a=e.target.closest("[data-addrep]");
+  if(a){ const id=a.dataset.addrep; const it=findItem(id); const keys=ensureRep(it); keys.push(newKey()); save(); renderForm();
+    const sec=form.querySelector('[data-rep="'+id+'"]'); if(sec){const ins=sec.querySelectorAll(".rep input"); const last=ins[ins.length-1]; if(last){last.focus();}} return; }
+  const d=e.target.closest("[data-delrep]");
+  if(d){
+    if(e.target.dataset.ask){ d.innerHTML='<span class="confirm">정말 지울까요? <button type="button" class="mini danger" data-yes="1">지우기</button><button type="button" class="mini" data-no="1">취소</button></span>'; return; }
+    if(e.target.dataset.no){ d.innerHTML='<button type="button" class="mini danger" data-ask="1">지우기</button>'; return; }
+    if(e.target.dataset.yes){ const id=d.dataset.delrep, rk=d.dataset.k, b=pid(id)+"_"+rk; const keys=repKeys(id)||[];
+      S_.v[pid(id)+"_keys"]=keys.filter(x=>x!==rk); delete S_.v[b+"_t"]; delete S_.v[b+"_b"]; delete S_.ph[b+"_b"]; dirty=true; phDirty=true; saveNow(); resetSendIfNeeded(); renderForm(); }
+  }
+});
+function findItem(id){for(const s of K().secs) for(const it of s.items) if(it.id===id) return it; return null;}
+
+/* 사진 */
+const picker=document.createElement("input"); picker.type="file"; picker.accept="image/*"; picker.multiple=true; picker.hidden=true; document.body.appendChild(picker);
+let pickFor=null;
+form.addEventListener("click",e=>{
+  const a=e.target.closest("[data-add]"); if(a){pickFor=a.dataset.add; picker.value=""; picker.click(); return;}
+  const d=e.target.closest("[data-del]"); if(d){const id=d.dataset.del; (S_.ph[id]||[]).splice(+d.dataset.i,1); refreshPh(id); save(true); resetSendIfNeeded();}
+  const p=e.target.closest("[data-delpdf]"); if(p){PDFS.splice(+p.dataset.delpdf,1); idbPut("pdfs",PDFS).catch(()=>{}); refreshPdfs(); resetSendIfNeeded();}
+});
+picker.addEventListener("change",async()=>{const id=pickFor; if(!id)return; for(const f of picker.files){ try{ (S_.ph[id]=S_.ph[id]||[]).push(await shrink(f)); }catch(e){statusEl.textContent="사진을 읽지 못했어요. 다른 사진으로 해 보세요.";} } refreshPh(id); save(true); resetSendIfNeeded();});
+function refreshPh(id){const box=form.querySelector('[data-ph="'+id+'"]'); if(box) box.outerHTML=photoBox(id);}
+function shrink(file){return new Promise((res,rej)=>{const r=new FileReader(); r.onerror=rej; r.onload=()=>{const img=new Image(); img.onerror=rej; img.onload=()=>{
+  const M=1400, k=Math.min(1,M/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+  const g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height); res(c.toDataURL("image/jpeg",0.82));}; img.src=r.result;}; r.readAsDataURL(file);});}
+
+/* 자료 PDF */
+const addPicker=document.createElement("input"); addPicker.type="file"; addPicker.accept="application/pdf,.pdf"; addPicker.multiple=true; addPicker.hidden=true; document.body.appendChild(addPicker);
+document.getElementById("addPdfBtn").addEventListener("click",()=>{addPicker.value=""; addPicker.click();});
+addPicker.addEventListener("change",async()=>{
+  let bad=0;
+  for(const f of addPicker.files){
+    try{ const buf=await f.arrayBuffer(); let pages=0;
+      if(window.PDFLib){ const d=await PDFLib.PDFDocument.load(buf.slice(0),{ignoreEncryption:true}); pages=d.getPageCount(); }
+      PDFS.push({name:f.name,buf,pages}); }catch(e){ bad++; }
+  }
+  refreshPdfs(); resetSendIfNeeded();
+  idbPut("pdfs",PDFS).then(()=>{ if(!bad) statusEl.textContent="PDF를 올렸어요 · 보고서 맨 뒤에 붙어요"; }).catch(()=>{ statusEl.textContent="PDF는 올렸지만 저장 공간이 부족해요. 창을 닫지 말고 PDF까지 만들어 주세요."; });
+  if(bad) statusEl.textContent="열 수 없는 파일이 있었어요. PDF 파일인지 확인해 주세요.";
+});
+function refreshPdfs(){const l=document.getElementById("pdfList"); if(l) l.innerHTML=pdfList(); updAddBtn();}
+function updAddBtn(){document.getElementById("addPdfBtn").textContent=PDFS.length?"자료 PDF 추가 ("+PDFS.length+")":"자료 PDF 추가";}
+
+/* 이 보고서 지우기 (지금 고른 종류만) */
+const resetArea=document.getElementById("resetArea");
+resetArea.addEventListener("click",e=>{
+  if(!kindKey()) return;
+  if(e.target.id==="resetBtn"){resetArea.innerHTML='<span class="confirm">'+esc(K().short)+' 내용을 지울까요? <button class="btn" id="rYes" type="button">지우기</button><button class="btn" id="rNo" type="button">취소</button></span>';}
+  else if(e.target.id==="rYes"){const pre=K().pre; Object.keys(S_.v).forEach(x=>{if(x.startsWith(pre)) delete S_.v[x];}); Object.keys(S_.ph).forEach(x=>{if(x.startsWith(pre)) delete S_.ph[x];});
+    PDFS=[]; idbPut("pdfs",[]).catch(()=>{}); dirty=true; phDirty=true; saveNow(); resetSend(); renderForm(); resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>'; statusEl.textContent="지웠어요 (학년·반·이름은 남겨 뒀어요)";}
+  else if(e.target.id==="rNo"){resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>';}
+});
+
+/* ---------- PDF용 블록 ---------- */
+const T=id=>esc(val(id).replace(/\s+$/,""));
+const who=()=>{const n=x=>{const t=val(x).trim(); return (t.match(/\d+/)||[t])[0];}; return {g:n("grade"),c:n("cls"),name:val("name").trim()};};
+function buildBlocks(){
+  const k=K(), B=[]; let fig=0;
+  const add=(type,html,gap,toc)=>B.push({type,html:'<div class="pb">'+html+'</div>',gap,toc});
+  const text=(id,gap)=>{ if(val(id).trim()) add("p",'<div class="tx">'+T(id)+'</div>',gap); };
+  const imgs=id=>(S_.ph[id]||[]).forEach(src=>{fig++; add("img",'<div class="fig"><img src="'+src+'"><span>[그림 '+fig+']</span></div>',12);});
+  outline(true).forEach(o=>{
+    add("h1",'<div class="h1">'+esc((o.num?o.num+" ":"")+o.title)+'</div>',40,{lvl:1,text:(o.num?o.num+" ":"")+o.title});
+    let first=true;
+    if(kindKey()==="book"&&o.si===1){ // 1번 앞에 책 정보
+      const bi=[["책 제목","btitle"],["지은이","author"],["출판사","pub"]].filter(([l,id])=>val(pid(id)).trim());
+      if(bi.length){ add("p",bi.map(([l,id])=>'<div class="ln"><b>'+l+'</b> : '+T(pid(id))+'</div>').join(""),14); first=false; }
+    }
+    o.sec.items.forEach(it=>{
+      const id=pid(it.id), g=first?14:10; first=false;
+      if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
+      else if(it.t==="L"){ if(val(id).trim()) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); }
+      else if(it.t==="S"){ const s=o.subs.find(x=>x.id===it.id); add("h2",'<div class="h2">'+esc(s.label+" "+it.title)+'</div>',22,{lvl:2,text:s.label+" "+it.title}); text(id,6); if(it.photo) imgs(id); }
+      else if(it.t==="R"){ o.subs.filter(x=>x.id===it.id).forEach(s=>{const b=id+"_"+s.rk;
+        if(!val(b+"_b").trim()&&!(S_.ph[b+"_b"]||[]).length&&s.blank) return;
+        add("h2",'<div class="h2">'+esc(s.label+" "+s.title)+'</div>',22,{lvl:2,text:s.label+" "+s.title}); text(b+"_b",6); imgs(b+"_b"); }); }
+      else if(it.t==="Q"){
+        if(val(id+"_a").trim()) add("p",'<div class="lab2">'+esc(it.aLab)+' :</div><div class="quote">'+T(id+"_a")+'</div>',g);
+        if(val(id+"_b").trim()) add("p",'<div class="lab2">'+esc(it.bLab)+' :</div><div class="tx">'+T(id+"_b")+'</div>',8);
+      }
+    });
+  });
+  return B;
+}
+function coverHtml(){
+  const k=K(), w=who(), mates=val("mates").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
+  const members=[w.name,...mates].join(", ");
+  const sub=kindKey()==="book"?val(pid("btitle")).trim():val(pid("subj")).trim();
+  const rows=[["구분",val("team").trim()||"개인"],["출품부문",k.name],["세부구분",sub],["구성원",members],["학년·반",w.g+"학년 "+w.c+"반"]];
+  return '<div class="pfull pcover"><div class="ct">'+esc(val(pid("title")).trim())+'</div><table>'+rows.map(([a,b])=>'<tr><th>'+a+'</th><td>'+esc(b)+'</td></tr>').join("")+'</table>'+
+    '<div class="brand"><b>Fermat</b> education · '+new Date().getFullYear()+'</div></div>';
+}
+function tocPageHtml(entries){
+  return '<div class="pfull ptoc'+(entries.length>22?' small':'')+'"><h2>차례</h2>'+entries.map(e=>'<div class="tl l'+e.lvl+'"><span class="tt">'+esc(e.text)+'</span><span class="dots"></span><span class="pg">'+e.page+'</span></div>').join("")+'</div>';
+}
+
+/* ---------- A4 쪽 나누기 ---------- */
+const SC=2, PW=794*SC, PH=1123*SC, TOP=72*SC, BOT=86*SC;
+const cap=el=>html2canvas(el,{scale:SC,backgroundColor:"#ffffff",useCORS:true,logging:false,width:794,windowWidth:794});
+function whiteRow(data,w,y){ const x0=60*SC, x1=w-60*SC; for(let x=x0;x<x1;x+=3){const i=(y*w+x)*4; if(data[i]<235||data[i+1]<235||data[i+2]<235) return false;} return true; }
+function findCut(cv,from,maxY,minY){ // maxY 위쪽에서 비어 있는 줄을 찾는다
+  minY=Math.max(from+1,minY); if(maxY<=minY) return maxY;
+  const w=cv.width, d=cv.getContext("2d").getImageData(0,minY,w,maxY-minY).data;
+  for(let y=maxY-minY-1;y>=0;y--) if(whiteRow(d,w,y)) return minY+y;
+  return maxY;
+}
+async function paginate(blocks,onStep){
+  const stage=document.getElementById("pdfStage");
+  stage.innerHTML=blocks.map(b=>b.html).join("");
+  if(document.fonts){ try{ await Promise.all([document.fonts.load('400 15px "Noto Serif KR"',"가나다"),document.fonts.load('700 15px "Noto Serif KR"',"가나다"),document.fonts.load('400 15px "Noto Sans KR"',"가나다")]); await document.fonts.ready; }catch(e){} }
+  await Promise.all([...stage.querySelectorAll("img")].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
+  const els=[...stage.children], out=[], toc=[];
+  let pg=null, g=null, y=TOP;
+  const finish=()=>{ if(!pg) return; g.fillStyle="#444"; g.font=(12*SC)+'px "Noto Serif KR", serif'; g.textAlign="center"; g.fillText("- "+(out.length+1)+" -",PW/2,PH-44*SC);
+    out.push(pg.toDataURL("image/jpeg",0.88)); pg.width=pg.height=0; pg=null; };
+  const newPage=()=>{ finish(); pg=document.createElement("canvas"); pg.width=PW; pg.height=PH; g=pg.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,PW,PH); y=TOP; };
+  newPage();
+  for(let i=0;i<els.length;i++){
+    onStep&&onStep(i,els.length);
+    const b=blocks[i], cv=await cap(els[i]); let h=cv.height;
+    if(y>TOP) y+=b.gap*SC;
+    const rem=()=>PH-BOT-y;
+    if(b.type==="h1"||b.type==="h2"){
+      if(y>TOP&&rem()<h+(b.type==="h1"?150:90)*SC) newPage();
+      g.drawImage(cv,0,y); if(b.toc) toc.push({...b.toc,page:out.length+1}); y+=h;
+    }else if(b.type==="img"){
+      const avail=PH-BOT-TOP; let dw=cv.width, dh=h;
+      if(dh>avail){ const s=avail/dh; dw=cv.width*s; dh=avail; }
+      if(dh>rem()&&y>TOP) newPage();
+      g.drawImage(cv,(PW-dw)/2,y,dw,dh); y+=dh;
+    }else{
+      let off=0;
+      while(off<h){
+        const left=h-off;
+        if(left<=rem()){ g.drawImage(cv,0,off,cv.width,left,0,y,cv.width,left); y+=left; break; }
+        if(rem()<50*SC){ newPage(); continue; }
+        let cut=findCut(cv,off,off+rem(),off+rem()-260*SC);
+        if(cut<=off+10) cut=off+rem();
+        g.drawImage(cv,0,off,cv.width,cut-off,0,y,cv.width,cut-off);
+        off=cut; newPage();
+      }
+    }
+    cv.width=cv.height=0;
+  }
+  finish();
+  stage.innerHTML="";
+  return {pages:out,toc};
+}
+async function fullPage(html){
+  const stage=document.getElementById("pdfStage"); stage.innerHTML=html;
+  if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+  const cv=await cap(stage.firstElementChild); const u=cv.toDataURL("image/jpeg",0.9); cv.width=cv.height=0; stage.innerHTML=""; return u;
+}
+
+/* ---------- PDF 만들기 & 보내기 ---------- */
+let dlPromise=null;
+try{ if(window.claude&&typeof window.claude.use==="function") dlPromise=window.claude.use("downloads").catch(()=>null); }catch(e){}
+const pdfBtn=document.getElementById("pdfBtn"), saveBtn=document.getElementById("saveBtn"), submitBtn=document.getElementById("submitBtn");
+let lastPdf=null;
+function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;submitBtn.hidden=true;}
+function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
+saveBtn.addEventListener("click",()=>{ if(lastPdf) download(lastPdf.blob,lastPdf.name); });
+function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
+
+pdfBtn.addEventListener("click",async()=>{
+  if(lastPdf && pdfBtn.dataset.mode==="send"){ return deliver(lastPdf.blob,lastPdf.name); }
+  if(!kindKey()){ statusEl.textContent="먼저 맨 위에서 보고서 종류를 골라 주세요."; scrollTo({top:0,behavior:"smooth"}); return; }
+  if(!window.html2canvas||!window.jspdf){statusEl.textContent="PDF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
+  for(const [id,l] of [["grade","학년"],["cls","반"],["name","이름"]]) if(!val(id).trim()) return goTo(id,"표지의 "+l+"을(를) 먼저 써 주세요. 선생님께 이 이름으로 제출돼요.");
+  if(!val(pid("title")).trim()) return goTo(pid("title"),"표지의 보고서 제목을 써 주세요.");
+  pdfBtn.disabled=true;
+  try{
+    statusEl.textContent="PDF 만드는 중… 잠깐만 기다려 주세요.";
+    const {pages,toc}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
+    statusEl.textContent="표지와 차례 만드는 중…";
+    const cover=await fullPage(coverHtml());
+    const tocImg=await fullPage(tocPageHtml(toc));
+    const all=[cover,tocImg,...pages];
+    const {jsPDF}=window.jspdf; const pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
+    all.forEach((u,i)=>{ if(i) pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
+    let blob=pdf.output("blob"), failed=0;
+    if(PDFS.length&&window.PDFLib){
+      statusEl.textContent="자료 PDF를 맨 뒤에 붙이는 중…";
+      const out=await PDFLib.PDFDocument.load(pdf.output("arraybuffer"));
+      for(const f of PDFS){ try{ const src=await PDFLib.PDFDocument.load(f.buf.slice(0),{ignoreEncryption:true}); (await out.copyPages(src,src.getPageIndices())).forEach(x=>out.addPage(x)); }catch(e){ failed++; } }
+      blob=new Blob([await out.save()],{type:"application/pdf"});
+    } else if(PDFS.length) failed=PDFS.length;
+    const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
+    lastPdf={blob,name:K().name+"_"+nm+".pdf",shots:all,failed};
+    pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false;
+    await submitToTeacher();
+  }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
+  finally{ pdfBtn.disabled=false; }
+});
+
+function blobToB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(b);});}
+async function submitToTeacher(){
+  if(!lastPdf) return;
+  submitBtn.hidden=true;
+  statusEl.textContent="선생님께 제출하는 중… 창을 닫지 마세요.";
+  const w=who();
+  const label=(K().name+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"");
+  const body=JSON.stringify({label,pdf:await blobToB64(lastPdf.blob)});
+  const warn=lastPdf.failed?" (자료 PDF "+lastPdf.failed+"개는 보호된 파일이라 붙이지 못했어요. 사진으로 넣어 주세요.)":"";
+  const shown=K().name+" · "+w.g+"학년 "+w.c+"반 "+w.name;
+  try{
+    const r=await fetch(SUBMIT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
+    const j=await r.json(); if(!j.ok) throw new Error(j.error||"fail");
+    lastPdf.submitted=true;
+    statusEl.textContent="✅ 선생님께 제출 완료! ("+shown+")"+warn+" 카톡으로도 보내려면 노란 버튼을 누르세요.";
+  }catch(e){
+    if(e instanceof TypeError){
+      try{ await fetch(SUBMIT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
+        lastPdf.submitted=true; statusEl.textContent="✅ 선생님께 제출했어요. ("+shown+")"+warn; return; }catch(_){}
+    }
+    submitBtn.hidden=false;
+    statusEl.textContent="⚠️ 제출하지 못했어요. 인터넷 연결을 확인하고 '다시 제출'을 눌러 주세요.";
+  }
+}
+submitBtn.addEventListener("click",async()=>{submitBtn.disabled=true; try{await submitToTeacher();}finally{submitBtn.disabled=false;}});
+
+async function deliver(blob,name){
+  const dl=dlPromise?await dlPromise:null;
+  if(dl){
+    try{ await dl.save({filename:name,data:blob}); statusEl.textContent="저장 완료! 저장한 파일을 카카오톡 채팅방에 첨부하세요."; return; }
+    catch(e){ if(e&&e.code==="declined"){statusEl.textContent="저장을 취소했어요. 다시 누르면 저장할 수 있어요.";return;}
+      if(e&&e.code==="rate_limited"){statusEl.textContent="잠시 후 다시 눌러 주세요.";return;} }
+  }
+  if(window.claude){ showShots(); return; }
+  let file=null; try{ file=new File([blob],name,{type:"application/pdf"}); }catch(e){}
+  if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:name}); statusEl.textContent="보냈어요! 공유 화면에 카카오톡이 안 보였다면 '파일로 저장' 후 카톡에 첨부하세요."; return; }
+    catch(e){
+      if(e&&e.name==="AbortError"){ statusEl.textContent="공유를 닫았어요. 카카오톡이 없으면 '파일로 저장'을 누른 뒤 카톡 채팅방에 첨부하세요."; return; }
+      if(e&&e.name==="NotAllowedError"){ statusEl.textContent="'카톡으로 보내기'를 한 번 더 눌러 주세요."; return; }
+    }
+  }
+  download(blob,name);
+}
+function download(blob,name){
+  try{ const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000);
+    statusEl.textContent="다운로드 폴더에 저장했어요. PC 카카오톡 채팅방에 파일을 끌어다 놓으면 보내져요."; }
+  catch(e){ statusEl.textContent="이 브라우저에서는 저장할 수 없어요. 크롬이나 사파리로 열어 주세요."; }
+}
+function showShots(){
+  document.getElementById("shotList").innerHTML=(lastPdf&&lastPdf.shots||[]).map((s,i)=>'<figure><img src="'+s+'" alt="보고서 '+(i+1)+'쪽"><figcaption>'+(i+1)+'쪽</figcaption></figure>').join("");
+  document.getElementById("shots").hidden=false; document.getElementById("shotClose").focus();
+}
+document.getElementById("shotClose").addEventListener("click",()=>{document.getElementById("shots").hidden=true;});
+
+/* 예시 작성: 주소 끝에 #demo (주제탐구) / #demo-subject / #demo-book 을 붙이면 예시 내용으로 채워져요 (선생님 테스트용) */
+const DEMO={
+ topic:{t_title:"미세플라스틱의 문제점과 우리가 할 수 있는 일",t_subj:"미세플라스틱",
+  t_sum:"우리 주변에서 쉽게 쓰는 플라스틱이 작게 부서져 미세플라스틱이 된다는 것을 알고 이 주제를 조사했다. 5~6학년 친구 30명에게 설문을 했더니 절반 이상이 미세플라스틱을 잘 모르고 있었다. 우리는 일회용품을 줄이는 작은 실천이 중요하다는 것을 알게 되었다.",
+  t_kw:"플라스틱, 미세플라스틱, 환경",
+  t_need:"바닷가에 갔을 때 작은 플라스틱 조각이 모래에 섞여 있는 것을 보았다. 이런 조각이 물고기 몸속에도 들어간다는 뉴스를 보고, 친구들은 미세플라스틱을 얼마나 알고 있는지 궁금해졌다.",
+  t_q:"1) 학생들은 미세플라스틱을 얼마나 알고 있을까?\n2) 미세플라스틱을 줄이려면 어떻게 해야 할까?",
+  t_lim:"조사한 사람이 30명뿐이라 모든 학생의 생각이라고 하기는 어렵다.",
+  t_theory_keys:["a1","a2"],t_theory_a1_t:"플라스틱이란?",t_theory_a1_b:"플라스틱은 열을 가하면 모양을 쉽게 바꿀 수 있는 물질이다. 가볍고 싸서 많이 쓰이지만 잘 썩지 않는다.",
+  t_theory_a2_t:"미세플라스틱이란?",t_theory_a2_b:"크기가 5mm보다 작은 플라스틱 조각을 미세플라스틱이라고 한다. 처음부터 작게 만든 것도 있고, 큰 플라스틱이 부서져서 생기기도 한다.",
+  t_design:"자료 조사 → 설문지 만들기 → 설문하기 → 결과 정리",t_data:"○○초등학교 5~6학년 30명에게 종이 설문지로 조사했다.",
+  t_result_keys:["r1","r2"],t_result_r1_t:"미세플라스틱을 알고 있나요?",t_result_r1_b:"‘잘 안다’ 8명(27%), ‘들어 봤다’ 12명(40%), ‘모른다’ 10명(33%)이었다.",
+  t_result_r2_t:"줄이기 위해 할 수 있는 일",t_result_r2_b:"텀블러 쓰기(14명), 분리수거 잘하기(10명), 빨대 안 쓰기(6명) 순서로 답했다.",
+  t_concl:"많은 친구들이 미세플라스틱을 잘 모르고 있었다. 학교에서 캠페인을 하고, 일회용품 대신 다회용품을 쓰자고 제안한다.",
+  t_feel:"설문지를 직접 만들고 결과를 정리하는 일이 어려웠지만 재미있었다. 앞으로 텀블러를 꼭 들고 다니겠다.",
+  t_ref:"환경부 누리집 https://www.me.go.kr\n「플라스틱 지구」, 2021"},
+ subject:{s_title:"빛과 색의 관계 탐구",s_subj:"빛과 색",s_unit:"초등과학 6-1 빛과 렌즈 / 중등과학 1-2 빛과 파동",
+  s_why:"과학 시간에 프리즘으로 햇빛을 나누는 실험을 했다. 하얀 빛 속에 여러 색이 숨어 있다는 것이 신기해서, 우리가 색을 어떻게 보는지 더 알아보고 싶었다.",
+  s_prior:"빛의 삼원색에 대한 설명은 많이 있지만, 생활 속 예와 함께 정리한 자료는 적었다. 우리는 스마트폰 화면을 돋보기로 관찰해 보았다.",
+  s_method:"인터넷과 책으로 자료를 찾고, 돋보기로 화면을 관찰한 뒤 친구들과 토론했다.",
+  s_inq_keys:["q1","q2"],s_inq_q1_t:"우리는 어떻게 색을 볼 수 있을까?",s_inq_q1_b:"물체에 닿은 빛 중 반사된 빛이 눈으로 들어와 색을 느끼게 된다. 눈 안쪽에는 빨강, 초록, 파랑 빛을 느끼는 세포가 있다.",
+  s_inq_q2_t:"빛이 없다면 세상은 어떻게 될까?",s_inq_q2_b:"빛이 없으면 식물이 광합성을 하지 못하고, 우리는 색을 전혀 볼 수 없다.",
+  s_concl:"색은 물체가 반사하는 빛 때문에 보인다. 빛의 삼원색을 섞으면 여러 색을 만들 수 있다.",
+  s_use:"화면, 조명, 자율주행 자동차의 센서처럼 빛을 이용한 기술이 계속 발전할 것이다.",
+  s_proc:"온라인과 오프라인 수업을 함께 하며 자료를 모으고, 마지막 날 보고서를 함께 썼다.",
+  s_feel:"평소에 당연하게 보던 색에 이렇게 많은 원리가 숨어 있다는 것을 알게 되었다.",
+  s_ref:"「빛의 과학」, 2020\nhttps://www.youtube.com (생물학 영상)"},
+ book:{b_title:"데미안을 읽고, 나의 꿈을 생각하다",b_btitle:"데미안",b_author:"헤르만 헤세",b_pub:"○○출판사",
+  b_bg:"헤르만 헤세는 독일에서 태어난 작가로, 노벨문학상을 받았다. 이 책은 제1차 세계대전 무렵에 쓰였다.",
+  b_reason:"선생님께서 추천해 주셔서 읽게 되었다. 제목이 무슨 뜻인지 궁금했다.",
+  b_story:"싱클레어는 밝은 세계에서 자라던 소년이다. 어느 날 크로머에게 괴롭힘을 당하는데, 전학 온 데미안이 도와준다. 싱클레어는 데미안을 만나며 진짜 자기 자신을 찾아간다.",
+  b_imp1_a:"“새는 알에서 나오려고 투쟁한다. 알은 세계이다.”",b_imp1_b:"새로운 것을 시작하려면 용기가 필요하다는 말처럼 느껴졌다.",
+  b_imp2_a:"“나는 내 속에서 솟아 나오려는 것, 바로 그것을 살아 보려고 했다.”",b_imp2_b:"내가 진짜 좋아하는 것을 찾고 싶어졌다.",
+  b_imp3_a:"“모든 사람의 삶은 자기 자신에게로 가는 길이다.”",b_imp3_b:"다른 사람과 비교하지 않고 나만의 길을 가도 된다고 생각했다.",
+  b_learn:"친구의 말 한마디가 큰 힘이 될 수 있다는 것을 알게 되었다. 나도 누군가에게 데미안 같은 친구가 되고 싶다.",
+  b_dream:"과학자",b_do1_a:"매일 과학 책 10쪽 읽기",b_do1_b:"많이 알아야 새로운 질문을 할 수 있기 때문이다.",
+  b_do2_a:"궁금한 것을 노트에 적기",b_do2_b:"과학자는 질문에서 시작하기 때문이다.",
+  b_do3_a:"수학 공부 꾸준히 하기",b_do3_b:"실험 결과를 정리하려면 수학이 꼭 필요하다."}
+};
+const dm=location.hash.match(/^#demo(?:-(subject|book))?$/);
+if(dm){
+  const k=dm[1]||"topic";
+  S_.v={...S_.v,...DEMO[k],kind:k,grade:"5",cls:"2",name:"예시학생"};
+  dirty=true; saveNow(); history.replaceState(null,"",location.pathname);
+  setTimeout(()=>{statusEl.textContent="예시 내용으로 채웠어요. 노란 버튼을 누르면 제출 테스트가 돼요.";},0);
+}
+renderForm();
+idbGet("pdfs").then(l=>{ if(Array.isArray(l)&&l.length){ PDFS=l.filter(x=>x&&x.buf); refreshPdfs(); } }).catch(()=>{});
+idbGet("photos").then(ph=>{ if(ph&&typeof ph==="object"&&Object.keys(ph).length){ S_.ph=ph; renderForm(); } }).catch(()=>{});
+if(!dm&&Object.keys(S_.v).length>1) statusEl.textContent="저장해 둔 내용을 불러왔어요 · 이어서 쓰세요";
+})();
+</script>
+</body>
+</html>
