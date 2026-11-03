@@ -690,7 +690,7 @@ function buildBlocks(){
       const id=pid(it.id), g=first?14:10; first=false;
       if(it.t==="V"){ const f=FX[it.id]; if(f) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+it.icon+' '+esc(f.name)+' ('+fmtMB(f.size)+') · 선생님 제출함에 함께 저장됨</div>',g); }
       else if(it.t==="N") add("p",'<div class="nt">'+it.html.replace(/<[^>]+>/g,"")+'</div>',g);
-      else if(it.t==="G") add("p",'<table class="pg"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+T(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table>',g);
+      else if(it.t==="G") add("img",'<table class="pg"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+T(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table>',g);
       else if(it.t==="C"){ if(CN.length) add("p",'<div class="nt">※ 커리어넷 결과지('+CN.length+'개)는 이 보고서 맨 뒤에 붙어 있어요.</div>',g); }
       else if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
       else if(it.t==="L"){ if(val(id).trim()){ if(it.url){ const u=val(id).trim(); add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : <span style="color:#1d5fd1;text-decoration:underline;word-break:break-all">'+esc(u)+'</span></div>',g); B[B.length-1].link=/^https?:\/\//i.test(u)?u:"https://"+u; }
