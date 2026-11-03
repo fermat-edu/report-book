@@ -59,6 +59,9 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .year{font:inherit;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 16px;cursor:pointer}
 .year[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
 .year:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lvl{display:flex;flex-direction:column;gap:6px}
+.lvlname{font-size:12.5px;font-weight:700;color:var(--muted)}
+.year .n{font-weight:500;opacity:.75;margin-left:4px;font-size:12px}
 .classnav{display:flex;gap:6px;flex-wrap:wrap}
 .classnav a{font-size:12.5px;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:3px 9px;background:var(--field)}
 .cls{border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:12px}
@@ -90,7 +93,8 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 
   <section id="main" hidden>
     <div class="card" style="display:flex;flex-direction:column;gap:14px">
-      <div class="years" id="forms" role="group" aria-label="페이지 종류"></div>
+      <div class="lvl"><span class="lvlname">비교과 주제</span><div class="years" id="topics" role="group" aria-label="비교과 주제"></div></div>
+      <div class="lvl"><span class="lvlname">보고서 종류</span><div class="years" id="forms" role="group" aria-label="보고서 종류"></div></div>
       <div class="years" id="years" role="group" aria-label="연도"></div>
       <div class="stats" id="stats"></div>
       <div class="toolbar">
@@ -123,11 +127,13 @@ async function api(params){
 }
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function parse(f){ // "2학년3반_홍길동_1102_2130.pdf"
-  let base=f.name.replace(/\.pdf$/i,"").replace(/_\d{4}_\d{4}$/,""), form="기타";
-  const fi=base.indexOf("__"); if(fi>0){ form=base.slice(0,fi); base=base.slice(fi+2); }
+  let base=f.name.replace(/\.pdf$/i,"").replace(/_\d{4}_\d{4}$/,""), form="기타", topic="주제 없음";
+  const parts=base.split("__");
+  if(parts.length>=3){ topic=parts[0]; form=parts[1]; base=parts.slice(2).join("__"); }
+  else if(parts.length===2){ form=parts[0]; base=parts[1]; }
   const m=base.match(/(\d+)\s*학년\D*?(\d+)\s*반_?(.*)$/);
   const g=m?+m[1]:99, c=m?+m[2]:99, nm=m?(m[3]||"이름없음").replace(/_/g," "):base.replace(/_/g," ");
-  return {...f,who:nm,key:form+"|"+base,g,c,cls:m?g+"학년 "+c+"반":"기타",year:new Date(f.time).getFullYear(),form};
+  return {...f,who:nm,key:topic+"|"+form+"|"+base,g,c,cls:m?g+"학년 "+c+"반":"기타",year:new Date(f.time).getFullYear(),form,topic};
 }
 const fmtTime=t=>{const d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");};
 const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+"MB":Math.max(1,Math.round(b/1024))+"KB";
@@ -147,10 +153,13 @@ $("pw").addEventListener("keydown",e=>{if(e.key==="Enter"){KEY=$("pw").value.tri
 $("logoutBtn").addEventListener("click",()=>{KEY="";FILES=[];try{sessionStorage.removeItem("teacherKey");}catch(e){} $("main").hidden=true;$("loginCard").hidden=false;$("logoutBtn").hidden=true;$("pw").value="";$("loginMsg").textContent="";});
 
 /* 목록 */
-let YEAR=null, FORM=null;
+let YEAR=null, FORM=null, TOPIC=null;
+const TORDER=["디베이트 특강","AI 리터러시","일상생활 속에서의 수학","미세 플라스틱","그리스로마 신화","주제 탐구 보고서 작성하기","군주론","독서연계 진화론","물리&철학","수학&심리학","세상을 바꾼 화학","음식과 사회","검은 눈물, 석유","엔트로피","지구 과학&경제","탄소","빛","문화유산","반려동물"];
+function topics(){ const r=x=>{const i=TORDER.indexOf(x);return i<0?99:i;}; return [...new Set(FILES.map(f=>f.topic))].sort((a,b)=>r(a)-r(b)||a.localeCompare(b,"ko")); }
+const FT=()=>FILES.filter(f=>f.topic===TOPIC);
 const FORDER=["주제탐구보고서","교과연계탐구보고서","독서연계탐구보고서"];
-function forms(){ const r=x=>{const i=FORDER.indexOf(x);return i<0?99:i;}; return [...new Set(FILES.map(f=>f.form))].sort((a,b)=>r(a)-r(b)||a.localeCompare(b,"ko")); }
-const FF=()=>FILES.filter(f=>f.form===FORM);
+function forms(){ const r=x=>{const i=FORDER.indexOf(x);return i<0?99:i;}; return [...new Set(FT().map(f=>f.form))].sort((a,b)=>r(a)-r(b)||a.localeCompare(b,"ko")); }
+const FF=()=>FT().filter(f=>f.form===FORM);
 function years(){ return [...new Set(FF().map(f=>f.year))].sort((x,y)=>y-x); }
 function visible(){
   const q=$("q").value.replace(/\s/g,"");
@@ -169,8 +178,11 @@ function itemHtml(f){
 }
 const openState={};
 function render(){
+  const ts=topics(); if(!ts.includes(TOPIC)) TOPIC=ts[0]||null;
+  const cnt=l=>new Set(l.map(f=>f.key)).size;
+  $("topics").innerHTML=ts.length?ts.map(x=>'<button type="button" class="year" data-topic="'+esc(x)+'" aria-pressed="'+(x===TOPIC)+'">'+esc(x)+'<span class="n">'+cnt(FILES.filter(f=>f.topic===x))+'</span></button>').join(""):'<span class="msg">아직 제출이 없어요.</span>';
   const fs=forms(); if(!fs.includes(FORM)) FORM=fs[0]||"주제탐구보고서";
-  $("forms").innerHTML=fs.length?fs.map(x=>'<button type="button" class="year" data-form="'+esc(x)+'" aria-pressed="'+(x===FORM)+'">'+esc(x)+'</button>').join(""):"";
+  $("forms").innerHTML=fs.length?fs.map(x=>'<button type="button" class="year" data-form="'+esc(x)+'" aria-pressed="'+(x===FORM)+'">'+esc(x)+'<span class="n">'+cnt(FT().filter(f=>f.form===x))+'</span></button>').join(""):"";
   const ys=years(); if(!ys.includes(YEAR)) YEAR=ys[0]||new Date().getFullYear();
   $("years").innerHTML=(ys.length?ys:[YEAR]).map(y=>'<button type="button" class="year" data-year="'+y+'" aria-pressed="'+(y===YEAR)+'">'+y+'년</button>').join("");
   const inYear=FF().filter(f=>f.year===YEAR);
@@ -186,6 +198,7 @@ function render(){
   ).join(""):'<div class="empty">'+(inYear.length?"찾는 학생이 없어요.":"아직 제출한 학생이 없어요. 학생이 'PDF 만들고 제출'을 누르면 여기에 나타나요.")+'</div>';
   $("zipBtn").textContent=YEAR+"년 전체 받기"; $("zipBtn").disabled=!groups.length;
 }
+$("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; TOPIC=b.dataset.topic; FORM=null; YEAR=null; render();});
 $("forms").addEventListener("click",e=>{const b=e.target.closest("[data-form]"); if(!b)return; FORM=b.dataset.form; YEAR=null; render();});
 $("years").addEventListener("click",e=>{const b=e.target.closest("[data-year]"); if(!b)return; YEAR=+b.dataset.year; render();});
 $("list").addEventListener("toggle",e=>{const d=e.target; if(d.classList&&d.classList.contains("cls")) openState[YEAR+d.dataset.cls]=d.open;},true);
@@ -201,7 +214,7 @@ async function getBlob(id){ const j=await api({action:"file",id});
 function saveBlob(blob,name){ const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),60000); }
 
 $("list").addEventListener("click",async e=>{
-  const z=e.target.closest("[data-zipcls]"); if(z){ e.preventDefault(); const cls=z.dataset.zipcls; zipFiles(visible().filter(f=>f.cls===cls),FORM+"_"+YEAR+"년_"+cls.replace(/\s/g,""),false,z); return; }
+  const z=e.target.closest("[data-zipcls]"); if(z){ e.preventDefault(); const cls=z.dataset.zipcls; zipFiles(visible().filter(f=>f.cls===cls),TOPIC+"_"+FORM+"_"+YEAR+"년_"+cls.replace(/\s/g,""),false,z); return; }
   const b=e.target.closest("[data-act]"); if(!b) return;
   const item=b.closest(".item"), id=item.dataset.id, f=FILES.find(x=>x.id===id); if(!f) return;
   const act=b.dataset.act;
@@ -236,7 +249,7 @@ async function zipFiles(v,label,folders,btn){
   $("msg").textContent=(v.length-fail)+"개 파일을 "+zname+"로 받았어요."+(fail?" ("+fail+"개는 가져오지 못했어요)":"");
   $("prog").hidden=true; bar.style.width="0"; btn.disabled=false;
 }
-$("zipBtn").addEventListener("click",()=>zipFiles(visible(),FORM+"_"+YEAR+"년_전체",true,$("zipBtn")));
+$("zipBtn").addEventListener("click",()=>zipFiles(visible(),TOPIC+"_"+FORM+"_"+YEAR+"년_전체",true,$("zipBtn")));
 
 if(KEY) login(); else $("pw").focus();
 })();
