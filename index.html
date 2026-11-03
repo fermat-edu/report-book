@@ -225,6 +225,7 @@ const KINDS={
    {h:"결론 및 제언, 배우고 느낀 점",items:[
      S("concl","결론",5,"조사로 알게 된 사실을 정리하고, 앞으로 우리가 할 수 있는 일을 제안해요."),
      S("feel","배우고 느낀 점",5,"탐구하면서 새롭게 배운 점과 느낀 점을 솔직하게 써요.")]},
+   {h:"더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
    {h:"참고문헌",nonum:true,items:[
      P("ref",4,"참고한 책이나 인터넷 주소를 적어요.\n예) 환경부, 「미세플라스틱 이야기」, 2022\n예) https://www.me.go.kr",{photo:false})]},
    {h:"부록",nonum:true,optional:true,items:[
@@ -248,10 +249,11 @@ const KINDS={
      P("proc",4,"탐구를 어떻게 진행했는지 순서대로 써요. 활동 사진을 넣어 주세요.",{label:"탐구 과정"})]},
    {h:"배우고 느낀 점",items:[
      P("feel",5,"탐구하면서 새롭게 배운 점과 느낀 점을 솔직하게 써요.",{label:"배우고 느낀 점"})]},
+   {h:"더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
    {h:"참고 자료",nonum:true,items:[
      P("ref",3,"참고한 책, 영상, 인터넷 주소를 적어요.",{photo:false})]}
   ]},
- book:{name:"독서연계탐구보고서",short:"독서연계 탐구 보고서 (독서록)",pre:"b_",color:"c-coral",major:"num",sub:"num",
+ book:{name:"독서연계탐구보고서",short:"독서연계 탐구 보고서 (독서록)",pre:"b_",color:"c-coral",major:"num",sub:"num",fixedNum:true,
   desc:"책을 읽고 정해진 10가지 질문에 답하며 독서록을 써요.",
   subLabel:null,
   secs:[
@@ -265,7 +267,8 @@ const KINDS={
    {h:"책을 읽은 후 새롭게 알게 된 내용과 배우고 느낀 점",items:[P("learn",6,"책을 읽고 새로 알게 된 것, 생각이 바뀐 것을 써요.",{label:"배우고 느낀 점"})]},
    {h:"내 꿈을 위해 반드시 실천할 사항 1 + 이유",items:[L("dream","나의 꿈","예: 과학자"),Q("do1","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]},
    {h:"내 꿈을 위해 반드시 실천할 사항 2 + 이유",items:[Q("do2","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]},
-   {h:"내 꿈을 위해 반드시 실천할 사항 3 + 이유",items:[Q("do3","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]}
+   {h:"내 꿈을 위해 반드시 실천할 사항 3 + 이유",items:[Q("do3","실천할 사항","내 꿈을 이루기 위해 꼭 실천할 일을 써요.","이유","왜 그 일이 필요한가요?")]},
+   {h:"더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]}
   ]}
 };
 KINDS.ai={name:"AI 활용 작품",short:"AI 활용 작품 제출",pre:"a_",color:"c-teal",major:"num",sub:"num",
@@ -288,6 +291,7 @@ KINDS.ai={name:"AI 활용 작품",short:"AI 활용 작품 제출",pre:"a_",color
      P("shots",2,"영상의 주요 장면을 캡처해서 넣어요.",{label:"장면 캡처"})]},
    {h:"AI 탐험지도 – AI 도구 조합하기",optional:true,items:[
      P("combo",4,"어떤 AI 도구들을 어떤 순서로 썼는지, 그리고 결과물을 캡처해서 넣어요.\n예) 퍼플렉시티로 자료 찾기 → ChatGPT로 정리 → Canva로 발표 자료 만들기",{label:"사용한 도구와 결과"})]},
+   {h:"더 만든 작품 · 더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
    {h:"배우고 느낀 점",items:[
      P("feel",5,"AI로 작품을 만들며 배운 점, 어려웠던 점, AI를 쓸 때 조심해야 할 점(저작권, 딥페이크, 개인정보)을 써요.",{label:"배우고 느낀 점",photo:false})]}
   ]};
@@ -298,7 +302,7 @@ const NS=(id,title,rows,o={})=>S(id,title,rows,"",{num:false,...o});
 const QS=(id,title,rows,o={})=>S(id,title,rows,"",{photo:false,...o});
 const CAREER='<a href="https://www.career.go.kr" target="_blank" rel="noopener">www.career.go.kr</a>';
 const NY=new Date().getFullYear();
-KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",color:"c-green",major:"num",sub:"num",solo:true,tocMajor:true,autoTitle:"나의 꿈 조사 보고서",
+KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",color:"c-green",major:"num",sub:"num",solo:true,tocMajor:true,skipEmpty:true,autoTitle:"나의 꿈 조사 보고서",
   desc:"진로 컨설팅(Section 1) · 교과·학교 탐색(Section 2) · 직업탐구 보고서(Section 3)를 쓰고, 커리어넷 결과지·발표 PPT·발표 영상을 함께 제출해요.",
   subLabel:null,
   secs:[
@@ -352,6 +356,7 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
    {h:"04. 학습계획",nonum:true,items:[
      N("과목별 진로계획 "+(NY+1)+"년"),
      NS("plan_math","수학",4),NS("plan_sci","과학",4),NS("plan_eng","영어",4),NS("plan_soc","사회",4),NS("plan_act","진로탐색활동",5)]},
+   {h:"추가로 쓰고 싶은 내용",nonum:true,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
    {h:"추가 자료 추가",nonum:true,optional:true,items:[
      {...C("cn","커리어넷 검사 결과","커리어넷 검사 결과지 PDF(또는 캡처 사진)를 올려요. SECTION 1-3에서 올린 것과 같은 목록이에요. 보고서 맨 뒤에 붙어서 하나의 PDF가 돼요."),dup:true},
      {t:"V",id:"ppt",label:"발표 PPT",guide:"발표에 쓴 PPT 파일을 올려요 (pptx·ppt·pdf, 100MB까지). 선생님 제출함에 함께 저장돼요.",accept:".ppt,.pptx,.key,.pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf",tag:"발표자료",icon:"📊",max:100},
@@ -428,9 +433,10 @@ function hasContent(sec){
 function outline(forPdf){
   const k=K(); let n=0; const out=[];
   k.secs.forEach((sec,si)=>{
-    if(forPdf&&sec.optional&&!hasContent(sec)) return;
+    if(k.fixedNum&&!sec.nonum) ++n; // 독서록은 문항 번호(1~10)를 그대로 둠
+    if(forPdf&&!hasContent(sec)) return; // 안 쓴 부분은 PDF와 차례에서 뺌
     if(forPdf&&sec.h==="책 정보") return; // 책 정보는 표지와 1번에 들어감
-    const num=sec.nonum?"":majorLabel(k,++n);
+    const num=sec.nonum?"":majorLabel(k,k.fixedNum?n:++n);
     let m=0; const subs=[];
     sec.items.forEach(it=>{
       if(it.t==="S") subs.push({id:it.id,label:it.num===false?"":subLabel(k,++m),title:it.title});
@@ -683,20 +689,20 @@ function buildBlocks(){
   outline(true).forEach(o=>{
     add("h1",'<div class="h1">'+esc((o.num?o.num+" ":"")+o.title)+'</div>',40,{lvl:1,text:(o.num?o.num+" ":"")+o.title});
     let first=true;
-    if(kindKey()==="book"&&o.si===1){ // 1번 앞에 책 정보
+    if(kindKey()==="book"&&!B.bookInfo){ B.bookInfo=true; // 첫 문항 앞에 책 정보
       const bi=[["책 제목","btitle"],["지은이","author"],["출판사","pub"]].filter(([l,id])=>val(pid(id)).trim());
       if(bi.length){ add("p",bi.map(([l,id])=>'<div class="ln"><b>'+l+'</b> : '+T(pid(id))+'</div>').join(""),14); first=false; }
     }
-    o.sec.items.forEach(it=>{
+    o.sec.items.forEach((it,ix)=>{
       const id=pid(it.id), g=first?14:10; first=false;
       if(it.t==="V"){ const f=FX[it.id]; if(f) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+it.icon+' '+esc(f.name)+' ('+fmtMB(f.size)+') · 선생님 제출함에 함께 저장됨</div>',g); }
-      else if(it.t==="N") add("p",'<div class="nt">'+it.html.replace(/<[^>]+>/g,"")+'</div>',g);
-      else if(it.t==="G") add("img",'<table class="pg"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+T(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table>',g);
+      else if(it.t==="N"){ const nx=o.sec.items.slice(ix+1); const stop=nx.findIndex(x=>x.t==="N"); if(!hasContent({items:stop<0?nx:nx.slice(0,stop)})) return; add("p",'<div class="nt">'+it.html.replace(/<[^>]+>/g,"")+'</div>',g); }
+      else if(it.t==="G"){ if(!hasContent({items:[it]})) return; add("img",'<table class="pg"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+T(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table>',g); }
       else if(it.t==="C"){ if(CN.length&&!B.cnNoted){ B.cnNoted=true; add("p",'<div class="nt">※ 커리어넷 결과지('+CN.length+'개)는 이 보고서 맨 뒤에 붙어 있어요.</div>',g); } }
       else if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
       else if(it.t==="L"){ if(val(id).trim()){ if(it.url){ const u=val(id).trim(); add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : <span style="color:#1d5fd1;text-decoration:underline;word-break:break-all">'+esc(u)+'</span></div>',g); B[B.length-1].link=/^https?:\/\//i.test(u)?u:"https://"+u; }
         else add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); } }
-      else if(it.t==="S"){ const s=o.subs.find(x=>x.id===it.id), tt=(s.label?s.label+" ":"")+it.title; add("h2",'<div class="h2">'+esc(tt)+'</div>',22,k.tocMajor?null:{lvl:2,text:tt}); text(id,6); if(it.photo) imgs(id); }
+      else if(it.t==="S"){ if(!val(id).trim()&&!(S_.ph[id]||[]).length) return; const s=o.subs.find(x=>x.id===it.id), tt=(s.label?s.label+" ":"")+it.title; add("h2",'<div class="h2">'+esc(tt)+'</div>',22,k.tocMajor?null:{lvl:2,text:tt}); text(id,6); if(it.photo) imgs(id); }
       else if(it.t==="R"){ o.subs.filter(x=>x.id===it.id).forEach(s=>{const b=id+"_"+s.rk;
         if(!val(b+"_b").trim()&&!(S_.ph[b+"_b"]||[]).length&&s.blank) return;
         add("h2",'<div class="h2">'+esc(s.label+" "+s.title)+'</div>',22,{lvl:2,text:s.label+" "+s.title}); text(b+"_b",6); imgs(b+"_b"); }); }
@@ -803,6 +809,7 @@ pdfBtn.addEventListener("click",async()=>{
   if(!val(pid("title")).trim()&&!K().autoTitle) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
   if(kindKey()==="ai"&&!FX.vfile&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
     statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
+  if(!outline(true).length){ statusEl.textContent="아직 쓴 내용이 없어요. 문항을 하나 이상 채운 뒤 제출해 주세요."; return; }
   pdfBtn.disabled=true;
   try{
     statusEl.textContent="PDF 만드는 중… 잠깐만 기다려 주세요.";
