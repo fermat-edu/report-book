@@ -40,6 +40,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .topic{font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:999px;padding:7px 14px}
 .topic[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rec{font-family:var(--body);font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--coral);border-radius:999px;padding:2px 8px;vertical-align:middle}
 .pick-first{text-align:center;color:var(--muted);padding:30px 10px;border:2px dashed var(--line);border-radius:14px}
 
 .page{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
@@ -154,13 +155,13 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <div class="wrap" id="app">
   <header class="intro">
     <h1>페르마 탐구 보고서 · 독서록</h1>
-    <p>① 수업에서 한 비교과 주제를 고르고 ② 보고서 종류를 고르세요. 다른 양식으로 이미 보고서를 만들었으면 ‘다른 양식으로 쓴 보고서’를 고르세요. 빈칸을 채우고 사진을 넣은 다음 노란 버튼을 누르면 PDF가 만들어지고 선생님께 자동으로 제출돼요.</p>
+    <p>① 수업에서 한 비교과 주제를 고르고 ② 보고서 종류는 주제에 맞게 저절로 골라져요. 다른 양식으로 이미 보고서를 만들었으면 ‘다른 양식으로 쓴 보고서’를 고르세요. 빈칸을 채우고 사진을 넣은 다음 노란 버튼을 누르면 PDF가 만들어지고 선생님께 자동으로 제출돼요.</p>
     <p class="note">표지, 차례(쪽 번호), 번호 매기기, 그림 번호는 저절로 만들어져요. 쓰는 내용은 이 기기에 자동 저장돼서, 창을 닫았다가 다시 열어도 이어서 쓸 수 있어요. (다른 기기로는 이어지지 않아요)</p>
   </header>
   <h2 class="step">① 비교과 주제</h2>
   <div class="topics" id="topics" role="group" aria-label="비교과 주제"></div>
   <label class="fld" id="etcBox" hidden>주제 이름 <span class="opt">(목록에 없는 주제를 직접 써요)</span><input type="text" id="f_topic_etc" data-id="topic_etc"></label>
-  <h2 class="step">② 보고서 종류</h2>
+  <h2 class="step">② 보고서 종류 <small style="font-family:var(--body);font-size:13px;color:var(--muted)">주제를 고르면 저절로 골라져요 · 다른 양식으로 썼으면 바꿔도 돼요</small></h2>
   <div class="kinds" id="kinds" role="group" aria-label="보고서 종류"></div>
   <div id="form"></div>
 </div>
@@ -294,10 +295,17 @@ const val=id=>{const x=S_.v[id]; return typeof x==="string"?x:"";};
 const kindKey=()=>KINDS[S_.v.kind]?S_.v.kind:null;
 const K=()=>KINDS[kindKey()];
 /* 학원 비교과 주제 (노션 '중등부 비교과 PPT 파일 공유' 표 기준) */
-const TOPICS=[["debate","디베이트 특강"],["ai","AI 리터러시"],["mathlife","일상생활 속에서의 수학"],["plastic","미세 플라스틱"],["myth","그리스로마 신화"],
- ["topicreport","주제 탐구 보고서 작성하기"],["prince","군주론"],["evolution","독서연계 진화론"],["physphil","물리&철학"],["mathpsy","수학&심리학"],
- ["chem","세상을 바꾼 화학"],["food","음식과 사회"],["oil","검은 눈물, 석유"],["entropy","엔트로피"],["earth","지구 과학&경제"],
- ["carbon","탄소"],["light","빛"],["heritage","문화유산"],["pet","반려동물"],["etc","기타 (직접 입력)"]];
+const TOPICS=[ // [id, 이름, 보고서 종류(PPT 표지 기준)]
+ ["debate","디베이트 특강","book"],["ai","AI 리터러시",""],["mathlife","일상생활 속에서의 수학","subject"],["plastic","미세 플라스틱","topic"],
+ ["myth","그리스로마 신화","book"],["topicreport","주제 탐구 보고서 작성하기","topic"],["prince","군주론","book"],["evolution","독서연계 진화론","book"],
+ ["physphil","물리&철학","topic"],["mathpsy","수학&심리학","subject"],["chem","세상을 바꾼 화학","book"],["food","음식과 사회","book"],
+ ["oil","검은 눈물, 석유","book"],["entropy","엔트로피","book"],["earth","지구 과학&경제","topic"],
+ ["carbon","탄소","subject"],["light","빛","subject"],["heritage","문화유산","subject"],["pet","반려동물","subject"],
+ ["fandom","연예인 팬덤 활동","topic"],["justice","10대를 위한 정의란 무엇인가","book"],["bts","BTS & 데미안","book"],
+ ["money","경제의 핏줄 화폐","book"],["stats","통계 보고서 만들기","book"],["air","대기오염","topic"],
+ ["juvenile","사회에서 바라보는 소년법의 의미와 기준","book"],["climate","기후변화","topic"],
+ ["etc","기타 (직접 입력)",""]];
+const topicKind=()=>{const t=TOPICS.find(x=>x[0]===tk()); return t?t[2]:"";};
 const tk=()=>TOPICS.some(t=>t[0]===S_.v.topic)?S_.v.topic:null;
 const topicName=()=>{const t=TOPICS.find(x=>x[0]===tk()); if(!t) return ""; return t[0]==="etc"?(val("topic_etc").trim()||"기타"):t[1];};
 const pid=id=>K().pre+tk()+"_"+id;
@@ -376,7 +384,7 @@ function renderTopics(){
 function renderKinds(){
   renderTopics();
   const cur=S_.v.kind;
-  document.getElementById("kinds").innerHTML=[...ORDER,"own"].map(k=>{const x=KINDS[k]||OWNK; return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
+  document.getElementById("kinds").innerHTML=[...ORDER,"own"].map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
 }
 function renderForm(){
   renderKinds();
@@ -436,8 +444,12 @@ function refreshToc(){const t=document.getElementById("tocPrev"); if(t) t.innerH
 
 const form=document.getElementById("form");
 form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.v[t.dataset.id]=t.value; if(/_t$/.test(t.dataset.id)) refreshToc(); save(); resetSendIfNeeded();});
-document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic; save(); resetSendIfNeeded(); loadOwn(); renderForm();
-  statusEl.textContent="‘"+topicName()+"’ 주제를 골랐어요"+(kindKey()||isOwn()?" · 주제마다 쓴 내용이 따로 저장돼요":" · 이제 보고서 종류를 골라요");});
+document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic;
+  const k=topicKind();
+  if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
+  save(); resetSendIfNeeded(); loadOwn(); renderForm();
+  statusEl.textContent="‘"+topicName()+"’ 주제를 골랐어요"+(k&&!isOwn()?" → "+KINDS[k].short+"로 자동 선택했어요":"")+(!k&&!kindKey()&&!isOwn()?" · 이제 보고서 종류를 골라요":"");
+  if(k&&!isOwn()){ const f=document.getElementById("form"); setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"start"}),50); }});
 document.getElementById("f_topic_etc").addEventListener("input",e=>{S_.v.topic_etc=e.target.value; save(); resetSendIfNeeded();});
 document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; save(); resetSendIfNeeded(); renderForm(); statusEl.textContent=(KINDS[b.dataset.kind]||OWNK).short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
 
