@@ -352,7 +352,8 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
    {h:"04. 학습계획",nonum:true,items:[
      N("과목별 진로계획 "+(NY+1)+"년"),
      NS("plan_math","수학",4),NS("plan_sci","과학",4),NS("plan_eng","영어",4),NS("plan_soc","사회",4),NS("plan_act","진로탐색활동",5)]},
-   {h:"발표 자료",nonum:true,optional:true,items:[
+   {h:"추가 자료 추가",nonum:true,optional:true,items:[
+     {...C("cn","커리어넷 검사 결과","커리어넷 검사 결과지 PDF(또는 캡처 사진)를 올려요. SECTION 1-3에서 올린 것과 같은 목록이에요. 보고서 맨 뒤에 붙어서 하나의 PDF가 돼요."),dup:true},
      {t:"V",id:"ppt",label:"발표 PPT",guide:"발표에 쓴 PPT 파일을 올려요 (pptx·ppt·pdf, 100MB까지). 선생님 제출함에 함께 저장돼요.",accept:".ppt,.pptx,.key,.pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf",tag:"발표자료",icon:"📊",max:100},
      {t:"V",id:"vfile",label:"발표 영상",guide:"발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 제출함에 함께 저장돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
   ]};
@@ -416,7 +417,7 @@ function hasContent(sec){
   return sec.items.some(it=>{
     if(it.t==="N") return false;
     if(it.t==="G") return it.rows.some((r,ri)=>it.cols.some((c,ci)=>val(pid(it.id)+"_"+ri+"_"+ci).trim()));
-    if(it.t==="C") return CN.length>0;
+    if(it.t==="C") return !it.dup&&CN.length>0;
     if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
     if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
     if(it.t==="V") return !!FX[it.id];
@@ -456,7 +457,7 @@ function itemEdit(it,subs){
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
-    case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" id="cnAdd">+ 커리어넷 결과지 올리기 (PDF · 사진)</button><div class="pdfs" id="cnList">'+cnList()+'</div></div>';
+    case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
     case "P": return '<div class="q">'+(it.label?'<span class="qt">'+esc(it.label)+'</span>':'')+'<p class="guide">'+esc(it.guide)+'</p>'+ta(id,it.rows,it.label||it.guide)+(it.photo?photoBox(id):"")+'</div>';
     case "L": return '<div class="tbl"><div class="row"><label class="lab" for="f_'+id+'">'+esc(it.label)+'</label><div class="val">'+ln(id,it.hint)+'</div></div></div>';
     case "S": { const s=subs.find(x=>x.id===it.id);
@@ -609,7 +610,7 @@ fxPicker.addEventListener("change",()=>{ const f=fxPicker.files[0], it=vItems().
 let CN=[]; const cnKey=()=>"cn_"+pid("cn");
 function cnList(){ if(!CN.length) return '<p class="note">아직 올린 결과지가 없어요.</p>';
   return CN.map((x,i)=>'<div class="pdfchip">'+(x.type==="pdf"?'<span class="tagpdf">PDF</span>':'<img src="'+x.src+'" alt="" style="width:44px;height:33px;object-fit:cover;border-radius:4px">')+'<span class="nm">'+esc(x.name)+(x.pages?' ('+x.pages+'쪽)':'')+'</span><button type="button" class="mini danger" data-cndel="'+i+'">삭제</button></div>').join(""); }
-function refreshCn(){ const l=document.getElementById("cnList"); if(l) l.innerHTML=cnList(); }
+function refreshCn(){ document.querySelectorAll(".cnlist").forEach(l=>{l.innerHTML=cnList();}); }
 function saveCn(){ refreshCn(); resetSendIfNeeded(); idbPut(cnKey(),CN).catch(()=>{ statusEl.textContent="결과지는 올렸지만 저장 공간이 부족해요. 창을 닫지 말고 바로 제출해 주세요."; }); }
 const cnPicker=document.createElement("input"); cnPicker.type="file"; cnPicker.accept="application/pdf,.pdf,image/*"; cnPicker.multiple=true; cnPicker.hidden=true; document.body.appendChild(cnPicker);
 cnPicker.addEventListener("change",async()=>{ let bad=0;
@@ -620,7 +621,7 @@ cnPicker.addEventListener("change",async()=>{ let bad=0;
 document.getElementById("form").addEventListener("click",e=>{
   const a=e.target.closest("[data-fxadd]"); if(a){ const it=vItems().find(x=>x.id===a.dataset.fxadd); fxFor=it.id; fxPicker.accept=it.accept; fxPicker.value=""; fxPicker.click(); return; }
   const d=e.target.closest("[data-fxdel]"); if(d){ const id=d.dataset.fxdel; delete FX[id]; idbPut(fxKey(id),null).catch(()=>{}); refreshFx(id); resetSendIfNeeded(); return; }
-  if(e.target.id==="cnAdd"){ cnPicker.value=""; cnPicker.click(); return; }
+  if(e.target.closest("[data-cnadd]")){ cnPicker.value=""; cnPicker.click(); return; }
   const c=e.target.closest("[data-cndel]"); if(c){ CN.splice(+c.dataset.cndel,1); saveCn(); }
 });
 async function uploadFile(v,label){
@@ -691,7 +692,7 @@ function buildBlocks(){
       if(it.t==="V"){ const f=FX[it.id]; if(f) add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+it.icon+' '+esc(f.name)+' ('+fmtMB(f.size)+') · 선생님 제출함에 함께 저장됨</div>',g); }
       else if(it.t==="N") add("p",'<div class="nt">'+it.html.replace(/<[^>]+>/g,"")+'</div>',g);
       else if(it.t==="G") add("img",'<table class="pg"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+T(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table>',g);
-      else if(it.t==="C"){ if(CN.length) add("p",'<div class="nt">※ 커리어넷 결과지('+CN.length+'개)는 이 보고서 맨 뒤에 붙어 있어요.</div>',g); }
+      else if(it.t==="C"){ if(CN.length&&!B.cnNoted){ B.cnNoted=true; add("p",'<div class="nt">※ 커리어넷 결과지('+CN.length+'개)는 이 보고서 맨 뒤에 붙어 있어요.</div>',g); } }
       else if(it.t==="P"){ text(id,g); if(it.photo) imgs(id); }
       else if(it.t==="L"){ if(val(id).trim()){ if(it.url){ const u=val(id).trim(); add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : <span style="color:#1d5fd1;text-decoration:underline;word-break:break-all">'+esc(u)+'</span></div>',g); B[B.length-1].link=/^https?:\/\//i.test(u)?u:"https://"+u; }
         else add("p",'<div class="ln"><b>'+esc(it.label)+'</b> : '+T(id)+'</div>',g); } }
