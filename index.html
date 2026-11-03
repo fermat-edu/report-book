@@ -683,7 +683,7 @@ async function submitToTeacher(){
   submitBtn.hidden=true;
   statusEl.textContent="선생님께 제출하는 중… 창을 닫지 마세요.";
   const w=who();
-  const label=(topicName().replace(/_+/g," ")+"__"+catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"");
+  const label=topicName().replace(/_+/g," ").replace(/\s+/g," ").trim()+"__"+(catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"");
   const body=JSON.stringify({label,pdf:await blobToB64(lastPdf.blob)});
   const warn=lastPdf.failed?" (파일 "+lastPdf.failed+"개는 보호된 파일이라 붙이지 못했어요. 캡처해서 사진으로 올린 뒤 다시 제출해 주세요.)":"";
   const shown=topicName()+" · "+catName()+" · "+w.g+"학년 "+w.c+"반 "+w.name;
