@@ -743,6 +743,9 @@ resetArea.addEventListener("click",e=>{
 const T=id=>esc(val(id).replace(/\s+$/,""));
 /* 반 = 학년(7·8·9) + 반 이름. 1·2·3학년이라고 써도 7·8·9로, "9탈레스"·"탈레스" 모두 9탈레스반, 줄임말(8데카·8데)은 원래 이름으로 */
 const CLASSES=["페르마","탈레스","유클리드","뉴튼","데카르트","가우스1","가우스2","칸토르1","S"];
+/* 학생들이 제출하면서 새로 생긴 반 이름을 제출함에서 받아 와서 목록에 더함 */
+(async()=>{ try{ const r=await fetch(SUBMIT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"classes"})}); const j=await r.json();
+  (j.classes||[]).forEach(c=>{ if(c&&!CLASSES.includes(c)){ CLASSES.push(c); const o=document.createElement("option"); o.value=c; document.getElementById("clsList").appendChild(o); } }); }catch(e){} })();
 function normGrade(x){ const n=parseInt(String(x||"").replace(/\D/g,""),10); if(!n) return ""; return String(n>=1&&n<=3?n+6:n); }
 function normClass(raw){
   let t=String(raw||"").replace(/\s+/g,"").replace(/반$/,""); if(!t) return "";

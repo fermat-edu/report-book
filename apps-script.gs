@@ -3,6 +3,21 @@ const TEACHER_KEY = '여기에비밀번호';
 
 function folder_(){const it=DriveApp.getFoldersByName(FOLDER_NAME);return it.hasNext()?it.next():DriveApp.createFolder(FOLDER_NAME);}
 function saveFolder_(){const p=folder_(),it=p.getFoldersByName('중간저장');return it.hasNext()?it.next():p.createFolder('중간저장');}
+/* 반 이름 목록: 학생들이 제출할 때 처음 보는 반이면 등록 (줄임말보다 긴 이름을 남김) */
+function classes_(){ try{ return JSON.parse(PropertiesService.getScriptProperties().getProperty('classes')||'[]'); }catch(e){ return []; } }
+function addClass_(label){
+  const m=String(label||'').match(/__\d+학년(.+?)반_/); if(!m) return;
+  let c=m[1].replace(/\s+/g,'').replace(/^\d+/,''); if(!c||/^\d+$/.test(c)) return; if(/^[a-z0-9]+$/i.test(c)) c=c.toUpperCase();
+  const lock=LockService.getScriptLock(); lock.waitLock(5000);
+  try{ let L=classes_(); if(L.indexOf(c)>=0) return; if(L.some(x=>x.indexOf(c)===0)) return; // 이미 있는 반의 줄임말
+    L=L.filter(x=>c.indexOf(x)!==0); L.push(c); PropertiesService.getScriptProperties().setProperty('classes',JSON.stringify(L)); }
+  finally{ lock.releaseLock(); }
+}
+/* 같은 학생·같은 주제·같은 양식으로 다시 내면 예전 파일은 휴지통으로 (마지막 것만 남김) */
+function trashOld_(prefix){ // 이름_MMdd_HHmm.확장자 (확장자는 무엇이든)
+  const re=new RegExp('^'+prefix.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'_\\d{4}_\\d{4}\\.[A-Za-z0-9]+$');
+  const it=folder_().getFiles(); while(it.hasNext()){ const f=it.next(); if(re.test(f.getName())) f.setTrashed(true); }
+}
 function out_(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}
 function inFolder_(f){const id=folder_().getId(),ps=f.getParents();while(ps.hasNext())if(ps.next().getId()===id)return true;return false;}
 function clean_(s){return String(s||'이름없음').replace(/[\\/:*?"<>|]/g,'').slice(0,80);}
@@ -18,6 +33,7 @@ function doPost(e){
     if(d.action==='vstart'){
       const ext=String(d.ext||'.mp4').replace(/[^.a-zA-Z0-9]/g,'').slice(0,6)||'.mp4';
       const tag=['영상','발표자료'].indexOf(d.tag)>=0?d.tag:'영상';
+      trashOld_(clean_(d.label)+'_'+tag);
       const name=clean_(d.label)+'_'+tag+'_'+stamp_()+ext;
       const r=UrlFetchApp.fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',{
         method:'post',contentType:'application/json; charset=UTF-8',
@@ -51,7 +67,9 @@ function doPost(e){
       return out_({ok:true});
     }
     /* 보고서 PDF */
+    if(d.action==='classes') return out_({ok:true,classes:classes_()});
     if(!d.pdf) return out_({ok:false,error:'no file'});
+    trashOld_(clean_(d.label)); try{ addClass_(d.label); }catch(e){}
     const name=clean_(d.label)+'_'+stamp_()+'.pdf';
     folder_().createFile(Utilities.newBlob(Utilities.base64Decode(d.pdf),'application/pdf',name));
     return out_({ok:true,file:name});
@@ -64,7 +82,7 @@ function doGet(e){
   if(p.action==='list'){
     const list=[],files=folder_().getFiles();
     while(files.hasNext()){const f=files.next();list.push({id:f.getId(),name:f.getName(),time:f.getDateCreated().getTime(),size:f.getSize(),mime:f.getMimeType()});}
-    list.sort((a,b)=>b.time-a.time); return out_({ok:true,files:list});
+    list.sort((a,b)=>b.time-a.time); return out_({ok:true,files:list,classes:classes_()});
   }
   if(p.action==='file'||p.action==='delete'){
     const f=DriveApp.getFileById(p.id); if(!inFolder_(f)) return out_({ok:false,error:'not found'});

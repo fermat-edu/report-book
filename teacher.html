@@ -147,7 +147,7 @@ const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+"MB":Math.max(1,Math.round(b/1
 async function login(){
   $("loginBtn").disabled=true; $("loginMsg").className="msg"; $("loginMsg").textContent="여는 중…";
   try{ const j=await api({action:"list"}); try{sessionStorage.setItem("teacherKey",KEY);}catch(e){}
-    FILES=j.files.map(parse); $("loginCard").hidden=true; $("main").hidden=false; $("logoutBtn").hidden=false; render(); }
+    NEWCLS=j.classes||[]; FILES=j.files.map(parse); $("loginCard").hidden=true; $("main").hidden=false; $("logoutBtn").hidden=false; render(); }
   catch(e){ $("loginMsg").className="msg err";
     $("loginMsg").textContent=e.message==="password"?"비밀번호가 맞지 않아요. 구글 스크립트에 넣은 비밀번호를 확인해 주세요.":"제출함에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.";
     try{sessionStorage.removeItem("teacherKey");}catch(_){} }
@@ -161,9 +161,10 @@ $("logoutBtn").addEventListener("click",()=>{KEY="";FILES=[];try{sessionStorage.
 let YEAR=null, FORM=null, TOPIC=null;
 const CORDER=["페르마","탈레스","유클리드","뉴튼","데카르트","가우스1","가우스2","칸토르1","S"]; // 반 순서 (앞 숫자는 학년 7·8·9)
 function normGrade(x){ const n=parseInt(String(x||"").replace(/\D/g,""),10); if(!n) return 99; return n>=1&&n<=3?n+6:n; }
-function normClass(raw){ let t=String(raw||"").replace(/\s+/g,"").replace(/반$/,""); if(!t) return "기타"; if(/^[a-z0-9]+$/i.test(t)) t=t.toUpperCase();
-  if(CORDER.includes(t)) return t; const hit=CORDER.filter(c=>c.startsWith(t)); if(hit.length===1) return hit[0];
-  const base=CORDER.filter(c=>c.replace(/\d+$/,"")===t); return base.length===1?base[0]:t; }
+let NEWCLS=[]; // 학생들이 제출하면서 새로 생긴 반 (제출함이 알려 줌)
+function normClass(raw){ const A=CORDER.concat(NEWCLS.filter(c=>!CORDER.includes(c))); let t=String(raw||"").replace(/\s+/g,"").replace(/반$/,""); if(!t) return "기타"; if(/^[a-z0-9]+$/i.test(t)) t=t.toUpperCase();
+  if(A.includes(t)) return t; const hit=A.filter(c=>c.startsWith(t)); if(hit.length===1) return hit[0];
+  const base=A.filter(c=>c.replace(/\d+$/,"")===t); return base.length===1?base[0]:t; }
 const TORDER=["꿈조사","디베이트 특강", "AI 리터러시", "일상생활 속에서의 수학", "미세 플라스틱", "그리스로마 신화", "주제 탐구 보고서 작성하기", "군주론", "독서연계 진화론", "물리&철학", "수학&심리학", "세상을 바꾼 화학", "음식과 사회", "검은 눈물, 석유", "엔트로피", "지구 과학&경제", "탄소", "빛", "문화유산", "반려동물", "연예인 팬덤 활동", "10대를 위한 정의란 무엇인가", "BTS & 데미안", "경제의 핏줄 화폐", "통계 보고서 만들기", "대기오염", "사회에서 바라보는 소년법의 의미와 기준", "기후변화"];
 function topics(){ const r=x=>{const i=TORDER.indexOf(x);return i<0?99:i;}; return [...new Set(FILES.map(f=>f.topic))].sort((a,b)=>r(a)-r(b)||a.localeCompare(b,"ko")); }
 const FT=()=>FILES.filter(f=>f.topic===TOPIC);
@@ -179,7 +180,7 @@ function visible(){
 }
 function byClass(v){
   const m=new Map(); v.forEach(f=>{ if(!m.has(f.cls)) m.set(f.cls,{g:f.g,c:f.c,files:[]}); m.get(f.cls).files.push(f); });
-  const r=c=>{const i=CORDER.indexOf(String(c)); return i<0?99:i;};
+  const r=c=>{const i=CORDER.indexOf(String(c)); if(i>=0) return i; const k=NEWCLS.indexOf(String(c)); return k<0?999:100+k;};
   return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||y.time-x.time)}));
 }
 function itemHtml(f){
@@ -215,7 +216,7 @@ $("years").addEventListener("click",e=>{const b=e.target.closest("[data-year]");
 $("list").addEventListener("toggle",e=>{const d=e.target; if(d.classList&&d.classList.contains("cls")) openState[YEAR+d.dataset.cls]=d.open;},true);
 $("q").addEventListener("input",render); $("onlyNew").addEventListener("change",render);
 $("refreshBtn").addEventListener("click",async()=>{ $("refreshBtn").disabled=true; $("msg").className="msg"; $("msg").textContent="새로 불러오는 중…";
-  try{ FILES=(await api({action:"list"})).files.map(parse); render(); $("msg").textContent="최신 목록이에요 · "+fmtTime(Date.now()); }
+  try{ const jj=await api({action:"list"}); NEWCLS=jj.classes||[]; FILES=jj.files.map(parse); render(); $("msg").textContent="최신 목록이에요 · "+fmtTime(Date.now()); }
   catch(e){ $("msg").className="msg err"; $("msg").textContent="불러오지 못했어요. 다시 눌러 주세요."; }
   finally{ $("refreshBtn").disabled=false; } });
 
