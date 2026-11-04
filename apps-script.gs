@@ -2,6 +2,7 @@ const FOLDER_NAME = '보고서·독서록 제출함';
 const TEACHER_KEY = '여기에비밀번호';
 
 function folder_(){const it=DriveApp.getFoldersByName(FOLDER_NAME);return it.hasNext()?it.next():DriveApp.createFolder(FOLDER_NAME);}
+function saveFolder_(){const p=folder_(),it=p.getFoldersByName('중간저장');return it.hasNext()?it.next():p.createFolder('중간저장');}
 function out_(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}
 function inFolder_(f){const id=folder_().getId(),ps=f.getParents();while(ps.hasNext())if(ps.next().getId()===id)return true;return false;}
 function clean_(s){return String(s||'이름없음').replace(/[\\/:*?"<>|]/g,'').slice(0,80);}
@@ -37,6 +38,17 @@ function doPost(e){
       if(c===308) return out_({ok:true,done:false});
       if(c===200||c===201) return out_({ok:true,done:true});
       return out_({ok:false,error:'chunk '+c});
+    }
+    /* 중간 저장 · 불러오기 (이름 + 핸드폰 뒷자리) */
+    if(d.action==='save'||d.action==='load'){
+      const pin=String(d.pin||'').replace(/\D/g,''), nm=String(d.name||'').replace(/\s+/g,'');
+      if(!nm||pin.length!==4) return out_({ok:false,error:'id'});
+      const key=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,nm+'|'+pin,Utilities.Charset.UTF_8).map(b=>('0'+(b&255).toString(16)).slice(-2)).join('')+'.json';
+      const sf=saveFolder_(), it=sf.getFilesByName(key);
+      if(d.action==='load'){ if(!it.hasNext()) return out_({ok:true,data:null}); const f=it.next(); return out_({ok:true,data:f.getBlob().getDataAsString('UTF-8'),time:f.getLastUpdated().getTime()}); }
+      while(it.hasNext()) it.next().setTrashed(true);
+      const f=sf.createFile(Utilities.newBlob(String(d.data||''),'application/json',key)); f.setDescription(clean_(d.label));
+      return out_({ok:true});
     }
     /* 보고서 PDF */
     if(!d.pdf) return out_({ok:false,error:'no file'});

@@ -56,7 +56,8 @@ img{max-width:100%}[hidden]{display:none!important}
 .q{display:flex;flex-direction:column;gap:6px}
 .q .qt{font-weight:700;font-size:14.5px}
 
-.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.savebox{display:flex;flex-direction:column;gap:8px;align-items:flex-start;background:var(--field);border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
 .info label,.fld{display:flex;flex-direction:column;font-size:13px;font-weight:700;gap:4px}
 .fld .opt{font-weight:400;color:var(--muted)}
 .auto{font-size:13px;color:var(--muted);background:var(--field);border:1px dashed var(--line);border-radius:8px;padding:8px 11px}
@@ -117,7 +118,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
   .kinds,#kinds{grid-template-columns:1fr}
   .kind{flex-direction:row;align-items:baseline;gap:10px;flex-wrap:wrap}
   .row{grid-template-columns:1fr} .row .lab{border-right:0;padding:10px 10px 0}
-  .info{grid-template-columns:1fr 1fr} .info label:last-child{grid-column:1/-1}
+  .info{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -166,11 +167,13 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
   <h2 class="step">② 보고서 종류 <small style="font-family:var(--body);font-size:13px;color:var(--muted)">주제를 고르면 저절로 골라져요 · 다른 양식으로 썼으면 바꿔도 돼요</small></h2>
   <div class="kinds" id="kinds" role="group" aria-label="보고서 종류"></div>
   <div id="form"></div>
+  <datalist id="clsList"><option value="페르마"><option value="탈레스"><option value="유클리드"><option value="뉴튼"><option value="가우스1"><option value="가우스2"><option value="칸토르1"><option value="S"></datalist>
 </div>
 
 <div class="bar">
   <div class="bar-in">
     <div class="status" id="status" aria-live="polite">작성 중 · 자동 저장됨</div>
+    <button class="btn" id="cloudSaveBtn" type="button">☁️ 중간 저장</button>
     <span id="resetArea"><button class="btn" id="resetBtn" type="button">이 보고서 지우기</button></span>
     <button class="btn" id="submitBtn" type="button" hidden>다시 제출</button>
     <button class="btn" id="saveBtn" type="button" hidden>파일로 저장</button>
@@ -503,7 +506,7 @@ function renderForm(){
   let h='<div style="display:flex;flex-direction:column;gap:20px">';
   // 표지
   h+='<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
-    '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':' inputmode="numeric"')+'></label>').join("")+'</div>'+
+    infoGrid()+
     '<label class="fld">'+(kindKey()==="ai"?"작품 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(k.autoTitle?"비워 두면 ‘"+k.autoTitle+"’(으)로 들어가요":k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     (k.solo?'':'<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
@@ -519,9 +522,15 @@ function renderForm(){
   h+='</div>';
   f.innerHTML=h;
 }
+/* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
+function infoGrid(){
+  return '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 가우스1"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
+    '<div class="savebox"><p class="guide" style="margin:0">📌 <b>중간 저장</b>을 누르면 쓰던 내용이 선생님 쪽에 보관돼요. 다른 기기나 다음에 이어서 쓸 때는 <b>이름 + 핸드폰 뒷자리 4자리</b>를 똑같이 쓰고 ‘불러오기’를 누르세요. 핸드폰이 없으면 부모님 핸드폰 뒷자리를 쓰세요.</p>'+
+    '<span id="loadArea"><button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button></span>'+(S_.v.savedAt?'<span class="note">마지막 중간 저장: '+esc(S_.v.savedAt)+'</span>':'')+'</div>';
+}
 function infoCard(sub){
   return '<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
-    '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':' inputmode="numeric"')+'></label>').join("")+'</div>'+sub+'</div></section>';
+    infoGrid()+sub+'</div></section>';
 }
 const fld=(id,label,hint,opt)=>'<label class="fld">'+label+(opt?' <span class="opt">'+opt+'</span>':'')+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'" placeholder="'+esc(hint||"")+'"></label>';
 function ownForm(){
@@ -667,6 +676,58 @@ ownPicker.addEventListener("change",async()=>{
   statusEl.textContent=bad?"열 수 없는 파일이 있었어요. 한글·워드 파일은 PDF로 바꿔서 올려 주세요.":locked?"잠긴(보호된) PDF가 있어요. 제출이 안 되면 쪽마다 캡처해서 사진으로 올려 주세요.":"파일을 올렸어요 · "+OWN.length+"개";
 });
 
+/* ---------- 중간 저장 · 불러오기 (선생님 구글 드라이브에 보관) ---------- */
+function ab2b64(buf){ const u=new Uint8Array(buf); let s=""; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s); }
+function b642ab(b){ const s=atob(b), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
+function idbAll(){ return idb().then(db=>new Promise((res,rej)=>{ const out={}, st=db.transaction("kv").objectStore("kv"), q=st.openCursor();
+  q.onsuccess=()=>{ const c=q.result; if(!c) return res(out); out[c.key]=c.value; c.continue(); }; q.onerror=()=>rej(q.error); })); }
+const cleanPin=()=>String(val("pin")).replace(/\D/g,"");
+function needId(){
+  if(!val("name").trim()){ goTo("name","이름을 먼저 써 주세요. (중간 저장은 이름 + 핸드폰 뒷자리로 찾아요)"); return true; }
+  if(cleanPin().length!==4){ goTo("pin","핸드폰 뒷자리 4자리를 숫자로 써 주세요."); return true; }
+  return false;
+}
+async function cloudPost(o){ const r=await fetch(SUBMIT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}); const j=await r.json(); if(!j.ok) throw new Error(j.error||"fail"); return j; }
+const cloudBtn=document.getElementById("cloudSaveBtn");
+cloudBtn.addEventListener("click",async()=>{
+  if(needId()) return;
+  saveNow(); cloudBtn.disabled=true; statusEl.textContent="☁️ 중간 저장하는 중… 창을 닫지 마세요.";
+  try{
+    const all=await idbAll().catch(()=>({})), files={}; let skipped=0, size=0;
+    for(const [k,v] of Object.entries(all)){
+      if(/^(fx_|video_)/.test(k)) { if(v&&v.blob) skipped++; continue; } // 영상·PPT는 너무 커서 제출할 때만 보냄
+      if(Array.isArray(v)) files[k]=v.map(x=>x&&x.buf?{...x,buf:null,b64:ab2b64(x.buf)}:x); else if(k!=="photos") files[k]=v;
+    }
+    const w=who(), now=new Date(), stamp=(now.getMonth()+1)+"/"+now.getDate()+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    S_.v.savedAt=stamp;
+    const data=JSON.stringify({v:S_.v,ph:S_.ph,files,ver:1});
+    size=data.length;
+    if(size>45*1024*1024) throw new Error("big");
+    await cloudPost({action:"save",name:w.name,pin:cleanPin(),label:(w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,""),data});
+    dirty=true; saveNow(); const sa=document.querySelector(".savebox .note"); if(sa) sa.textContent="마지막 중간 저장: "+stamp; else renderForm();
+    statusEl.textContent="✅ 중간 저장 완료 ("+stamp+")"+(skipped?" · 영상·PPT 파일은 용량이 커서 저장되지 않아요. 제출할 때 다시 올려 주세요.":"")+" 다음에 이름 + 핸드폰 뒷자리로 불러올 수 있어요.";
+  }catch(e){ console.error(e); statusEl.textContent=String(e.message)==="big"?"⚠️ 저장할 내용이 너무 커요. 사진 개수를 조금 줄이고 다시 눌러 주세요.":String(e.message||"").includes("no file")?"⚠️ 선생님 제출함이 아직 중간 저장을 받을 수 있게 바뀌지 않았어요. 선생님께 말씀드려 주세요.":"⚠️ 중간 저장을 못 했어요. 인터넷 연결을 확인하고 다시 눌러 주세요."; }
+  finally{ cloudBtn.disabled=false; }
+});
+form.addEventListener("click",async e=>{
+  const la=document.getElementById("loadArea"); if(!la) return;
+  if(e.target.id==="loadBtn"){ if(needId()) return; la.innerHTML='<span class="confirm">불러오면 이 기기에 쓰던 내용이 중간 저장한 내용으로 바뀌어요. 불러올까요? <button type="button" class="mini danger" id="loadYes">불러오기</button><button type="button" class="mini" id="loadNo">취소</button></span>'; return; }
+  if(e.target.id==="loadNo"){ la.innerHTML='<button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button>'; return; }
+  if(e.target.id==="loadYes"){
+    const w=who(), pin=cleanPin(); statusEl.textContent="☁️ 불러오는 중…";
+    try{
+      const j=await cloudPost({action:"load",name:w.name,pin});
+      if(!j.data){ statusEl.textContent="이 이름과 핸드폰 뒷자리로 중간 저장한 내용이 없어요. 이름과 번호를 다시 확인해 주세요."; la.innerHTML='<button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button>'; return; }
+      const d=JSON.parse(j.data);
+      S_.v={...d.v,pin}; S_.ph=d.ph||{};
+      for(const [k,v] of Object.entries(d.files||{})) await idbPut(k,Array.isArray(v)?v.map(x=>x&&x.b64?{...x,buf:b642ab(x.b64),b64:null}:x):v).catch(()=>{});
+      dirty=true; phDirty=true; saveNow(); resetSend(); loadOwn(); renderForm(); loadVid();
+      const msg="✅ "+(S_.v.savedAt||"")+"에 중간 저장한 내용을 불러왔어요. 이어서 쓰세요."; statusEl.textContent=msg; setTimeout(()=>{statusEl.textContent=msg;},900);
+    }catch(err){ console.error(err); statusEl.textContent=String(err.message||"").includes("no file")?"⚠️ 선생님 제출함이 아직 불러오기를 할 수 있게 바뀌지 않았어요.":"⚠️ 불러오지 못했어요. 인터넷 연결을 확인하고 다시 해 주세요.";
+      la.innerHTML='<button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button>'; }
+  }
+});
+
 /* 이 보고서 지우기 (지금 고른 종류만) */
 const resetArea=document.getElementById("resetArea");
 resetArea.addEventListener("click",e=>{
@@ -680,7 +741,9 @@ resetArea.addEventListener("click",e=>{
 
 /* ---------- PDF용 블록 ---------- */
 const T=id=>esc(val(id).replace(/\s+$/,""));
-const who=()=>{const n=x=>{const t=val(x).trim(); return (t.match(/\d+/)||[t])[0];}; return {g:n("grade"),c:n("cls"),name:val("name").trim()};};
+const CLASSES=["페르마","탈레스","유클리드","뉴튼","가우스1","가우스2","칸토르1","S"];
+const who=()=>{const g=(val("grade").trim().match(/\d+/)||[val("grade").trim()])[0];
+  const c=val("cls").replace(/\s+/g,"").replace(/반$/,"").replace(/^[a-z]+$/,x=>x.toUpperCase()); return {g,c,name:val("name").trim()};};
 function buildBlocks(){
   const k=K(), B=[]; let fig=0;
   const add=(type,html,gap,toc)=>B.push({type,html:'<div class="pb">'+html+'</div>',gap,toc});
@@ -1003,7 +1066,8 @@ if(dm){
 renderForm();
 loadOwn(); loadVid();
 idbGet("photos").then(ph=>{ if(ph&&typeof ph==="object"&&Object.keys(ph).length){ S_.ph=ph; renderForm(); } }).catch(()=>{});
-if(!dm&&Object.keys(S_.v).length>1) statusEl.textContent="저장해 둔 내용을 불러왔어요 · 이어서 쓰세요";
+if(!dm&&Object.keys(S_.v).length>1) statusEl.textContent="저장해 둔 내용을 불러왔어요 · 이어서 쓰세요 (가끔 ☁️ 중간 저장도 눌러 주세요)";
+else if(!dm) statusEl.textContent="다른 기기에서 쓰던 게 있으면 표지의 ‘중간 저장한 것 불러오기’를 누르세요.";
 })();
 </script>
 </body>
