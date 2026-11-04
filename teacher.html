@@ -98,7 +98,7 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
       <div class="years" id="years" role="group" aria-label="연도"></div>
       <div class="stats" id="stats"></div>
       <div class="toolbar">
-        <input class="search" type="search" id="q" placeholder="이름이나 반으로 찾기 (예: 홍길동, 가우스1)" aria-label="찾기">
+        <input class="search" type="search" id="q" placeholder="이름이나 반으로 찾기 (예: 홍길동, 9탈레스)" aria-label="찾기">
         <label class="chk"><input type="checkbox" id="onlyNew" checked> 학생별 최신 제출만</label>
         <button class="btn" id="refreshBtn" type="button">새로고침</button>
         <button class="btn primary" id="zipBtn" type="button">전체 받기</button>
@@ -136,8 +136,9 @@ function parse(f){ // "2학년3반_홍길동_1102_2130.pdf"
   if(parts.length>=3){ topic=parts[0]; form=parts[1]; base=parts.slice(2).join("__"); }
   else if(parts.length===2){ form=parts[0]; base=parts[1]; }
   const m=base.match(/(\d+)\s*학년(.+?)반_(.*)$/); // "1학년가우스1반_홍길동", "1학년S반_김철수"
-  const g=m?+m[1]:99, c=m?m[2].trim():"기타", nm=m?(m[3]||"이름없음").replace(/_/g," "):base.replace(/_/g," ");
-  return {...f,who:nm,key:topic+"|"+form+"|"+base+(extra?"|"+extra:""),isVideo,extra,g,c,cls:m?(/^\d+$/.test(c)?g+"학년 "+c+"반":c+"반"):"기타",year:new Date(f.time).getFullYear(),form,topic};
+  let g=m?normGrade(m[1]):99, cr=m?m[2].replace(/\s+/g,""):""; const gm=cr.match(/^(\d+)(\D.*)$/); if(gm){ g=normGrade(gm[1]); cr=gm[2]; }
+  const c=m?(/^\d+$/.test(cr)?cr:normClass(cr)):"기타", nm=m?(m[3]||"이름없음").replace(/_/g," "):base.replace(/_/g," ");
+  return {...f,who:nm,key:topic+"|"+form+"|"+base+(extra?"|"+extra:""),isVideo,extra,g,c,cls:m?(/^\d+$/.test(c)?g+"학년 "+c+"반":g+c+"반"):"기타",year:new Date(f.time).getFullYear(),form,topic};
 }
 const fmtTime=t=>{const d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");};
 const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+"MB":Math.max(1,Math.round(b/1024))+"KB";
@@ -158,7 +159,11 @@ $("logoutBtn").addEventListener("click",()=>{KEY="";FILES=[];try{sessionStorage.
 
 /* 목록 */
 let YEAR=null, FORM=null, TOPIC=null;
-const CORDER=["페르마","탈레스","유클리드","뉴튼","가우스1","가우스2","칸토르1","S"]; // 반 순서
+const CORDER=["페르마","탈레스","유클리드","뉴튼","데카르트","가우스1","가우스2","칸토르1","S"]; // 반 순서 (앞 숫자는 학년 7·8·9)
+function normGrade(x){ const n=parseInt(String(x||"").replace(/\D/g,""),10); if(!n) return 99; return n>=1&&n<=3?n+6:n; }
+function normClass(raw){ let t=String(raw||"").replace(/\s+/g,"").replace(/반$/,""); if(!t) return "기타"; if(/^[a-z0-9]+$/i.test(t)) t=t.toUpperCase();
+  if(CORDER.includes(t)) return t; const hit=CORDER.filter(c=>c.startsWith(t)); if(hit.length===1) return hit[0];
+  const base=CORDER.filter(c=>c.replace(/\d+$/,"")===t); return base.length===1?base[0]:t; }
 const TORDER=["꿈조사","디베이트 특강", "AI 리터러시", "일상생활 속에서의 수학", "미세 플라스틱", "그리스로마 신화", "주제 탐구 보고서 작성하기", "군주론", "독서연계 진화론", "물리&철학", "수학&심리학", "세상을 바꾼 화학", "음식과 사회", "검은 눈물, 석유", "엔트로피", "지구 과학&경제", "탄소", "빛", "문화유산", "반려동물", "연예인 팬덤 활동", "10대를 위한 정의란 무엇인가", "BTS & 데미안", "경제의 핏줄 화폐", "통계 보고서 만들기", "대기오염", "사회에서 바라보는 소년법의 의미와 기준", "기후변화"];
 function topics(){ const r=x=>{const i=TORDER.indexOf(x);return i<0?99:i;}; return [...new Set(FILES.map(f=>f.topic))].sort((a,b)=>r(a)-r(b)||a.localeCompare(b,"ko")); }
 const FT=()=>FILES.filter(f=>f.topic===TOPIC);
@@ -175,7 +180,7 @@ function visible(){
 function byClass(v){
   const m=new Map(); v.forEach(f=>{ if(!m.has(f.cls)) m.set(f.cls,{g:f.g,c:f.c,files:[]}); m.get(f.cls).files.push(f); });
   const r=c=>{const i=CORDER.indexOf(String(c)); return i<0?99:i;};
-  return [...m.entries()].sort((a,b)=>r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})||a[1].g-b[1].g).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||y.time-x.time)}));
+  return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||y.time-x.time)}));
 }
 function itemHtml(f){
   return '<div class="item'+(f.isNew?'':' isold')+'" data-id="'+f.id+'"><div><div class="who">'+esc(f.who)+'</div>'+

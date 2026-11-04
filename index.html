@@ -167,7 +167,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
   <h2 class="step">② 보고서 종류 <small style="font-family:var(--body);font-size:13px;color:var(--muted)">주제를 고르면 저절로 골라져요 · 다른 양식으로 썼으면 바꿔도 돼요</small></h2>
   <div class="kinds" id="kinds" role="group" aria-label="보고서 종류"></div>
   <div id="form"></div>
-  <datalist id="clsList"><option value="페르마"><option value="탈레스"><option value="유클리드"><option value="뉴튼"><option value="가우스1"><option value="가우스2"><option value="칸토르1"><option value="S"></datalist>
+  <datalist id="clsList"><option value="페르마"><option value="탈레스"><option value="유클리드"><option value="뉴튼"><option value="가우스1"><option value="가우스2"><option value="칸토르1"><option value="데카르트"><option value="S"></datalist>
 </div>
 
 <div class="bar">
@@ -524,7 +524,7 @@ function renderForm(){
 }
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
-  return '<div class="info">'+[["grade","학년"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 가우스1"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
+  return '<div class="info">'+[["grade","학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
     '<div class="savebox"><p class="guide" style="margin:0">📌 <b>중간 저장</b>을 누르면 쓰던 내용이 선생님 쪽에 보관돼요. 다른 기기나 다음에 이어서 쓸 때는 <b>이름 + 핸드폰 뒷자리 4자리</b>를 똑같이 쓰고 ‘불러오기’를 누르세요. 핸드폰이 없으면 부모님 핸드폰 뒷자리를 쓰세요.</p>'+
     '<span id="loadArea"><button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button></span>'+(S_.v.savedAt?'<span class="note">마지막 중간 저장: '+esc(S_.v.savedAt)+'</span>':'')+'</div>';
 }
@@ -741,9 +741,20 @@ resetArea.addEventListener("click",e=>{
 
 /* ---------- PDF용 블록 ---------- */
 const T=id=>esc(val(id).replace(/\s+$/,""));
-const CLASSES=["페르마","탈레스","유클리드","뉴튼","가우스1","가우스2","칸토르1","S"];
-const who=()=>{const g=(val("grade").trim().match(/\d+/)||[val("grade").trim()])[0];
-  const c=val("cls").replace(/\s+/g,"").replace(/반$/,"").replace(/^[a-z]+$/,x=>x.toUpperCase()); return {g,c,name:val("name").trim()};};
+/* 반 = 학년(7·8·9) + 반 이름. 1·2·3학년이라고 써도 7·8·9로, "9탈레스"·"탈레스" 모두 9탈레스반, 줄임말(8데카·8데)은 원래 이름으로 */
+const CLASSES=["페르마","탈레스","유클리드","뉴튼","데카르트","가우스1","가우스2","칸토르1","S"];
+function normGrade(x){ const n=parseInt(String(x||"").replace(/\D/g,""),10); if(!n) return ""; return String(n>=1&&n<=3?n+6:n); }
+function normClass(raw){
+  let t=String(raw||"").replace(/\s+/g,"").replace(/반$/,""); if(!t) return "";
+  if(/^[a-z0-9]+$/i.test(t)) t=t.toUpperCase();
+  if(CLASSES.includes(t)) return t;
+  const hit=CLASSES.filter(c=>c.startsWith(t)); if(hit.length===1) return hit[0];
+  const base=CLASSES.filter(c=>c.replace(/\d+$/,"")===t); if(base.length===1) return base[0];
+  return t;
+}
+const who=()=>{ let g=normGrade(val("grade")); let c=val("cls").replace(/\s+/g,"").replace(/^(\d+)학년/,"$1");
+  const m=c.match(/^(\d+)(\D.*)$/); if(m){ g=normGrade(m[1]); c=m[2]; } // 반 칸에 "9탈레스"처럼 써도 됨
+  return {g,c:normClass(c),name:val("name").trim()}; };
 function buildBlocks(){
   const k=K(), B=[]; let fig=0;
   const add=(type,html,gap,toc)=>B.push({type,html:'<div class="pb">'+html+'</div>',gap,toc});
@@ -862,7 +873,8 @@ pdfBtn.addEventListener("click",async()=>{
   if(lastPdf && pdfBtn.dataset.mode==="send"){ return deliver(lastPdf.blob,lastPdf.name); }
   if(!tk()||(!kindKey()&&!isOwn())){ statusEl.textContent="먼저 맨 위에서 비교과 주제와 보고서 종류를 골라 주세요."; scrollTo({top:0,behavior:"smooth"}); return; }
   if(!window.html2canvas||!window.jspdf){statusEl.textContent="PDF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
-  for(const [id,l] of [["grade","학년"],["cls","반"],["name","이름"]]) if(!val(id).trim()) return goTo(id,"표지의 "+l+"을(를) 먼저 써 주세요. 선생님께 이 이름으로 제출돼요.");
+  if(val("cls").trim()&&!who().g) return goTo("grade","학년(7·8·9)을 써 주세요.");
+  for(const [id,l] of [["cls","반"],["name","이름"]]) if(!val(id).trim()) return goTo(id,"표지의 "+l+"을(를) 먼저 써 주세요. 선생님께 이 이름으로 제출돼요.");
   if(isOwn()){
     if(!catKey()){ statusEl.textContent="출품부문(주제탐구 / 교과연계 / 독서연계)을 골라 주세요."; const b=form.querySelector("[data-cat]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
     if(!val(oid("title")).trim()) return goTo(oid("title"),"보고서 제목을 써 주세요.");
