@@ -43,6 +43,9 @@ img{max-width:100%}[hidden]{display:none!important}
 .rec{font-family:var(--body);font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--coral);border-radius:999px;padding:2px 8px;vertical-align:middle}
 .gridw{overflow-x:auto}.grid{width:100%;border-collapse:collapse;min-width:440px}.grid th{background:var(--forest);color:#fff;font-weight:500;font-size:13px;padding:7px}.grid td{border:1px solid var(--line);padding:5px;font-size:13.5px}.grid td.rh{font-weight:700;text-align:center;white-space:nowrap}
 .pb table.pg{width:100%;border-collapse:collapse;font-size:14px}.pb table.pg th{background:#e8ecf7;border:1px solid #888;padding:6px;font-weight:700}.pb table.pg td{border:1px solid #888;padding:6px 8px;min-height:24px;height:30px}.pb table.pg td.rh{text-align:center;font-weight:700;white-space:nowrap}.pb .nt{font-size:13.5px;color:#444}
+.sechead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.sechead .mini{margin:10px 12px 0 0;flex:none}
+.page.off{opacity:.75}
 .pick-first{text-align:center;color:var(--muted);padding:30px 10px;border:2px dashed var(--line);border-radius:14px}
 
 .page{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
@@ -365,6 +368,17 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
      {t:"V",id:"ppt",label:"발표 PPT",guide:"발표에 쓴 PPT 파일을 올려요 (pptx·ppt·pdf, 100MB까지). 선생님 제출함에 함께 저장돼요.",accept:".ppt,.pptx,.key,.pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf",tag:"발표자료",icon:"📊",max:100},
      {t:"V",id:"vfile",label:"발표 영상",guide:"발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 제출함에 함께 저장돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
   ]};
+/* 모든 양식: 칸마다 ‘이 부분 빼기’와 ‘내용 추가’를 할 수 있게 */
+const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
+Object.values(KINDS).forEach(k=>{
+  k.secs=k.secs.filter(s=>!s.extra);
+  k.secs.forEach(s=>{ s.key=hkey(s.h);
+    if(s.h==="책 정보"||s.items.some(i=>i.t==="V")) return;
+    s.canOff=true;
+    s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
+  });
+});
+const isOff=sec=>!!(sec.canOff&&S_.v[pid("off_"+sec.key)]);
 const EXCL=["ai","dream"];
 const ORDER=["topic","subject","book"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
@@ -437,13 +451,13 @@ function outline(forPdf){
   const k=K(); let n=0; const out=[];
   k.secs.forEach((sec,si)=>{
     if(k.fixedNum&&!sec.nonum) ++n; // 독서록은 문항 번호(1~10)를 그대로 둠
-    if(forPdf&&!hasContent(sec)) return; // 안 쓴 부분은 PDF와 차례에서 뺌
+    if(forPdf&&(isOff(sec)||!hasContent(sec))) return; // 뺀 부분·안 쓴 부분은 PDF와 차례에서 뺌
     if(forPdf&&sec.h==="책 정보") return; // 책 정보는 표지와 1번에 들어감
     const num=sec.nonum?"":majorLabel(k,k.fixedNum?n:++n);
     let m=0; const subs=[];
     sec.items.forEach(it=>{
       if(it.t==="S") subs.push({id:it.id,label:it.num===false?"":subLabel(k,++m),title:it.title});
-      if(it.t==="R") ensureRep(it).forEach((r,ri)=>subs.push({id:it.id,rk:r,label:subLabel(k,++m),title:val(pid(it.id)+"_"+r+"_t").trim()||(it.label+" "+(ri+1)),blank:!val(pid(it.id)+"_"+r+"_t").trim()}));
+      if(it.t==="R") ensureRep(it).forEach((r,ri)=>subs.push({id:it.id,rk:r,label:it.num===false?"":subLabel(k,++m),title:val(pid(it.id)+"_"+r+"_t").trim()||(it.label+" "+(ri+1)),blank:!val(pid(it.id)+"_"+r+"_t").trim()}));
     });
     out.push({si,sec,num,title:sec.h,subs});
   });
@@ -476,14 +490,14 @@ function itemEdit(it,subs){
         return '<div class="rep"><div class="subhead"><span class="repnum">'+esc(s.label)+'</span>'+ln(b+"_t",it.titleHint,it.label+" "+(i+1)+" 제목")+
           '<span data-delrep="'+it.id+'" data-k="'+s.rk+'"><button type="button" class="mini danger" data-ask="1">지우기</button></span></div>'+
           '<p class="guide">'+esc(it.guide)+'</p>'+ta(b+"_b",6,it.label+" "+(i+1)+" 내용")+photoBox(b+"_b")+'</div>';}).join("")+
-        '<button type="button" class="addrep" data-addrep="'+it.id+'">+ '+esc(it.label)+' 소제목 하나 더 넣기</button></div>'; }
+        '<button type="button" class="addrep" data-addrep="'+it.id+'">'+(it.added?'＋ 이 부분에 내가 쓰고 싶은 내용 추가하기':'+ '+esc(it.label)+' 소제목 하나 더 넣기')+'</button></div>'; }
     case "Q": return '<div class="q"><span class="qt">'+esc(it.aLab)+'</span><p class="guide">'+esc(it.aGuide)+'</p>'+ta(id+"_a",3,it.aLab)+
       '<span class="qt">'+esc(it.bLab)+'</span><p class="guide">'+esc(it.bGuide)+'</p>'+ta(id+"_b",4,it.bLab)+'</div>';
   }
   return "";
 }
 function tocHtml(){
-  return outline(false).map(o=>'<div class="l1">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?' <span class="note">(선택)</span>':'')+'</div>'+
+  return outline(false).map(o=>isOff(o.sec)?'<div class="l1 empty" style="text-decoration:line-through">'+esc((o.num?o.num+" ":"")+o.title)+' <span class="note">(뺌)</span></div>':'<div class="l1">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?' <span class="note">(선택)</span>':'')+'</div>'+
     (K().tocMajor?"":o.subs.map(s=>'<div class="l2'+(s.blank?' empty':'')+'">'+esc((s.label?s.label+" ":"")+s.title)+'</div>').join(""))).join("");
 }
 function renderTopics(){
@@ -517,7 +531,11 @@ function renderForm(){
   h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
   // 본문
   ol.forEach(o=>{
-    h+='<section class="page"><div class="ribbon '+k.color+'">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?'<small>선택</small>':'')+'</div><div class="pbody">'+o.sec.items.map(it=>itemEdit(it,o.subs)).join("")+'</div></section>';
+    const off=isOff(o.sec);
+    h+='<section class="page'+(off?' off':'')+'"><div class="sechead"><div class="ribbon '+(off?'c-dark':k.color)+'">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?'<small>선택</small>':'')+'</div>'+
+      (o.sec.canOff?(off?'<button type="button" class="mini" data-on="'+o.sec.key+'">↩ 다시 넣기</button>':'<button type="button" class="mini" data-off="'+o.sec.key+'">✕ 이 부분 빼기</button>'):'')+'</div>'+
+      (off?'<div class="pbody"><p class="guide">이 부분은 PDF에서 빠져요. 쓴 내용은 지워지지 않으니, 다시 넣고 싶으면 ‘↩ 다시 넣기’를 누르세요.</p></div>'
+          :'<div class="pbody">'+o.sec.items.map(it=>itemEdit(it,o.subs)).join("")+'</div>')+'</section>';
   });
   h+='</div>';
   f.innerHTML=h;
@@ -574,6 +592,9 @@ document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.c
 
 /* 소제목 늘리기·지우기 */
 form.addEventListener("click",e=>{
+  const so=e.target.closest("[data-off],[data-on]");
+  if(so){ const key=so.dataset.off||so.dataset.on; if(so.dataset.off) S_.v[pid("off_"+key)]=true; else delete S_.v[pid("off_"+key)];
+    save(); resetSendIfNeeded(); renderForm(); statusEl.textContent=so.dataset.off?"그 부분을 뺐어요 · PDF에 안 들어가요 (쓴 내용은 남아 있어요)":"다시 넣었어요"; return; }
   const a=e.target.closest("[data-addrep]");
   if(a){ const id=a.dataset.addrep; const it=findItem(id); const keys=ensureRep(it); keys.push(newKey()); save(); renderForm();
     const sec=form.querySelector('[data-rep="'+id+'"]'); if(sec){const ins=sec.querySelectorAll(".rep input"); const last=ins[ins.length-1]; if(last){last.focus();}} return; }
