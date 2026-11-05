@@ -373,6 +373,7 @@ const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
   k.secs.forEach(s=>{ s.key=hkey(s.h);
+    if(k===KINDS.dream) return; // 꿈조사는 정해진 양식을 채우기만 함
     if(s.h==="책 정보"||s.items.every(i=>i.t==="V"||i.t==="C")) return; // 책 정보·파일 올리는 칸은 제외
     s.canOff=true;
     s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
