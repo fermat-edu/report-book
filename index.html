@@ -201,7 +201,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="hints.js?v=4"></script>
+<script src="hints.js?v=5"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -480,13 +480,13 @@ function photoBox(id){
 const ta=(id,rows,label)=>'<textarea id="f_'+id+'" data-id="'+id+'" rows="'+rows+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>'+esc(val(id))+'</textarea>';
 /* 주제별 안내문구와 예시 (hints.js) */
 const TH=()=>(window.TOPIC_HINTS||{})[tk()]||null;
-const tip=key=>{const h=TH(); if(!h||!h.it) return ""; const t=h.it[key]||h.it[String(key).replace(/\d+$/,"")]; return t?'<p class="tip">💡 우리 수업: '+esc(t)+'</p>':"";};
+const tip=key=>{const h=TH(); if(!h||!h.it) return ""; const t=h.it[key]||h.it[String(key).replace(/\d+$/,"")]; return t?'<p class="tip">💡 '+esc(h.tag||"우리 수업")+': '+esc(t)+'</p>':"";};
 const phx=(key,def)=>{const h=TH(); return (h&&h.ph&&h.ph[key])||def;};
 function lessonBox(){ const h=TH(); if(!h) return "";
-  return '<details class="lesson" open><summary>📚 「'+esc(topicName())+'」 수업에서 배운 내용 · 쓸거리 (눌러서 접기)</summary>'+
-    '<h4>수업에서 배운 내용</h4><ul>'+h.cp.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>'+
-    (h.ideas?'<h4>이런 주제로 써 볼 수 있어요</h4><ul>'+h.ideas.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>':'')+
-    '<div class="note">칸마다 노란 💡 상자에 우리 수업에 맞춘 도움말이 있어요. 활동지에 썼던 내용을 떠올리며 내 말로 써요.</div></details>'; }
+  return '<details class="lesson" open><summary>📚 '+(h.lessonTitle?esc(h.lessonTitle):'「'+esc(topicName())+'」 수업에서 배운 내용 · 쓸거리')+' (눌러서 접기)</summary>'+
+    '<h4>'+(h.lessonTitle?'이렇게 써요':'수업에서 배운 내용')+'</h4><ul>'+h.cp.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>'+
+    (h.ideas?'<h4>'+(h.lessonTitle?'참고한 예시':'이런 주제로 써 볼 수 있어요')+'</h4><ul>'+h.ideas.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>':'')+
+    '<div class="note">칸마다 노란 💡 상자에 '+(h.lessonTitle?'쓰는 법과 예시가 있어요. 예시를 그대로 베끼지 말고 내 이야기로 써요.':'우리 수업에 맞춘 도움말이 있어요. 활동지에 썼던 내용을 떠올리며 내 말로 써요.')+'</div></details>'; }
 const ln=(id,hint,label)=>'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'" placeholder="'+esc(hint||"")+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>';
 function itemEdit(it,subs){
   const id=pid(it.id);
