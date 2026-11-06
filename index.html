@@ -88,8 +88,23 @@ img{max-width:100%}[hidden]{display:none!important}
 .pst{width:100%;height:100%;display:flex;align-items:center;justify-content:center;line-height:1}
 .hm{position:absolute;left:calc(-15px*var(--inv));top:calc(-15px*var(--inv));width:calc(30px*var(--inv));height:calc(30px*var(--inv));border-radius:50%;background:#2f8792;color:#fff;border:calc(2px*var(--inv)) solid #fff;font-size:calc(16px*var(--inv));line-height:1;cursor:move;touch-action:none;padding:0;z-index:5}
 .hr{position:absolute;right:calc(-11px*var(--inv));bottom:calc(-11px*var(--inv));width:calc(22px*var(--inv));height:calc(22px*var(--inv));border-radius:50%;background:#fff;border:calc(3px*var(--inv)) solid #2f8792;cursor:nwse-resize;touch-action:none;z-index:5;box-sizing:border-box}
-.pimg-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#eef2f2;color:#7a8b8d;font-size:22px;border:2px dashed #b9c6c7;box-sizing:border-box}
+.pimg-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.4;cursor:pointer;background:#eef2f2;color:#7a8b8d;font-size:22px;border:2px dashed #b9c6c7;box-sizing:border-box}
 .pempty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;color:#8a9799;line-height:1.7;pointer-events:none}
+.pstrip{display:flex;flex-direction:column;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px}
+.pstools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}.pstools>b{margin-right:4px}
+.pstools button{font:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);cursor:pointer;white-space:nowrap}
+.pstools .ppop{min-width:150px}.pstools .ppop button{text-align:left}
+.pstools .pshow{margin-left:auto;background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.psthumbs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch}
+.psth{flex:0 0 auto;position:relative;padding:0;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;overflow:hidden;line-height:0}
+.psth canvas{width:132px;height:74px;display:block}
+.psth span{position:absolute;left:4px;top:4px;line-height:1;font-size:11px;font-weight:700;background:rgba(0,0,0,.6);color:#fff;border-radius:6px;padding:2px 5px}
+.psth.on{border-color:#2f8792;box-shadow:0 0 0 2px #2f8792}
+.pshowov{position:fixed;inset:0;z-index:2000;background:#000;display:flex;align-items:center;justify-content:center;outline:none}
+.pshowov img{max-width:100%;max-height:100%;object-fit:contain;user-select:none}
+.pshowbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:6px 10px;font-size:14px;opacity:.35;transition:opacity .2s}
+.pshowbar:hover{opacity:1}
+.pshowbar button{font:inherit;background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:999px;padding:6px 12px;cursor:pointer}
 .pmodal{position:fixed;inset:0;z-index:1000;background:rgba(20,26,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .pmcard{background:var(--paper);color:var(--ink);border-radius:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
 .pmcard h3{margin:0;font-family:var(--display);font-weight:400;font-size:22px}
@@ -255,8 +270,8 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="hints.js?v=7"></script>
-<script src="poster.js?v=7"></script>
+<script src="hints.js?v=8"></script>
+<script src="poster.js?v=8"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -441,18 +456,27 @@ KINDS.stat={name:"통계보고서",short:"통계 보고서 (통계포스터)",pr
      S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false})]},
    {h:"통계포스터 만들기",nonum:true,poster:true,items:[{t:"PO",id:"po"}]}
   ]};
+KINDS.sppt={name:"통계발표PPT",short:"발표용 PPT (통계 발표)",pre:"t3_",color:"c-coral",major:"num",sub:"ga",noToc:true,slides:true,
+  desc:"조에서 발표를 맡은 친구가 16:9 발표 슬라이드를 만들어요. 사진·그래프를 넣고, 이 화면에서 바로 발표도 할 수 있어요.",
+  subLabel:null,titleHint:"예: 빌런은 없다! 우리 팀 환상의 조합 찾기",
+  secs:[
+   {h:"발표용 PPT 만들기",nonum:true,poster:true,items:[{t:"SL",id:"sl"}]},
+   {h:"발표 기록",items:[
+     S("script","발표 대본 메모",4,"슬라이드마다 할 말을 짧게 적어 두면 발표가 쉬워져요. (선택)\n예) 1번: 안녕하세요, ○조 발표를 맡은 ○○○입니다.",{photo:false}),
+     S("feel","발표를 준비하며 느낀 점",3,"발표 자료를 만들고 발표하면서 배운 점, 아쉬운 점을 써요.",{photo:false})]}
+  ]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
   k.secs.forEach(s=>{ s.key=hkey(s.h);
-    if(k===KINDS.dream||k===KINDS.stat) return; // 꿈조사·통계포스터는 추가 칸 없음
+    if(k===KINDS.dream||k===KINDS.stat||k===KINDS.sppt) return; // 꿈조사·통계포스터는 추가 칸 없음
     if(s.h==="책 정보"||s.items.every(i=>i.t==="V"||i.t==="C")) return; // 책 정보·파일 올리는 칸은 제외
     s.canOff=true;
     s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
   });
 });
 const isOff=sec=>!!(sec.canOff&&S_.v[pid("off_"+sec.key)]);
-const EXCL=["ai","dream","stat"];
+const EXCL=["ai","dream","stat","sppt"];
 const ORDER=["topic","subject","book"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 const GA="가나다라마바사아자차카타파하".split("");
@@ -516,7 +540,7 @@ function hasContent(sec){
     if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
     if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
     if(it.t==="V") return !!FX[it.id];
-    if(it.t==="PO") return false; // 포스터는 따로 그림으로 들어감
+    if(it.t==="PO"||it.t==="SL") return false; // 포스터·슬라이드는 따로 그림으로 들어감
     return val(pid(it.id)).trim()||(S_.ph[pid(it.id)]||[]).length;
   });
 }
@@ -562,6 +586,7 @@ function itemEdit(it,subs){
     case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div data-fxbox="'+it.id+'">'+fxBox(it)+'</div></div>';
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
     case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
+    case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성’을 누르면 발표 순서(표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이 한 번에 생겨요. 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-key="slides_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
@@ -592,7 +617,7 @@ function renderTopics(){
 function renderKinds(){
   renderTopics();
   const cur=S_.v.kind;
-  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?(topicKind()==="stat"?["stat","own"]:[topicKind()]):[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
+  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?(topicKind()==="stat"?["stat","sppt","own"]:[topicKind()]):[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
 }
 function renderForm(){
   renderKinds();
@@ -605,11 +630,11 @@ function renderForm(){
   // 표지
   h+='<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
     infoGrid()+
-    '<label class="fld">'+(kindKey()==="ai"?"작품 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(TH()&&TH().title&&!k.autoTitle?TH().title:k.autoTitle?"비워 두면 ‘"+k.autoTitle+"’(으)로 들어가요":k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
+    '<label class="fld">'+(kindKey()==="ai"?"작품 제목":kindKey()==="sppt"?"발표 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(TH()&&TH().title&&!k.autoTitle?TH().title:k.autoTitle?"비워 두면 ‘"+k.autoTitle+"’(으)로 들어가요":k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
-    (k.solo?'':'<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
+    (k.solo?'':teamField()+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>')+
-    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
+    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.slides?'PDF에 슬라이드가 한 장씩 들어가고, 발표 기록을 쓰면 뒤에 붙어요':k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
   '</div></section>';
   // 차례 미리보기
   if(!k.noToc) h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
@@ -624,10 +649,17 @@ function renderForm(){
   h+='</div>';
   f.innerHTML=h;
   const pm=document.getElementById("posterMount");
-  if(pm&&window.FPoster) FPoster.mount(pm,{key:pm.dataset.key,get:idbGet,put:idbPut,onChange:resetSendIfNeeded,
+  if(pm&&window.FPoster) FPoster.mount(pm,{key:pm.dataset.key,mode:pm.dataset.mode||"poster",get:idbGet,put:idbPut,onChange:resetSendIfNeeded,
     title:()=>val(pid("title")),team:()=>[val("team"),[val("name"),val("mates")].filter(x=>x.trim()).join(", ")].filter(x=>x.trim()).join(" | "),
     status:m=>{statusEl.textContent=m;}});
 }
+/* 팀 이름: 통계 보고서는 조 번호를 골라서 같은 조 자료가 선생님 페이지에 함께 묶여요 */
+function teamField(){
+  if(topicKind()==="stat"){ const cur=val("team"), L=Array.from({length:12},(_,i)=>(i+1)+"조"); if(cur&&!L.includes(cur)) L.unshift(cur);
+    return '<label class="fld">우리 조 <span class="opt">(포스터·발표 PPT를 따로 만들어도 조원 모두 같은 조를 고르면 선생님 페이지에 함께 묶여요)</span><select id="f_team" data-id="team" style="font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink)"><option value="">조를 골라요</option>'+L.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join("")+'</select></label>'; }
+  return fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요 · 같은 팀은 이름을 똑같이 쓰면 선생님 페이지에 함께 묶여요)");
+}
+const teamTag=()=>{ if(K()&&K().solo&&!isOwn()) return ""; const t=val("team").replace(/[\s_\\/:*?"<>|]+/g,"").slice(0,15); return t?"__조_"+t:""; };
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
   return '<div class="info">'+[["grade","학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
@@ -643,10 +675,10 @@ function ownForm(){
   const cat=catKey();
   let h='<div style="display:flex;flex-direction:column;gap:20px">';
   h+=infoCard(
-    '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+(topicKind()==="stat"?["stat",...ORDER]:ORDER).map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
+    '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+(topicKind()==="stat"?["stat","sppt",...ORDER]:ORDER).map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
     fld(oid("title"),"보고서 제목","내 보고서의 제목을 그대로 써요")+
     fld(oid("subj"),cat==="book"?"세부구분 (책 제목)":"세부구분 (탐구 주제)","비워 두면 ‘"+topicName()+"’(으)로 들어가요")+
-    fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)")+
+    teamField()+
     fld("mates","함께한 친구 이름","예: 김민지, 이서준","(같이 한 친구가 있으면 쉼표로 적어요)")+
     '<label class="chk" style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="o_cover"'+(S_.v.o_nocover?'':' checked')+'> 맨 앞에 표지 자동으로 붙이기 <span class="opt" style="color:var(--muted);font-size:12.5px">(내 파일에 표지가 이미 있으면 끄세요)</span></label>');
   h+='<section class="page"><div class="ribbon c-dark">내 보고서 파일 올리기</div><div class="pbody">'+
@@ -670,7 +702,7 @@ form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.
 document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic;
   const k=topicKind();
   if(k==="stat"&&isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]="stat"; }
-  else if(EXCL.includes(k)) S_.v.kind=k;
+  else if(EXCL.includes(k)){ if(!(k==="stat"&&S_.v.kind==="sppt")) S_.v.kind=k; }
   else if(EXCL.includes(S_.v.kind)) S_.v.kind=k||null;
   else if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
   save(); resetSendIfNeeded(); loadOwn(); renderForm(); loadVid();
@@ -995,10 +1027,10 @@ pdfBtn.addEventListener("click",async()=>{
     if(!OWN.length){ statusEl.textContent="보고서 파일을 먼저 올려 주세요."; const b=document.getElementById("ownAdd"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
     return makeOwn();
   }
-  if(!val(pid("title")).trim()&&!K().autoTitle) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
+  if(!val(pid("title")).trim()&&!K().autoTitle) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":kindKey()==="sppt"?"표지의 발표 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
   if(kindKey()==="ai"&&!FX.vfile&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
     statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
-  if(kindKey()==="stat") return makePoster();
+  if(kindKey()==="stat"||kindKey()==="sppt") return makePoster();
   if(!outline(true).length){ statusEl.textContent="아직 쓴 내용이 없어요. 문항을 하나 이상 채운 뒤 제출해 주세요."; return; }
   pdfBtn.disabled=true;
   try{
@@ -1035,18 +1067,19 @@ pdfBtn.addEventListener("click",async()=>{
 
 /* 통계포스터: 1쪽 B4 포스터 + 활동 기록(A4) */
 async function makePoster(){
-  if(!window.FPoster||!FPoster.hasContent()){ statusEl.textContent="통계포스터를 먼저 만들어 주세요. ‘✨ 추천 배치’을 누르면 쉽게 시작할 수 있어요."; const m=document.getElementById("posterMount"); if(m) m.scrollIntoView({block:"start"}); return; }
+  const isSl=kindKey()==="sppt";
+  if(!window.FPoster||!FPoster.hasContent()){ statusEl.textContent=isSl?"발표 슬라이드를 먼저 만들어 주세요. ‘✨ 추천 구성’을 누르면 쉽게 시작할 수 있어요.":"통계포스터를 먼저 만들어 주세요. ‘✨ 추천 배치’을 누르면 쉽게 시작할 수 있어요."; const m=document.getElementById("posterMount"); if(m) m.scrollIntoView({block:"start"}); return; }
   pdfBtn.disabled=true;
   try{
-    statusEl.textContent="포스터를 PDF로 만드는 중…";
-    const poster=await FPoster.toImage();
+    statusEl.textContent=isSl?"슬라이드를 PDF로 만드는 중… ("+FPoster.count()+"장)":"포스터를 PDF로 만드는 중…";
+    const pics=await FPoster.toImages();
     let pages=[];
     if(outline(true).length){ statusEl.textContent="활동 기록 쪽 만드는 중…"; pages=(await paginate(buildBlocks(),()=>{})).pages; }
-    const {jsPDF}=window.jspdf, P=FPoster.SIZE; const pdf=new jsPDF({orientation:"p",unit:"mm",format:[P.w,P.h]});
-    pdf.addImage(poster,"JPEG",0,0,P.w,P.h);
+    const {jsPDF}=window.jspdf, P=FPoster.size(); const pdf=new jsPDF({orientation:isSl?"l":"p",unit:"mm",format:isSl?[P.h,P.w]:[P.w,P.h]});
+    pics.forEach((u,i)=>{ if(i) pdf.addPage(isSl?[P.h,P.w]:[P.w,P.h],isSl?"l":"p"); pdf.addImage(u,"JPEG",0,0,P.w,P.h); });
     pages.forEach(u=>{ pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
     const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
-    lastPdf={blob:pdf.output("blob"),name:topicName()+"_통계포스터_"+nm+".pdf",shots:[poster,...pages],uploads:[],failed:0};
+    lastPdf={blob:pdf.output("blob"),name:topicName()+(isSl?"_발표PPT_":"_통계포스터_")+nm+".pdf",shots:[...pics,...pages],uploads:[],failed:0};
     pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false;
     await submitToTeacher();
   }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
@@ -1099,7 +1132,7 @@ async function submitToTeacher(){
   submitBtn.hidden=true;
   statusEl.textContent="선생님께 제출하는 중… 창을 닫지 마세요.";
   const w=who();
-  const label=topicName().replace(/_+/g," ").replace(/\s+/g," ").trim()+"__"+(catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"");
+  const label=topicName().replace(/_+/g," ").replace(/\s+/g," ").trim()+"__"+(catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"")+teamTag();
   if(lastPdf.submitted&&(lastPdf.uploads||[]).some(u=>!u.done)) return sendFiles(label);
   const body=JSON.stringify({label,pdf:await blobToB64(lastPdf.blob)});
   const warn=lastPdf.failed?" (결과지 파일 "+lastPdf.failed+"개는 보호된 파일이라 붙이지 못했어요. 캡처해서 사진으로 올린 뒤 다시 제출해 주세요.)":"";

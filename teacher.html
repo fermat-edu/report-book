@@ -87,6 +87,11 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 .cls>summary .arrow{color:var(--muted);transition:transform .15s;order:9}
 .cls[open]>summary .arrow{transform:rotate(90deg)}
 .cls .list{padding:0 14px}
+.team{margin:10px 0 4px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:rgba(47,135,146,.04)}
+.teamh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 0 8px;border-bottom:1px dashed var(--line)}
+.teamh b{font-size:15.5px}.teamh .tm{font-size:12.5px;color:var(--muted);flex:1 1 160px}
+.team .item:last-child{border-bottom:0}
+.doc{color:#7b4bc9}
 .groups{display:flex;flex-direction:column;gap:12px}
 @media (max-width:560px){.item{grid-template-columns:1fr}.acts{justify-content:flex-start}.pbody{padding:16px 14px 18px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -161,13 +166,15 @@ function parse(f){ // "2학년3반_홍길동_1102_2130.pdf"
   else if(/^video\//.test(f.mime||"")||/\.(mp4|mov|m4v|webm|avi|3gp)$/i.test(f.name)) extra="영상";
   const isVideo=!!extra;
   let form="기타", topic="주제 없음";
+  let team=""; const tmm=base.match(/__조_([^_]+)$/); if(tmm){ team=tmm[1]; base=base.slice(0,-tmm[0].length); }
   const parts=base.split("__");
   if(parts.length>=3){ topic=parts[0]; form=parts[1]; base=parts.slice(2).join("__"); }
+  let doc=""; if(form==="통계발표PPT"){ form="통계보고서"; doc="발표 PPT"; } else if(form==="통계보고서"&&!extra) doc="포스터";
   else if(parts.length===2){ form=parts[0]; base=parts[1]; }
   const m=base.match(/(\d+)\s*학년(.+?)반_(.*)$/); // "1학년가우스1반_홍길동", "1학년S반_김철수"
   let g=m?normGrade(m[1]):99, cr=m?m[2].replace(/\s+/g,""):""; const gm=cr.match(/^(\d+)(\D.*)$/); if(gm){ g=normGrade(gm[1]); cr=gm[2]; }
   const c=m?(/^\d+$/.test(cr)?cr:normClass(cr)):"기타", nm=m?(m[3]||"이름없음").replace(/_/g," "):base.replace(/_/g," ");
-  return {...f,who:nm,key:topic+"|"+form+"|"+base+(extra?"|"+extra:""),isVideo,extra,g,c,cls:m?(/^\d+$/.test(c)?g+"학년 "+c+"반":g+c+"반"):"기타",year:new Date(f.time).getFullYear(),form,topic};
+  return {...f,who:nm,team,doc,key:topic+"|"+form+(doc?"·"+doc:"")+"|"+base+(extra?"|"+extra:""),isVideo,extra,g,c,cls:m?(/^\d+$/.test(c)?g+"학년 "+c+"반":g+c+"반"):"기타",year:new Date(f.time).getFullYear(),form,topic};
 }
 const fmtTime=t=>{const d=new Date(t);return (d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");};
 const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+"MB":Math.max(1,Math.round(b/1024))+"KB";
@@ -205,7 +212,7 @@ function visible(){
   const q=$("q").value.replace(/\s/g,"");
   const latest={}; FILES.forEach(f=>{ const k=f.year+"|"+f.key; if(!latest[k]||latest[k].time<f.time) latest[k]=f; });
   return FF().filter(f=>f.year===YEAR).map(f=>({...f,isNew:latest[f.year+"|"+f.key]===f}))
-    .filter(f=>(!$("onlyNew").checked||f.isNew)&&(!q||f.key.replace(/\s/g,"").includes(q)||f.cls.replace(/\s/g,"").includes(q)));
+    .filter(f=>(!$("onlyNew").checked||f.isNew)&&(!q||f.key.replace(/\s/g,"").includes(q)||f.cls.replace(/\s/g,"").includes(q)||f.team.includes(q)));
 }
 function byClass(v){
   const m=new Map(); v.forEach(f=>{ if(!m.has(f.cls)) m.set(f.cls,{g:f.g,c:f.c,files:[]}); m.get(f.cls).files.push(f); });
@@ -214,10 +221,20 @@ function byClass(v){
 }
 function itemHtml(f){
   return '<div class="item'+(f.isNew?'':' isold')+'" data-id="'+f.id+'"><div><div class="who">'+esc(f.who)+'</div>'+
-    '<div class="meta">'+(f.extra?'<span class="pill" style="color:#1d5fd1">'+(f.extra==="영상"?"🎬 영상":"📊 발표자료")+'</span>':'')+'<span>'+fmtTime(f.time)+' 제출</span><span>'+fmtSize(f.size)+'</span><span class="pill '+(f.isNew?'new">최신':'old">이전 제출')+'</span></div></div>'+
+    '<div class="meta">'+(f.doc?'<span class="pill doc">'+(f.doc==="발표 PPT"?"📽 발표 PPT":"🖼 포스터")+'</span>':'')+(f.extra?'<span class="pill" style="color:#1d5fd1">'+(f.extra==="영상"?"🎬 영상":"📊 발표자료")+'</span>':'')+'<span>'+fmtTime(f.time)+' 제출</span><span>'+fmtSize(f.size)+'</span><span class="pill '+(f.isNew?'new">최신':'old">이전 제출')+'</span></div></div>'+
     '<div class="acts"><button class="btn small" data-act="open">열기</button><button class="btn small" data-act="dl">받기</button><button class="btn small danger" data-act="del">삭제</button></div></div>';
 }
 const openState={};
+/* 같은 조(팀)끼리 묶기: 학생이 고른 조 이름이 같으면 한 상자에 */
+function teamsHtml(files){
+  const m=new Map(), solo=[]; files.forEach(f=>{ if(!f.team){ solo.push(f); return; } if(!m.has(f.team)) m.set(f.team,[]); m.get(f.team).push(f); });
+  if(!m.size) return files.map(itemHtml).join("");
+  const ord=t=>{ const n=parseInt(t,10); return isNaN(n)?999:n; };
+  return [...m.entries()].sort((a,b)=>ord(a[0])-ord(b[0])||a[0].localeCompare(b[0],"ko")).map(([t,fs])=>{
+    const who=[...new Set(fs.map(f=>f.who))];
+    return '<div class="team"><div class="teamh"><b>👥 '+esc(t)+'</b><span class="tm">'+esc(who.join(", "))+' · 파일 '+fs.length+'개</span><button class="btn small" type="button" data-zipteam="'+esc(t)+'" data-zipcls2="'+esc(fs[0].cls)+'">이 조 전체 받기</button></div>'+fs.map(itemHtml).join("")+'</div>';
+  }).join("")+(solo.length?'<div class="team" style="background:none;border-style:dashed"><div class="teamh"><b>조를 안 고른 제출</b><span class="tm">'+solo.length+'개</span></div>'+solo.map(itemHtml).join("")+'</div>':"");
+}
 function render(){
   const ts=topics(); if(!ts.includes(TOPIC)) TOPIC=ts[0]||null;
   const cnt=l=>new Set(l.map(f=>f.key)).size;
@@ -235,7 +252,7 @@ function render(){
     '<details class="cls" id="cls'+i+'" data-cls="'+esc(g.cls)+'"'+(openState[YEAR+g.cls]===false?'':' open')+'><summary><span class="arrow">▶</span><span class="ct">'+esc(g.cls)+'</span>'+
     '<span class="cn">'+new Set(g.files.map(f=>f.key)).size+'명 · 파일 '+g.files.length+'개</span>'+
     '<button class="btn small" type="button" data-zipcls="'+esc(g.cls)+'">이 반 전체 받기</button></summary>'+
-    '<div class="list">'+g.files.map(itemHtml).join("")+'</div></details>'
+    '<div class="list">'+teamsHtml(g.files)+'</div></details>'
   ).join(""):'<div class="empty">'+(inYear.length?"찾는 학생이 없어요.":"아직 제출한 학생이 없어요. 학생이 'PDF 만들고 제출'을 누르면 여기에 나타나요.")+'</div>';
   $("zipBtn").textContent=YEAR+"년 전체 받기"; $("zipBtn").disabled=!groups.length;
 }
@@ -255,6 +272,7 @@ async function getBlob(id){ const j=await api({action:"file",id});
 function saveBlob(blob,name){ const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),60000); }
 
 $("list").addEventListener("click",async e=>{
+  const zt=e.target.closest("[data-zipteam]"); if(zt){ e.preventDefault(); const t=zt.dataset.zipteam, c=zt.dataset.zipcls2; zipFiles(visible().filter(f=>f.cls===c&&f.team===t),TOPIC+"_"+YEAR+"년_"+c.replace(/\s/g,"")+"_"+t,false,zt); return; }
   const z=e.target.closest("[data-zipcls]"); if(z){ e.preventDefault(); const cls=z.dataset.zipcls; zipFiles(visible().filter(f=>f.cls===cls),TOPIC+"_"+FORM+"_"+YEAR+"년_"+cls.replace(/\s/g,""),false,z); return; }
   const b=e.target.closest("[data-act]"); if(!b) return;
   const item=b.closest(".item"), id=item.dataset.id, f=FILES.find(x=>x.id===id); if(!f) return;
