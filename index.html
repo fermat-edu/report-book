@@ -209,7 +209,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="hints.js?v=5"></script>
+<script src="hints.js?v=6"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -382,6 +382,38 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
      {t:"V",id:"vfile",label:"발표 영상",guide:"발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 제출함에 함께 저장돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
   ]};
 /* 모든 양식: 칸마다 ‘이 부분 빼기’와 ‘내용 추가’를 할 수 있게 */
+KINDS.stat={name:"통계보고서",short:"통계 보고서",pre:"t2_",color:"c-teal",major:"num",sub:"ga",
+  desc:"궁금한 질문을 통계로 탐구해요. 전국학생통계활용대회 통계포스터처럼 동기 → 질문·가설 → 조사 → 분석 → 결론 순서로 써요.",
+  subLabel:null,titleHint:"예: 매운맛은 감각일까, 정보일까?",
+  secs:[
+   {h:"한 줄 요약",nonum:true,items:[
+     L("subt","부제 (한 줄 요약)","예: 표시 방식에 따라 달라지는 음식 선택 분석"),
+     P("sum",3,"다른 칸을 다 쓴 다음 마지막에 써요. 무엇을 궁금해했고, 어떻게 조사해서, 무엇을 알게 되었는지 2~3문장으로 정리해요.",{label:"요약",photo:false})]},
+   {h:"탐구 동기 및 목적",items:[
+     S("why","탐구 동기",5,"생활 속에서 무엇을 보고 궁금해졌나요? 실제로 겪은 일이나 본 장면에서 시작하면 좋아요.\n예) 친구들과 모둠 활동을 할 때마다 갈등이 생겨서, 어떤 조합이 가장 좋은지 궁금해졌다."),
+     S("goal","탐구 목적",3,"이 탐구로 무엇을 알아내고 싶나요? 알아낸 것을 어디에 쓸 수 있나요?",{photo:false})]},
+   {h:"탐구 질문과 가설",items:[
+     S("q","탐구 질문",4,"통계로 답을 찾을 수 있는 질문을 차례대로 써요.\n예) 1) 청소년은 매운 음식을 고를 때 무엇을 보고 고를까?\n     2) 표시 방식이 바뀌면 선택이 달라질까?",{photo:false}),
+     S("hyp","가설",3,"질문에 대한 나의 예상을 ‘~할수록 ~할 것이다’처럼 확인할 수 있게 써요.\n예) 맵기를 숫자로 표시하면 그림으로 표시할 때보다 선택이 더 정확해질 것이다.",{photo:false})]},
+   {h:"사전 조사",items:[
+     R("prior","알아본 내용","예: 스코빌 지수란? / 비슷한 선행 연구","책, 기사, 논문, 통계청 자료 등에서 미리 찾아본 내용을 내 말로 정리해요. 출처도 함께 적어요.",1)]},
+   {h:"탐구 과정",items:[
+     S("method","조사 방법과 대상",5,"어떤 방법으로 자료를 모았나요? 누구에게, 언제, 몇 명에게 조사했나요?\n예) 설문조사 – ○○중학교 1~3학년 163명, 2026년 6월 / 공공데이터 – 국가데이터처 KOSIS"),
+     S("steps","탐구 순서",4,"탐구를 어떤 순서로 했는지 화살표로 정리해요.\n예) 사전조사 → 설문 설계 → 1차 설문 → 결과 분석 → 2차 설문 → 인터뷰 → 결론",{photo:false})]},
+   {h:"조사 결과와 분석",items:[
+     R("res","결과","예: 매운 음식을 고를 때 가장 많이 보는 것","그래프나 표를 사진으로 넣고, 아래에 해석을 써요.\n해석은 ‘사실(숫자) → 의미 → 이유’ 순서로!\n예) 응답자의 92%가 맵기 표시를 보고 골랐다. 표시가 선택에 큰 영향을 준다는 뜻이다. 실제로 먹어 보기 전에는 맛을 알 수 없기 때문으로 보인다.",2)]},
+   {h:"결론 및 제언",items:[
+     S("concl","결론",5,"탐구 질문마다 답을 쓰고, 가설이 맞았는지(맞다 / 틀리다 / 일부 맞다) 밝혀요.",{photo:false}),
+     S("sugg","제언",4,"알게 된 것을 바탕으로 누구에게 무엇을 제안하고 싶나요?\n예) 식품 회사: 맵기를 숫자와 단계로 함께 표시하자 / 학생: 표시를 꼭 확인하자",{photo:false})]},
+   {h:"느낀 점과 한계",items:[
+     S("feel","느낀 점",4,"통계로 탐구하면서 새롭게 배운 점, 팀 활동에서 느낀 점을 써요.",{photo:false}),
+     S("lim","탐구의 한계와 더 알아보고 싶은 점",3,"조사 대상이 적었거나 아쉬웠던 점, 다음에 더 탐구하고 싶은 점을 써요.",{photo:false})]},
+   {h:"더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 인터뷰 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
+   {h:"참고 자료",nonum:true,items:[
+     P("ref",3,"참고한 자료와 통계 출처를 적어요.\n예) 국가데이터처, 「청소년 통계」, 2026 / KOSIS 국가통계포털 https://kosis.kr",{photo:false})]},
+   {h:"부록",nonum:true,optional:true,items:[
+     P("appx",3,"설문지, 완성한 통계포스터 사진처럼 더 보여 주고 싶은 자료를 사진으로 넣어요. (없으면 비워 두세요)",{label:"부록"})]}
+  ]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
@@ -393,7 +425,7 @@ Object.values(KINDS).forEach(k=>{
   });
 });
 const isOff=sec=>!!(sec.canOff&&S_.v[pid("off_"+sec.key)]);
-const EXCL=["ai","dream"];
+const EXCL=["ai","dream","stat"];
 const ORDER=["topic","subject","book"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 const GA="가나다라마바사아자차카타파하".split("");
@@ -430,7 +462,7 @@ const TOPICS=[ // [id, 이름, 보고서 종류(PPT 표지 기준)]
  ["oil","검은 눈물, 석유","book"],["entropy","엔트로피","book"],["earth","지구 과학&경제","topic"],
  ["carbon","탄소","subject"],["light","빛","subject"],["heritage","문화유산","subject"],["pet","반려동물","subject"],
  ["fandom","연예인 팬덤 활동","topic"],["justice","10대를 위한 정의란 무엇인가","book"],["bts","BTS & 데미안","book"],
- ["money","경제의 핏줄 화폐","book"],["stats","통계 보고서 만들기","book"],["air","대기오염","topic"],
+ ["money","경제의 핏줄 화폐","book"],["stats","통계 보고서 만들기","stat"],["air","대기오염","topic"],
  ["juvenile","사회에서 바라보는 소년법의 의미와 기준","book"],["climate","기후변화","topic"],
  ["etc","기타 (직접 입력)",""]];
 const topicKind=()=>{const t=TOPICS.find(x=>x[0]===tk()); return t?t[2]:"";};
@@ -531,7 +563,7 @@ function renderTopics(){
 function renderKinds(){
   renderTopics();
   const cur=S_.v.kind;
-  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?[topicKind()]:[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
+  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?(topicKind()==="stat"?["stat","own"]:[topicKind()]):[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
 }
 function renderForm(){
   renderKinds();
