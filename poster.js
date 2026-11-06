@@ -33,7 +33,7 @@ const r4=v=>Math.round(v/4)*4;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 let stripEl=null, zoom=1, sizer=null, S=null, KEY="", O={}, root=null, wrap=null, board=null, bar=null, side=null, scale=1, sel=null, hist=[], tSave=null, typed=false, ro=null;
-const th=()=>THEMES[D.theme]||THEMES.mint;
+const th=()=>D&&D.pal||THEMES[D&&D.theme]||THEMES.mint;
 const dk=()=>isDark(th().bg);
 const SL=()=>MODE==="slides";
 const pagesOf=()=>SL()?D.slides:[D];
@@ -70,35 +70,117 @@ const TPLS=[["a","수상작 2단형","위에 탐구 동기와 순서도, 가운�
   ["b","3단 신문형","왼쪽 단에 동기·질문·과정, 가운데·오른쪽 단에 그래프 4개와 추가 조사"],
   ["d","큰 그래프 강조형","위에 동기·질문·방법 3칸, 핵심 그래프 하나를 크게, 작은 그래프 3개"],
   ["e","지그재그 이야기형","그래프와 해석이 왼쪽·오른쪽을 번갈아 나오는 이야기 흐름"],
-  ["c","간단형","큰 글 칸과 그래프 2개, 처음 해 보는 팀에게 좋아요"]];
+  ["c","간단형","큰 글 칸과 그래프 2개, 처음 해 보는 팀에게 좋아요"],
+  ["f","수상작 4단 촘촘형","위에 동기·질문·가설·방법 4칸, 탐구 과정, 그래프 6개, 결론·제언·느낀 점 3칸"],
+  ["g","질문별 카드형","왼쪽에 탐구 흐름, 오른쪽에 질문 카드 4장(그래프+해석+한 줄)과 종합 분석"],
+  ["h","인포그래픽 숫자형","맨 위에 핵심 숫자 3개, 그래프 6개, 교차 분석과 추가 조사 사진"],
+  ["i","교차분석 심화형","결과 그래프 2개를 크게, 집단별 비교 그래프 2개, 결론·제언·참고 자료"],
+  ["j","신문 기사형","신문 머리글과 3단 기사, 그래프 5개·인터뷰·공공데이터까지 꽉 차게"]];
 function template(kind){
   const t=th(), dark=dk(), panel=dark?t.sub:"#ffffff", items=[], push=o=>items.push(o);
   const team=(O.team&&O.team())||"팀명 | 팀원 이름", title=(O.title&&O.title())||"우리의 궁금증을 질문으로 써요?";
-  const head=(x,y,w,txt,o)=>push(mk("title",Object.assign({x,y,w,h:40,text:txt,font:"Do Hyeon",size:23,align:"left",radius:8,pad:12,fill:t.main},o||{})));
-  const body=(x,y,w,h,txt,o)=>push(mk("text",Object.assign({x,y,w,h,text:txt,size:15,fill:panel,radius:10},o||{})));
-  const call=(x,y,w,h,txt)=>push(mk("text",{x,y,w,h,text:txt,size:15,bold:true,color:dark?t.accent:t.main,fill:dark?"":t.sub,stroke:"",sw:0,radius:8,valign:"middle",pad:10}));
-  const chart=(x,y,w,h,kind,ttl,labels,values,unit)=>push(mk("chart",{x,y,w,h,radius:10,fill:panel,chart:{kind,title:ttl,labels,values,unit:unit||"명",showVal:true,mono:false,color:t.main}}));
-  const flow=(x,y,w,h,steps,vertical)=>{ push(mk("shape",{shape:"round",x,y,w,h,fill:panel,stroke:t.sub,sw:2,radius:10}));
+  const head=(x,y,w,txt,o)=>push(mk("title",Object.assign({tag:"H",x,y,w,h:40,text:txt,font:"Do Hyeon",size:23,align:"left",radius:8,pad:12,fill:t.main},o||{})));
+  const body=(x,y,w,h,txt,o)=>push(mk("text",Object.assign({tag:"B",x,y,w,h,text:txt,size:15,fill:panel,radius:10},o||{})));
+  const call=(x,y,w,h,txt)=>push(mk("text",{tag:"C",x,y,w,h,text:txt,size:15,bold:true,color:dark?t.accent:t.main,fill:dark?"":t.sub,stroke:"",sw:0,radius:8,valign:"middle",pad:10}));
+  const chart=(x,y,w,h,kind,ttl,labels,values,unit)=>push(mk("chart",{tag:"G",x,y,w,h,radius:10,fill:panel,chart:{kind,title:ttl,labels,values,unit:unit||"명",showVal:true,mono:false,color:t.main}}));
+  const img=(x,y,w,h)=>push(mk("image",{tag:"I",x,y,w,h,radius:10}));
+  const stat=(x,y,w,h,num,lab)=>{ body(x,y,w,h,""); push(mk("text",{tag:"N",x,y:y+10,w,h:h-50,text:num,font:"Black Han Sans",size:50,color:t.accent,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+    push(mk("text",{tag:"NL",x,y:y+h-44,w,h:36,text:lab,size:15,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:2})); };
+  const flow=(x,y,w,h,steps,vertical)=>{ push(mk("shape",{tag:"FB",shape:"round",x,y,w,h,fill:panel,stroke:t.sub,sw:2,radius:10}));
     const n=steps.length;
     if(!vertical){ const slot=(w-24)/n, d=Math.min(54,slot-26);
       steps.forEach((s,k)=>{ const cx=x+12+slot*k+slot/2;
-        push(mk("shape",{shape:"ellipse",x:r4(cx-d/2),y:y+16,w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
-        push(mk("text",{x:r4(cx-d/2),y:y+16,w:d,h:d,text:String(k+1),font:"Black Han Sans",size:24,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
-        push(mk("text",{x:r4(cx-slot/2+2),y:y+20+d,w:r4(slot-4),h:h-28-d,text:s,size:13,bold:true,align:"center",fill:"",stroke:"",sw:0,pad:2}));
-        if(k<n-1) push(mk("shape",{shape:"arrow",x:r4(cx+d/2+3),y:y+16+d/2-8,w:Math.max(12,r4(slot-d-6)),h:16,fill:t.sub,radius:0})); }); }
+        push(mk("shape",{tag:"FC",alt:k%2,shape:"ellipse",x:r4(cx-d/2),y:y+16,w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
+        push(mk("text",{tag:"FN",x:r4(cx-d/2),y:y+16,w:d,h:d,text:String(k+1),font:"Black Han Sans",size:24,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+        push(mk("text",{tag:"FT",x:r4(cx-slot/2+2),y:y+20+d,w:r4(slot-4),h:h-28-d,text:s,size:13,bold:true,align:"center",fill:"",stroke:"",sw:0,pad:2}));
+        if(k<n-1) push(mk("shape",{tag:"FA",shape:"arrow",x:r4(cx+d/2+3),y:y+16+d/2-8,w:Math.max(12,r4(slot-d-6)),h:16,fill:t.sub,radius:0})); }); }
     else{ const rowH=(h-16)/n, d=Math.min(40,rowH-8);
       steps.forEach((s,k)=>{ const yy=y+8+rowH*k+(rowH-d)/2;
-        push(mk("shape",{shape:"ellipse",x:x+12,y:r4(yy),w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
-        push(mk("text",{x:x+12,y:r4(yy),w:d,h:d,text:String(k+1),font:"Black Han Sans",size:19,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
-        push(mk("text",{x:x+20+d,y:r4(yy-4),w:w-32-d,h:d+8,text:s,size:14,bold:true,fill:"",stroke:"",sw:0,valign:"middle",pad:2})); }); }
+        push(mk("shape",{tag:"FC",alt:k%2,shape:"ellipse",x:x+12,y:r4(yy),w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
+        push(mk("text",{tag:"FN",x:x+12,y:r4(yy),w:d,h:d,text:String(k+1),font:"Black Han Sans",size:19,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+        push(mk("text",{tag:"FT",x:x+20+d,y:r4(yy-4),w:w-32-d,h:d+8,text:s,size:14,bold:true,fill:"",stroke:"",sw:0,valign:"middle",pad:2})); }); }
   };
   const header=()=>{
-    push(mk("title",{x:36,y:30,w:W-72,h:112,text:title,font:"Black Han Sans",size:58,color:t.main,fill:"",radius:0,align:"center"}));
-    push(mk("shape",{shape:"line",x:80,y:166,w:150,h:4,fill:t.main}));
-    push(mk("text",{x:240,y:146,w:548,h:44,text:"부제: 무엇을 어떻게 조사했는지 한 줄로",size:21,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:4}));
-    push(mk("shape",{shape:"line",x:798,y:166,w:150,h:4,fill:t.main}));
-    push(mk("text",{x:724,y:196,w:264,h:38,text:team,size:14,bold:true,color:t.main,fill:panel,stroke:t.main,sw:2,radius:999,align:"center",valign:"middle",pad:6}));
+    push(mk("title",{tag:"T",x:36,y:30,w:W-72,h:112,text:title,font:"Black Han Sans",size:58,color:t.main,fill:"",radius:0,align:"center"}));
+    push(mk("shape",{tag:"L",shape:"line",x:80,y:166,w:150,h:4,fill:t.main}));
+    push(mk("text",{tag:"ST",x:240,y:146,w:548,h:44,text:"부제: 무엇을 어떻게 조사했는지 한 줄로",size:21,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:4}));
+    push(mk("shape",{tag:"L",shape:"line",x:798,y:166,w:150,h:4,fill:t.main}));
+    push(mk("text",{tag:"TM",x:724,y:196,w:264,h:38,text:team,size:14,bold:true,color:t.main,fill:panel,stroke:t.main,sw:2,radius:999,align:"center",valign:"middle",pad:6}));
   };
+  const C3=[40,361,682], W3=305, C4=[40,281,522,763], W4=225;
+  if(kind==="f"){ // 수상작 4단 촘촘형: 위 4칸 → 과정 → 그래프 6개 → 아래 3칸
+    header();
+    [["1. 탐구 동기","생활 속에서 궁금해진 장면"],["2. 탐구 질문","질문 1)\n질문 2)\n질문 3)"],["3. 가설","~할수록 ~할 것이다."],["4. 조사 방법","구글 설문지\n대상: ○○중 ○○명\n기간: ○월 ○일~○일"]].forEach(([h,b],i)=>{ head(C4[i],248,W4,h,{size:21}); body(C4[i],296,W4,150,b,{size:14}); });
+    head(40,462,948,"5. 탐구 과정"); flow(40,510,948,120,["주제 정하기","사전 조사","설문 만들기","배포·응답 모으기","정리·분석","결론·제언"]);
+    head(40,646,948,"6. 설문 결과와 분석 (응답 ○○명)");
+    const K=[["bar","질문 1",["항목 A","항목 B","항목 C","항목 D"],[34,21,15,8]],["pie","질문 2",["예","아니요","모르겠다"],[41,22,9]],["hbar","질문 3",["항목 A","항목 B","항목 C"],[29,17,11]],
+      ["donut","질문 4",["매우 그렇다","그렇다","보통","아니다"],[14,30,18,7]],["line","질문 5 (학년별)",["1학년","2학년","3학년"],[12,18,25]],["bar","질문 6",["항목 A","항목 B","항목 C"],[22,16,9]]];
+    K.forEach((k,i)=>{ const x=C3[i%3], y=i<3?694:956; chart(x,y,W3,200,k[0],k[1],k[2],k[3]); call(x,y+206,W3,48,"→ 알게 된 점 한 줄"); });
+    [["7. 결론","질문마다 답, 가설이 맞았는지"],["8. 제언","누구에게 무엇을 제안할까?"],["9. 느낀 점과 한계","배운 점, 아쉬운 점"]].forEach(([h,b],i)=>{ head(C3[i],1218,W3,h); body(C3[i],1266,W3,154,b); });
+    return items;
+  }
+  if(kind==="g"){ // 질문별 결과 카드형: 왼쪽 탐구 흐름, 오른쪽 질문 카드 4장 + 종합 분석
+    header(); const L=40, LW=300, R=360, RW=628, CW=306;
+    head(L,248,LW,"1. 탐구 동기"); body(L,296,LW,150,"생활 속에서 궁금해진 장면\n알아내고 싶은 것");
+    head(L,462,LW,"2. 질문과 가설"); body(L,510,LW,150,"질문 1)\n질문 2)\n가설: ~할수록 ~할 것이다.");
+    head(L,676,LW,"3. 조사 과정"); flow(L,724,LW,250,["사전 조사","설문 만들기","친구들에게 배포","결과 정리","분석·결론"],true);
+    head(L,990,LW,"4. 조사 대상"); body(L,1038,LW,110,"○○중 1~3학년 ○○명\n기간: ○월 ○일~○일\n방법: 구글 설문지");
+    head(L,1164,LW,"8. 느낀 점과 한계"); body(L,1212,LW,208,"배운 점, 아쉬운 점, 더 알아보고 싶은 점");
+    head(R,248,RW,"5. 질문별 결과");
+    [["bar","질문 1",["항목 A","항목 B","항목 C"],[30,18,9]],["pie","질문 2",["예","아니요","모르겠다"],[41,22,9]],["hbar","질문 3",["항목 A","항목 B","항목 C","항목 D"],[27,19,12,6]],["donut","질문 4",["매우 그렇다","그렇다","보통","아니다"],[14,30,18,7]]].forEach((k,i)=>{
+      const x=R+(i%2)*(CW+16), y=i<2?296:658; chart(x,y,CW,210,k[0],k[1],k[2],k[3]); body(x,y+216,CW,80,"해석: 사실(숫자) → 의미 → 이유",{size:14}); call(x,y+302,CW,44,"→ 핵심 한 줄"); });
+    head(R,1020,RW,"6. 종합 분석 (교차 분석)"); chart(R,1068,400,200,"bar","학년별로 비교하기",["1학년","2학년","3학년"],[45,58,71],"%"); call(R+416,1068,212,200,"→ 질문끼리, 집단끼리 비교해서 알게 된 점");
+    head(R,1284,RW,"7. 결론 및 제언"); body(R,1332,RW,88,"결론: 질문마다 답 · 가설 확인\n제언: 누구에게 무엇을 제안할까?");
+    return items;
+  }
+  if(kind==="h"){ // 인포그래픽 숫자형: 핵심 숫자 3개 → 그래프 6개 → 교차 분석·추가 조사 → 결론
+    header();
+    stat(C3[0],248,W3,130,"○○명","설문에 답한 친구"); stat(C3[1],248,W3,130,"○○%","가장 많이 고른 답"); stat(C3[2],248,W3,130,"1위","우리 탐구의 핵심 결과");
+    head(40,394,460,"1. 탐구 동기"); body(40,442,460,120,"생활 속에서 궁금해진 장면, 알아내고 싶은 것");
+    head(528,394,460,"2. 질문과 가설"); body(528,442,460,120,"질문 1) 질문 2)\n가설: ~할수록 ~할 것이다.");
+    head(40,578,948,"3. 조사 결과 한눈에 보기 (구글 설문 · ○○명)");
+    const K=[["bar","질문 1"],["pie","질문 2"],["hbar","질문 3"],["donut","질문 4"],["bar","질문 5"],["pie","질문 6"]];
+    K.forEach((k,i)=>{ const x=C3[i%3], y=i<3?626:856; const pie=k[0]==="pie"||k[0]==="donut"; chart(x,y,W3,170,k[0],k[1],pie?["예","아니요","모르겠다"]:["항목 A","항목 B","항목 C"],pie?[41,22,9]:[29,17,11]); call(x,y+174,W3,40,"→ 알게 된 점"); });
+    head(40,1086,600,"4. 더 깊이 보기 (교차 분석)"); chart(40,1134,600,180,"hbar","집단별 비교 (예: 남·여, 학년)",["1학년","2학년","3학년"],[45,58,71],"%");
+    head(660,1086,328,"5. 추가 조사",{fill:t.accent}); img(660,1134,328,180);
+    body(C3[0],1330,W3,90,"6. 결론\n질문마다 답, 가설 확인",{size:14}); body(C3[1],1330,W3,90,"7. 제언\n누구에게 무엇을 제안?",{size:14}); body(C3[2],1330,W3,90,"8. 느낀 점과 한계",{size:14});
+    return items;
+  }
+  if(kind==="i"){ // 교차분석 심화형: 결과 2개 크게 → 집단별 비교 2개 → 결론·제언·참고 자료
+    header();
+    head(40,248,600,"1. 탐구 동기 및 목적"); body(40,296,600,150,"생활 속에서 무엇이 궁금했나요?\n이 탐구로 무엇을 알아내고 싶나요?");
+    head(660,248,328,"2. 탐구 질문"); body(660,296,328,150,"질문 1)\n질문 2)\n질문 3)");
+    head(40,462,948,"3. 가설과 조사 방법"); body(40,510,464,110,"가설 1: ~할수록 ~할 것이다.\n가설 2:"); flow(524,510,464,110,["설문 만들기","배포","정리","분석"]);
+    head(40,636,464,"4. 결과 ① 질문 1"); chart(40,684,464,230,"bar","질문 1 그래프",["항목 A","항목 B","항목 C","항목 D"],[34,21,15,8]); call(40,920,464,48,"→ 그래프에서 알게 된 점");
+    head(524,636,464,"4. 결과 ② 질문 2"); chart(524,684,464,230,"pie","질문 2 그래프",["예","아니요","모르겠다"],[41,22,9]); call(524,920,464,48,"→ 그래프에서 알게 된 점");
+    head(40,984,948,"5. 교차 분석: 집단별로 비교하기");
+    chart(40,1032,464,200,"bar","1학년 vs 3학년",["1학년","3학년"],[38,62],"%"); chart(524,1032,464,200,"hbar","남학생 vs 여학생",["남학생","여학생"],[44,56],"%");
+    call(40,1238,948,44,"→ 집단에 따라 이렇게 달랐어요: ");
+    [["6. 결론","가설이 맞았는지"],["7. 제언","학생·학교에게"],["8. 참고 자료","책·기사·통계청 출처"]].forEach(([h,b],i)=>{ head(C3[i],1294,W3,h,{h:36,size:20}); body(C3[i],1336,W3,84,b,{size:14}); });
+    return items;
+  }
+  if(kind==="j"){ // 신문 기사형: 신문 머리 + 3단 기사 + 아래 결론
+    push(mk("text",{tag:"ST",x:40,y:22,w:948,h:30,text:"○○중 통계 신문  ·  2026년 ○월 ○일  ·  제○호",size:15,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+    push(mk("shape",{tag:"L",shape:"line",x:40,y:56,w:948,h:3,fill:t.ink}));
+    push(mk("title",{tag:"T",x:36,y:62,w:W-72,h:112,text:title,font:"Black Han Sans",size:60,color:t.main,fill:"",radius:0,align:"center"}));
+    push(mk("shape",{tag:"L",shape:"line",x:40,y:180,w:948,h:6,fill:t.ink}));
+    push(mk("text",{tag:"ST",x:40,y:192,w:660,h:40,text:"부제: 무엇을 어떻게 조사했는지 한 줄로",size:20,bold:true,color:t.ink,fill:"",stroke:"",sw:0,valign:"middle",pad:2}));
+    push(mk("text",{tag:"TM",x:724,y:194,w:264,h:36,text:team,size:14,bold:true,color:t.main,fill:panel,stroke:t.main,sw:2,radius:999,align:"center",valign:"middle",pad:6}));
+    push(mk("shape",{tag:"L",shape:"line",x:40,y:242,w:948,h:2,fill:t.ink}));
+    const X=[40,364,688], CW=300;
+    head(X[0],256,CW,"1. 탐구 동기"); body(X[0],304,CW,170,"생활 속에서 궁금해진 장면\n알아내고 싶은 것");
+    head(X[0],490,CW,"2. 질문과 가설"); body(X[0],538,CW,160,"질문 1)\n질문 2)\n가설: ~할수록 ~할 것이다.");
+    head(X[0],714,CW,"3. 조사 방법"); flow(X[0],762,CW,230,["사전 조사","설문 만들기","배포","정리·분석","결론"],true);
+    head(X[0],1008,CW,"4. 조사 대상"); body(X[0],1056,CW,90,"○○중 ○○명 · ○월 ○일~○일");
+    [["5. 결과 ① 질문 1","bar"],["5. 결과 ② 질문 2","pie"],["5. 결과 ③ 질문 3","hbar"]].forEach((k,i)=>{ const y=[256,570,884][i], h=i<2?200:170; head(X[1],y,CW,k[0]); const pie=k[1]==="pie";
+      chart(X[1],y+48,CW,h,k[1],k[0].slice(8)+" 그래프",pie?["예","아니요","모르겠다"]:["항목 A","항목 B","항목 C"],pie?[41,22,9]:[29,17,11]); call(X[1],y+54+h,CW,i<2?44:38,"→ 알게 된 점"); });
+    head(X[2],256,CW,"6. 결과 ④ 질문 4"); chart(X[2],304,CW,200,"donut","질문 4 그래프",["매우 그렇다","그렇다","보통","아니다"],[14,30,18,7]); call(X[2],510,CW,44,"→ 알게 된 점");
+    head(X[2],570,CW,"7. 인터뷰 · 추가 조사",{fill:t.accent}); img(X[2],618,CW,150); body(X[2],774,CW,94,"인터뷰에서 들은 말, 직접 관찰한 내용",{size:14});
+    head(X[2],884,CW,"8. 공공데이터 비교"); chart(X[2],932,CW,170,"line","통계청 자료",["2022","2023","2024","2025"],[12,15,19,24],"%"); call(X[2],1108,CW,38,"→ 우리 결과와 비교");
+    head(40,1162,948,"9. 결론 및 제언"); body(40,1210,464,98,"결론\n· 질문마다 답 · 가설 확인"); body(524,1210,464,98,"제언\n· 학생에게 · 학교에게",{fill:dark?panel:t.sub,stroke:""});
+    body(40,1324,600,96,"느낀 점과 한계: 배운 점, 아쉬운 점"); body(660,1324,328,96,"참고 자료: 책·기사·통계청 출처",{size:14});
+    return items;
+  }
   if(kind==="d"){ // 큰 그래프 강조형: 위 3칸 → 대표 그래프 크게 → 작은 그래프 3개 → 결론
     header(); const X=[40,364,688], CW=300;
     head(X[0],248,CW,"1. 탐구 동기"); body(X[0],296,CW,170,"생활 속에서 궁금해진 장면\n알아내고 싶은 것");
@@ -125,7 +207,7 @@ function template(kind){
     head(40,784,948,"4. 결과 ② 질문 2");
     body(40,832,368,172,"해석\n사실(숫자) → 의미 → 이유"); call(40,1012,368,52,"→ 핵심 한 줄"); chart(428,832,560,232,"pie","질문 2 그래프",["예","아니요","모르겠다"],[41,22,9]);
     head(40,1080,600,"5. 결론 및 제언"); body(40,1128,600,180,"결론: 질문마다 답, 가설이 맞았는지\n제언: 누구에게 무엇을 제안할까?",{fill:dark?panel:t.sub,stroke:""});
-    head(660,1080,328,"6. 추가 조사",{fill:t.accent}); push(mk("image",{x:660,y:1128,w:328,h:180,radius:10}));
+    head(660,1080,328,"6. 추가 조사",{fill:t.accent}); push(mk("image",{tag:"I",x:660,y:1128,w:328,h:180,radius:10}));
     head(40,1324,948,"7. 느낀 점과 한계"); body(40,1372,948,48,"배운 점, 아쉬운 점, 더 알아보고 싶은 점",{valign:"middle"});
     return items;
   }
@@ -141,7 +223,7 @@ function template(kind){
     chart(X[1],576,CW,208,"hbar","질문 3 그래프",["항목 A","항목 B","항목 C","항목 D"],[27,19,12,6]); call(X[1],790,CW,56,"→ 그래프에서 알게 된 점 한 줄");
     chart(X[2],576,CW,208,"donut","질문 4 그래프",["매우 그렇다","그렇다","보통","아니다"],[14,30,18,7]); call(X[2],790,CW,56,"→ 그래프에서 알게 된 점 한 줄");
     head(X[1],862,624,"5. 추가 조사 (인터뷰 · 관찰 · 공공데이터)");
-    push(mk("image",{x:X[1],y:910,w:CW,h:290,radius:10}));
+    push(mk("image",{tag:"I",x:X[1],y:910,w:CW,h:290,radius:10}));
     chart(X[2],910,CW,200,"line","공공데이터 그래프",["2022","2023","2024","2025"],[12,15,19,24],"%"); call(X[2],1116,CW,84,"→ 인터뷰·추가 자료로 알게 된 점");
     head(40,1216,948,"7. 결론 및 제언");
     body(40,1264,464,156,"결론\n· 질문 1:\n· 질문 2:\n· 가설은 (맞았다 / 틀렸다 / 일부 맞았다)");
@@ -154,7 +236,7 @@ function template(kind){
     head(528,248,460,"2. 탐구 과정"); flow(528,296,460,182,["사전 조사","설문 설계","설문 배포","결과 분석","결론·제언"]);
     head(40,494,948,"3. 사전 조사");
     body(40,542,600,136,"책·기사·통계청(KOSIS) 자료에서 미리 알아본 내용을 정리해요. 출처도 함께!");
-    push(mk("image",{x:660,y:542,w:328,h:136,radius:10}));
+    push(mk("image",{tag:"I",x:660,y:542,w:328,h:136,radius:10}));
     head(40,694,948,"4. 설문조사 결과와 분석 (○○중 학생 ○○명, ○월 ○일~○일)");
     chart(40,742,460,206,"bar","질문 1 그래프",["항목 A","항목 B","항목 C","항목 D"],[34,21,15,8]); call(40,954,460,48,"→ 그래프에서 알게 된 점 한 줄");
     chart(40,1010,460,196,"hbar","질문 2 그래프",["항목 A","항목 B","항목 C"],[29,17,11]); call(40,1212,460,48,"→ 그래프에서 알게 된 점 한 줄");
@@ -167,10 +249,10 @@ function template(kind){
   }
   // 간단형
   const box=(x,y,w,h,hd,b)=>{ head(x,y,w,hd,{h:44,size:24}); body(x,y+52,w,h-52,b,{size:18}); };
-  push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:200,fill:t.main,radius:0}));
-  push(mk("title",{x:40,y:28,w:W-80,h:96,text:title,size:56,fill:"",radius:0}));
-  push(mk("text",{x:40,y:128,w:W-80,h:44,text:"부제: 무엇을 조사했는지 한 줄로 써요",size:20,bold:true,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:6}));
-  push(mk("text",{x:W-300,y:208,w:260,h:40,text:team,size:15,color:t.ink,fill:"",stroke:"",sw:0,align:"right",valign:"middle",pad:4}));
+  push(mk("shape",{tag:"BAND",shape:"rect",x:0,y:0,w:W,h:200,fill:t.main,radius:0}));
+  push(mk("title",{tag:"TB",x:40,y:28,w:W-80,h:96,text:title,size:56,fill:"",radius:0}));
+  push(mk("text",{tag:"STB",x:40,y:128,w:W-80,h:44,text:"부제: 무엇을 조사했는지 한 줄로 써요",size:20,bold:true,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:6}));
+  push(mk("text",{tag:"TM",x:W-300,y:208,w:260,h:40,text:team,size:15,color:t.ink,fill:"",stroke:"",sw:0,align:"right",valign:"middle",pad:4}));
   box(40,256,464,250,"탐구 동기 및 목적","생활 속에서 무엇이 궁금했나요?\n이 탐구로 무엇을 알아내고 싶나요?");
   box(524,256,464,250,"탐구 질문과 가설","질문 1)\n질문 2)\n가설: ~할수록 ~할 것이다.");
   box(40,526,948,150,"조사 방법","구글 설문지 · 대상: ○○중 1~3학년 ○○명 · 기간: ○월 ○일~○일\n사전조사 → 설문 만들기 → 배포 → 결과 정리 → 분석");
@@ -182,6 +264,60 @@ function template(kind){
   box(660,1172,328,244,"느낀 점과 한계","배운 점, 아쉬운 점");
   return items;
 }
+
+/* ---------- 추천 디자인 (전국학생통계활용대회 수상작 디자인 참고) ----------
+   배치는 그대로 두고 배경·제목·소제목·글 상자·그래프 상자의 색과 글꼴만 바꿔요. */
+const DZ=[
+ {k:"news",n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},frame:4,
+  f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},C:{fill:"",color:"$accent",bold:true},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},TM:{fill:"",stroke:"$main",sw:1,radius:0,color:"$ink"},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},L:{fill:"$ink"}}},
+ {k:"pop",n:"패스트푸드 팝",d:"노란 배경, 빨간 알약 소제목, 테두리 제목",pal:{bg:"#ffd23f",main:"#e63946",sub:"#fff1c1",accent:"#2a9d8f",ink:"#2b2118"},bgx:{type:"pat",pat:"stripes",color:"#ffffff",a:0.22,size:40},frame:10,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#ffffff",tshadow:true},H:{radius:999},B:{stroke:"$ink",sw:2,radius:14},C:{fill:"$sub",color:"$main"},G:{stroke:"$ink",sw:2,radius:14},FB:{stroke:"$ink",sw:2,radius:14}}},
+ {k:"lav",n:"라벤더 카드",d:"연보라 땡땡이, 보라 테두리 카드",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.13,size:36},frame:0,
+  f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{H:{radius:12},B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18},FB:{stroke:"$main",sw:2,radius:18}}},
+ {k:"mint",n:"민트 라인",d:"하얀 바탕, 민트색 둥근 테두리",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},frame:6,
+  f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{H:{radius:999},B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
+ {k:"navy",n:"네이비 클래식",d:"남색 굵은 테두리, 그림자 카드",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},frame:14,
+  f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{H:{radius:0,bold:true},B:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},FB:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true}}},
+ {k:"sale",n:"레드 세일",d:"빨간 바탕, 노란 테두리 제목, 하얀 카드",pal:{bg:"#c62828",main:"#c62828",sub:"#ffe0b2",accent:"#ffca28",ink:"#2b1a12"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$accent",tline:6,tlc:"#7f0000",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$accent",stroke:"",sw:0,color:"$ink"},H:{fill:"$accent",color:"$ink",radius:6},B:{stroke:"",sw:0,radius:10,shadow:true},C:{fill:"#fff7ec",color:"$main"},G:{stroke:"",sw:0,radius:10,shadow:true},FB:{stroke:"",sw:0,radius:10},NL:{color:"$ink"}}},
+ {k:"sunset",n:"선셋 그라데이션",d:"주황→노랑 그라데이션, 둥근 그림자 카드",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"b"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:5,tlc:"#c2410c"},ST:{color:"#ffffff"},L:{fill:"#ffffff"},H:{radius:999,shadow:true},B:{stroke:"",sw:0,radius:18,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18}}},
+ {k:"retro",n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리, 노란 소제목",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},frame:8,frameC:"#1f1f1f",
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:8},B:{stroke:"$ink",sw:3,radius:10},C:{fill:"#8fd6b0",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:10},FB:{stroke:"$ink",sw:3,radius:10},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
+ {k:"yb",n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 소제목, 테두리 제목",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#fff7c2",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.45,size:34},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:5,tlc:"#ffffff"},H:{radius:10},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
+ {k:"note",n:"모눈 노트",d:"모눈종이, 손글씨 제목, 파란 펜 느낌",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:28},frame:0,
+  f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}}
+];
+const DZ_BASE={T:{fill:"",tline:0,tshadow:false,color:"$main"},ST:{color:"$ink"},L:{fill:"$main"},TM:{color:"$main",fill:"#ffffff",stroke:"$main",sw:2,radius:999},
+  H:{color:"#ffffff",fill:"$main",stroke:"",sw:0,radius:8,shadow:false,bold:false},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,color:"$ink",shadow:false},
+  C:{fill:"$sub",color:"$main",stroke:"",sw:0,bold:true},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},
+  FC:{},FN:{color:"#ffffff"},FT:{color:"$ink"},FA:{fill:"$sub"},N:{color:"$accent"},NL:{color:"$ink"},BAND:{fill:"$main"},TB:{color:"#ffffff"},STB:{color:"#ffffff"},I:{}};
+function tagOf(it){ if(it.tag) return it.tag;
+  if(it.type==="chart") return "G"; if(it.type==="image") return "I";
+  if(it.type==="shape") return it.shape==="arrow"?"FA":LINES.includes(it.shape)?"L":it.shape==="ellipse"&&it.w<=80?"FC":"";
+  if(it.type==="text"){ if(it.role==="title") return it.size>=40?"T":"H"; if(it.fill&&it.bold&&it.valign==="middle"&&!it.sw) return "C"; if(it.fill) return "B"; }
+  return ""; }
+function applyDesign(i,quiet){
+  const z=DZ[i]; if(!z) return; if(!quiet) snap();
+  D.pal=Object.assign({name:z.n},z.pal); D.dz=i; const P=z.pal, rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v;
+  S.bg=z.pal.bg; if(z.bgx) S.bgx=JSON.parse(JSON.stringify(z.bgx)); else delete S.bgx; if(!SL()){ S.frame=z.frame||0; S.frameC=z.frameC||P.main; }
+  S.items.forEach(it=>{ const tg=tagOf(it); if(!tg) return; const st=Object.assign({},DZ_BASE[tg]||{},z.s[tg]||{});
+    if(tg==="FC") st.fill=it.alt?P.accent:P.main;
+    for(const [k,v] of Object.entries(st)){ if(k==="size"){ continue; } it[k]=rv(v); }
+    if(it.type==="text"){ const f=tg==="T"||tg==="TB"||tg==="N"?z.f.T:tg==="H"?z.f.H:["B","C","ST","STB","TM","FT","NL"].includes(tg)?z.f.B:null; if(f) it.font=f; }
+    if(it.type==="chart"&&it.chart){ it.chart.color=P.main; } });
+  if(!quiet){ render(); save(); if(O.status) O.status("추천 디자인 ‘"+z.n+"’을 입혔어요. 배치와 쓴 내용은 그대로예요. (↶ 되돌리기로 돌아갈 수 있어요)"); }
+}
+function dzPop(){
+  return '<span class="pdd"><button type="button" data-pop="dz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz" data-popbox="dz" hidden><b>배치는 그대로, 색·배경·글꼴만 바뀌어요</b><span class="pdzg">'+
+    DZ.map((z,i)=>{ const P=z.pal, bgc=z.bgx&&z.bgx.type==="grad"?"linear-gradient(180deg,"+z.bgx.c1+","+z.bgx.c2+")":P.bg, H=Object.assign({},DZ_BASE.H,z.s.H||{}), B=Object.assign({},DZ_BASE.B,z.s.B||{}), rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v;
+      const T=Object.assign({},DZ_BASE.T,z.s.T||{});
+      return '<button type="button" data-dz="'+i+'"><span class="dzpv" style="background:'+bgc+';border:'+(z.frame?Math.min(4,z.frame/3)+'px solid '+(z.frameC||P.main):'1px solid #ddd')+'">'+
+        '<i style="font-family:\''+z.f.T+'\';color:'+rv(T.color)+';text-shadow:'+(T.tline?'0 0 2px '+rv(T.tlc)+',0 0 2px '+rv(T.tlc):'none')+'">통계 포스터</i>'+
+        '<u style="background:'+(rv(H.fill)||'transparent')+';color:'+rv(H.color)+';border-radius:'+Math.min(8,H.radius)+'px;border:'+(H.sw?'1px solid '+rv(H.stroke):'0')+';font-family:\''+z.f.H+'\'">1. 탐구 동기</u>'+
+        '<s style="background:'+rv(B.fill)+';border:'+(B.sw?Math.max(1,Math.round(B.sw/2))+'px solid '+rv(B.stroke):'0')+';border-radius:'+Math.min(6,B.radius/2)+'px;'+(B.shadow?'box-shadow:0 2px 4px rgba(0,0,0,.25);':'')+'"></s></span>'+
+        '<b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>'; }).join("")+'</span></span></span>'; }
 
 /* ---------- 그래프 데이터 ---------- */
 function parseData(txt,opt){
@@ -444,13 +580,13 @@ function toolbar(){
      '<label class="pinl">색 조합 <select data-theme>'+Object.entries(THEMES).map(([k,v])=>'<option value="'+k+'">'+v.name+'</option>').join("")+'</select></label>'+
      (SL()?'':'<label class="pinl">바깥 테두리 <select data-frame><option value="0">없음</option><option value="4">얇게</option><option value="8">보통</option><option value="14">두껍게</option></select></label>')+
      '<span class="pinl">보기 <button type="button" data-zoom="-1" aria-label="작게 보기">−</button><span class="pzoom pnum">100%</span><button type="button" data-zoom="1" aria-label="크게 보기">＋</button></span>'+
-   '</div><div class="prow"><span class="plab">'+(SL()?'구성':'배치')+'</span><button type="button" data-tpl="next" class="pmain">'+(SL()?'✨ 추천 구성':'✨ 추천 배치')+'</button><span class="ptplnote" aria-live="polite"></span></span><button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">'+(SL()?'처음부터 다시':'모두 지우기')+'</button>'+
+   '</div><div class="prow"><span class="plab">'+(SL()?'구성':'배치')+'</span><button type="button" data-tpl="next" class="pmain">'+(SL()?'✨ 추천 구성':'✨ 추천 배치')+'</button><span class="ptplnote" aria-live="polite"></span></span>'+(SL()?'':dzPop())+'<button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">'+(SL()?'처음부터 다시':'모두 지우기')+'</button>'+
    '</div>'+
    '<div class="prow psel" hidden></div><div class="prow psel2" hidden></div>'+
   '</div>';
 }
 function tplNote(){ const el=bar&&bar.querySelector(".ptplnote"); if(!el) return; if(SL()) return deckNote(el); const i=D.tplIdx;
-  el.innerHTML=i==null?'누를 때마다 수상작을 참고한 배치 <b>5가지</b>가 차례로 바뀌어요.':'<b>지금 '+(i+1)+'/'+TPLS.length+' · '+esc(TPLS[i][1])+'</b> – '+esc(TPLS[i][2])+'<br>다시 누르면 다음 배치 → ‘'+esc(TPLS[(i+1)%TPLS.length][1])+'’'; }
+  el.innerHTML=i==null?'누를 때마다 수상작을 참고한 배치 <b>'+TPLS.length+'가지</b>가 차례로 바뀌어요. 6번부터는 내용을 많이 넣는 수상작형이에요.':'<b>지금 '+(i+1)+'/'+TPLS.length+' · '+esc(TPLS[i][1])+'</b> – '+esc(TPLS[i][2])+'<br>다시 누르면 다음 배치 → ‘'+esc(TPLS[(i+1)%TPLS.length][1])+'’'; }
 function toolbarState(){ tplNote(); const fr=bar.querySelector("[data-frame]"); if(fr) fr.value=String(S.frame||0); const ts=bar.querySelector("[data-theme]"); if(ts) ts.value=D.theme; const bg=bar.querySelector("[data-bg]"); if(bg) bg.value=/^#[0-9a-f]{6}$/i.test(S.bg)?S.bg:"#ffffff"; }
 function panel(){
   const box=bar.querySelector(".psel"), box2=bar.querySelector(".psel2"), it=sel&&find(sel); if(!it){ box.hidden=box2.hidden=true; box.innerHTML=box2.innerHTML=""; return; }
@@ -572,6 +708,7 @@ function onBar(e){
   const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
   bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true);
   const it=sel&&find(sel);
+  if(b.dataset.dz!=null){ applyDesign(+b.dataset.dz); return; }
   if(b.dataset.tsty){ const pr=textPresets().find(x=>x[0]===b.dataset.tsty); if(pr) addItem(mk("text",JSON.parse(JSON.stringify(pr[2])))); return; }
   if(b.dataset.bgs!=null){ snap(); S.bg=b.dataset.bgs; delete S.bgx; render(); save(); return; }
   if(b.dataset.bgg!=null){ const g=bgPresets().grad[+b.dataset.bgg]; snap(); S.bg=g[0]; S.bgx={type:"grad",c1:g[0],c2:g[1],dir:g[2]}; render(); save(); return; }
@@ -593,7 +730,7 @@ function onBar(e){
     if(S.items.length&&!D.fresh&&!b.dataset.sure){ b.dataset.sure="1"; b.textContent="한 번 더 누르면 새 배치로 바뀌어요"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="✨ 추천 배치"; },3500); return; }
     delete b.dataset.sure; b.textContent="✨ 추천 배치";
     const n=((D.tplIdx==null?-1:D.tplIdx)+1)%TPLS.length, T=TPLS[n];
-    snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; D.tplIdx=n; sel=null; render(); save(false,true); D.fresh=true;
+    snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; D.tplIdx=n; if(D.dz!=null) applyDesign(D.dz,true); sel=null; render(); save(false,true); D.fresh=true;
     if(O.status) O.status("추천 배치 "+(n+1)+"/"+TPLS.length+" ‘"+T[1]+"’을 깔았어요. 다시 누르면 다음 배치로 바뀌어요."); return; }
   if(b.dataset.zoom){ const Z=[1,1.5,2,3]; zoom=Z[clamp(Z.indexOf(zoom)+(+b.dataset.zoom),0,Z.length-1)]; fit(); return; }
   if(b.dataset.undo){ undo(); return; }
@@ -616,7 +753,7 @@ function onBar(e){
 let rngSnap=false;
 function onBarChange(e){
   const t=e.target;
-  if(t.matches("[data-theme]")){ snap(); const o=th(); D.theme=t.value; recolor(o,th()); const tmp=document.createElement("div"); tmp.innerHTML=toolbar(); bar.innerHTML=tmp.firstChild.innerHTML; render(); strip(); save(); return; }
+  if(t.matches("[data-theme]")){ snap(); const o=th(); delete D.pal; delete D.dz; D.theme=t.value; recolor(o,th()); const tmp=document.createElement("div"); tmp.innerHTML=toolbar(); bar.innerHTML=tmp.firstChild.innerHTML; render(); strip(); save(); return; }
   if(t.matches("[data-frame]")){ snap(); S.frame=+t.value; if(!S.frameC) S.frameC=th().main; render(); save(); return; }
   if(t.matches("[data-bg]")){ if(!rngSnap){ snap(); rngSnap=true; } S.bg=t.value; if(S.bgx&&S.bgx.type!=="pat") delete S.bgx; board.style.background=S.bg; paintBg(); save(); if(e.type==="change") rngSnap=false; return; }
   const it=sel&&find(sel); if(!it) return;
@@ -708,7 +845,7 @@ function slideFrame(style,title){
 }
 function slide(style,kind,o){
   o=o||{}; const t=th(), dark=dk(), panel=dark?t.sub:"#ffffff";
-  const team=(O.team&&O.team())||"○조 | 발표자 이름", ttl=(O.title&&O.title())||"우리 탐구의 제목을 써요";
+  const team=(O.team&&O.team())||(O.deck==="dream"?"○학년 ○반 이름":"○조 | 발표자 이름"), ttl=(O.title&&O.title())||(O.deck==="dream"?"나의 꿈: ○○○":"우리 탐구의 제목을 써요");
   if(kind==="cover"||kind==="end"){
     const items=[], push=x=>items.push(x), big=kind==="cover"?ttl:"감사합니다!", sub=kind==="cover"?(o.sub||"부제: 무엇을 어떻게 조사했는지 한 줄로"):"궁금한 점이 있으면 질문해 주세요 🙋";
     let bg=dark?t.bg:"#ffffff";
@@ -748,9 +885,9 @@ function slide(style,kind,o){
     body(A.x+cw+28,A.y,A.w-cw-28,A.h-108,o.body||"해석\n\n사실(숫자): \n의미: \n이유: ");
     call(A.x+cw+28,A.y+A.h-92,A.w-cw-28,92,o.call||"→ 핵심을 한 줄로!"); }
   if(kind==="photo"){ const cw=r4(A.w*0.5);
-    push(mk("image",{x:A.x,y:A.y,w:cw,h:A.h,radius:16}));
+    push(mk("image",{tag:"I",x:A.x,y:A.y,w:cw,h:A.h,radius:16}));
     body(A.x+cw+28,A.y,A.w-cw-28,A.h,o.body||"사진에 대한 설명을 써요."); }
-  if(kind==="big"){ push(mk("image",{x:A.x,y:A.y,w:A.w,h:A.h-72,radius:16}));
+  if(kind==="big"){ push(mk("image",{tag:"I",x:A.x,y:A.y,w:A.w,h:A.h-72,radius:16}));
     push(mk("text",{x:A.x,y:A.y+A.h-60,w:A.w,h:60,text:o.body||"사진 설명: 무엇을, 언제, 어디서",size:24,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0})); }
   if(kind==="flow"){ const steps=o.steps||["설문 문항 만들기","구글 설문지 배포","응답 모으기","그래프로 정리","분석 · 결론"], n=steps.length, fh=260, slot=A.w/n, d=96;
     push(mk("shape",{shape:"round",x:A.x,y:A.y,w:A.w,h:fh,fill:panel,stroke:t.sub,sw:2,radius:16}));
@@ -763,6 +900,16 @@ function slide(style,kind,o){
   return {id:uid(),bg:F.bg,items};
 }
 function deck(style){
+  if(O.deck==="dream") return [slide(style,"cover",{sub:"나의 꿈과 진로를 소개합니다"}),
+    slide(style,"photo",{title:"1. 나는 어떤 사람일까?",body:"좋아하는 일:\n잘하는 일:\n계속 하고 싶은 일:"}),
+    slide(style,"two",{title:"2. 커리어넷 흥미 검사 결과",h1:"나의 흥미 유형",b1:"1순위:\n2순위:",h2:"추천 직업",b2:"1순위:\n2순위:",fill2:true}),
+    slide(style,"photo",{title:"3. 내가 고른 직업",body:"직업 이름:\n\n고른 이유:"}),
+    slide(style,"two",{title:"4. 이 직업은 어떤 일을 할까?",h1:"하는 일",b1:"• \n• \n• ",h2:"필요한 능력·성격",b2:"• \n• ",fill2:true}),
+    slide(style,"two",{title:"5. 관련 학과와 자격증",h1:"관련 학과",b1:"• ○○학과\n• ○○학과",h2:"관련 자격증",b2:"• \n• "}),
+    slide(style,"flow",{title:"6. 나의 진로 로드맵",steps:["중학교","고등학교","대학교 (학과)","자격·경험","나의 꿈 직업"],body:"지금부터 할 일: "}),
+    slide(style,"two",{title:"7. 학습 계획",h1:"과목별 계획",b1:"수학:\n과학:\n영어:\n사회:",h2:"진로 탐색 활동",b2:"동아리·체험 활동:",fill2:true}),
+    slide(style,"two",{title:"8. 느낀 점과 다짐",h1:"느낀 점",b1:"꿈조사를 하며 새로 알게 된 점",h2:"나의 다짐",b2:"꿈을 이루기 위해 꼭 할 일"}),
+    slide(style,"end")];
   return [slide(style,"cover"),
     slide(style,"photo",{title:"1. 탐구 동기",body:"생활 속에서 어떤 장면을 보고 궁금해졌나요?\n\n이 탐구로 알아내고 싶은 것은?"}),
     slide(style,"two",{title:"2. 탐구 질문과 가설",h1:"탐구 질문",b1:"질문 1)\n\n질문 2)",h2:"가설",b2:"~할수록 ~할 것이다.",fill2:true}),
@@ -781,7 +928,7 @@ function applyDeck(){
   if(O.status) O.status("추천 구성 "+(n+1)+"/"+DESIGNS.length+" ‘"+T[1]+"’으로 슬라이드 "+D.slides.length+"장을 만들었어요. 다시 누르면 다음 디자인으로 바뀌어요.");
 }
 function deckNote(el){ const i=D.deckIdx;
-  el.innerHTML=i==null?'누르면 발표 순서대로 슬라이드 <b>11장</b>이 한 번에 생겨요. 누를 때마다 디자인 <b>3가지</b>가 차례로 바뀌어요.'
+  el.innerHTML=i==null?'누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요. 누를 때마다 디자인 <b>3가지</b>가 차례로 바뀌어요.'
     :'<b>지금 '+(i+1)+'/'+DESIGNS.length+' · '+esc(DESIGNS[i][1])+'</b> – '+esc(DESIGNS[i][2])+'<br>다시 누르면 다음 디자인 → ‘'+esc(DESIGNS[(i+1)%DESIGNS.length][1])+'’ (쓴 내용은 새로 바뀌어요 · 색만 바꾸려면 ‘테마’)'; }
 function strip(){
   if(!SL()||!stripEl) return;

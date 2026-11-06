@@ -172,6 +172,8 @@ function parse(f){ // "2학년3반_홍길동_1102_2130.pdf"
   else if(parts.length===2){ form=parts[0]; base=parts[1]; }
   const form0=form; let doc=""; const st=["통계발표PPT","통계발표영상","통계보고서"].includes(form); if(st) form="통계보고서";
   if(form==="꿈조사발표영상"){ form="꿈조사보고서"; doc="발표 영상"; }
+  if(form==="꿈조사발표PPT"){ form="꿈조사보고서"; doc=extra==="발표자료"?"PPT 파일":"발표 PPT"; }
+  if(form==="꿈조사보고서"&&!doc&&!extra) doc="보고서";
   if(st) doc=extra==="영상"?"발표 영상":extra==="발표자료"?"PPT 파일":form0==="통계발표PPT"?"발표 PPT":"포스터";
   const m=base.match(/(\d+)\s*학년(.+?)반_(.*)$/); // "1학년가우스1반_홍길동", "1학년S반_김철수"
   let g=m?normGrade(m[1]):99, cr=m?m[2].replace(/\s+/g,""):""; const gm=cr.match(/^(\d+)(\D.*)$/); if(gm){ g=normGrade(gm[1]); cr=gm[2]; }
@@ -219,14 +221,15 @@ function visible(){
 function byClass(v){
   const m=new Map(); v.forEach(f=>{ if(!m.has(f.cls)) m.set(f.cls,{g:f.g,c:f.c,files:[]}); m.get(f.cls).files.push(f); });
   const r=c=>{const i=CORDER.indexOf(String(c)); if(i>=0) return i; const k=NEWCLS.indexOf(String(c)); return k<0?999:100+k;};
-  return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||y.time-x.time)}));
+  return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||(DOCO[x.doc]??9)-(DOCO[y.doc]??9)||y.time-x.time)}));
 }
 function itemHtml(f){
   return '<div class="item'+(f.isNew?'':' isold')+'" data-id="'+f.id+'"><div><div class="who">'+esc(f.who)+'</div>'+
-    '<div class="meta">'+(f.doc?'<span class="pill doc">'+({"포스터":"🖼 포스터","발표 PPT":"📽 발표 PPT (PDF)","PPT 파일":"📊 PPT 파일","발표 영상":"🎬 발표 영상"}[f.doc]||f.doc)+'</span>':'')+(f.extra&&!f.doc?'<span class="pill" style="color:#1d5fd1">'+(f.extra==="영상"?"🎬 영상":"📊 발표자료")+'</span>':'')+'<span>'+fmtTime(f.time)+' 제출</span><span>'+fmtSize(f.size)+'</span><span class="pill '+(f.isNew?'new">최신':'old">이전 제출')+'</span></div></div>'+
+    '<div class="meta">'+(f.doc?'<span class="pill doc">'+({"포스터":"🖼 포스터","보고서":"📄 꿈조사 보고서","발표 PPT":"📽 발표 PPT (PDF)","PPT 파일":"📊 PPT 파일","발표 영상":"🎬 발표 영상"}[f.doc]||f.doc)+'</span>':'')+(f.extra&&!f.doc?'<span class="pill" style="color:#1d5fd1">'+(f.extra==="영상"?"🎬 영상":"📊 발표자료")+'</span>':'')+'<span>'+fmtTime(f.time)+' 제출</span><span>'+fmtSize(f.size)+'</span><span class="pill '+(f.isNew?'new">최신':'old">이전 제출')+'</span></div></div>'+
     '<div class="acts"><button class="btn small" data-act="open">열기</button><button class="btn small" data-act="dl">받기</button><button class="btn small danger" data-act="del">삭제</button></div></div>';
 }
 const openState={};
+const DOCO={"보고서":0,"포스터":0,"발표 PPT":1,"PPT 파일":2,"발표 영상":3};
 /* 같은 조(팀)끼리 묶기: 학생이 고른 조 이름이 같으면 한 상자에 */
 function teamsHtml(files){
   const m=new Map(), solo=[]; files.forEach(f=>{ if(!f.tkey){ solo.push(f); return; } if(!m.has(f.tkey)) m.set(f.tkey,[]); m.get(f.tkey).push(f); });
