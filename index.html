@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>페르마 탐구 보고서 · 독서록</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&family=Gowun+Dodum&family=Sunflower:wght@500;700&family=Yeon+Sung&family=Gugi&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Gamja+Flower&family=Hi+Melody&family=Dokdo&family=Song+Myung&display=swap">
 <style>
 /* Layout: kind picker on top, then cover card, live TOC preview, section cards stacked like a booklet; sticky bottom bar */
 :root{
@@ -70,8 +70,26 @@ img{max-width:100%}[hidden]{display:none!important}
 .ppop[hidden]{display:none}
 .ptplnote{font-size:12.5px;color:var(--muted);flex:1 1 220px;line-height:1.4}.ptplnote b{color:var(--ink)}
 .ptpl{min-width:230px}.ptpl button{text-align:left;white-space:normal;line-height:1.35}.ptpl small{color:var(--muted)}
-.pstk{flex-direction:row;flex-wrap:wrap;width:248px}
-.pstk button{font-size:20px;padding:3px 6px}
+.pstk{width:300px;max-height:340px;overflow:auto}.pstk b,.pbgpop b{font-size:12px;color:var(--muted);margin-top:4px}
+.pstkg{display:flex;flex-wrap:wrap;gap:2px}.pstkg button{font-size:22px;padding:3px 5px;border:0;background:none;cursor:pointer;border-radius:6px}.pstkg button:hover{background:var(--field)}
+.pshp:not([hidden]){display:grid!important}.pshp{grid-template-columns:repeat(3,1fr);width:270px;gap:4px!important}
+.pshp button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px!important}.pshp canvas{width:72px;height:48px}.pshp small{font-size:11.5px}
+.ptsty{width:280px;max-height:380px;overflow:auto}.ptsty button{padding:8px!important;text-align:center;background:#f7f9f9!important}.ptsty button span{display:inline-block;font-size:22px;padding:2px 12px;line-height:1.3}
+.pfancy{background:linear-gradient(135deg,#ffe9f3,#e6f0ff)!important}
+.pcolor{display:inline-flex!important;align-items:center;gap:5px}.pcolor i{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid rgba(0,0,0,.25)}
+.pswatch{width:232px}.pswg{display:flex;flex-wrap:wrap;gap:5px}
+.pswg>button{width:30px;height:30px;padding:0!important;border-radius:7px!important;border:1px solid rgba(0,0,0,.18)!important;cursor:pointer}
+.pswnone{font-size:12.5px!important}
+.pbgpop{width:300px;max-height:440px;overflow:auto;left:auto!important;right:0}
+.ppat>button{width:auto!important;height:auto!important;display:flex;flex-direction:column;align-items:center;padding:3px!important;background:#fff}.ppat canvas{width:78px;height:52px;border-radius:5px}.ppat small{font-size:11px}
+.pbgrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.pbgrow button{font-size:12.5px!important}
+.prow input[type=range]{width:90px;accent-color:#2f8792}
+.psel2{border-top:1px dashed var(--line);padding-top:6px}
+.pbgc{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ptbg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.pi-text .pt{position:relative}
+.pguide{position:absolute;pointer-events:none;background:#e6007e;z-index:50}.pguide[hidden]{display:none}
+.pgv{left:50%;top:0;bottom:0;width:calc(2px*var(--inv));margin-left:calc(-1px*var(--inv))}.pgh{top:50%;left:0;right:0;height:calc(2px*var(--inv));margin-top:calc(-1px*var(--inv))}
 .pdanger{color:var(--brand)!important}
 .pmain{background:#fee500!important;border-color:#e6cf00!important;color:#191600!important;font-weight:700}
 .pnum{min-width:24px;text-align:center;font-size:13px}
@@ -271,7 +289,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
-<script src="poster.js?v=9"></script>
+<script src="poster.js?v=10"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -587,8 +605,8 @@ function itemEdit(it,subs){
   switch(it.t){
     case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div data-fxbox="'+it.id+'">'+fxBox(it)+'</div></div>';
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
-    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
-    case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성’을 누르면 발표 순서(표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이 한 번에 생겨요. 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-key="slides_'+id+'"></div>';
+    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 미리캔버스처럼 꾸미고, 고른 것마다 그림자·투명도·회전도 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
+    case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성’을 누르면 발표 순서(표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이 한 번에 생겨요. 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 꾸밀 수 있어요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-key="slides_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
