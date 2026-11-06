@@ -66,7 +66,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .pinl{display:inline-flex;gap:4px;align-items:center;font-size:12.5px}
 .pinl input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
 .pdd{position:relative}
-.ppop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:120px}
+.ppop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:120px;max-width:calc(100vw - 24px)}
 .ppop[hidden]{display:none}
 .ptplnote{font-size:12.5px;color:var(--muted);flex:1 1 220px;line-height:1.4}.ptplnote b{color:var(--ink)}
 .ptpl{min-width:230px}.ptpl button{text-align:left;white-space:normal;line-height:1.35}.ptpl small{color:var(--muted)}
@@ -80,7 +80,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .pswatch{width:232px}.pswg{display:flex;flex-wrap:wrap;gap:5px}
 .pswg>button{width:30px;height:30px;padding:0!important;border-radius:7px!important;border:1px solid rgba(0,0,0,.18)!important;cursor:pointer}
 .pswnone{font-size:12.5px!important}
-.pbgpop{width:300px;max-height:440px;overflow:auto;left:auto!important;right:0}
+.pbgpop{width:300px;max-height:440px;overflow:auto}
 .ppat>button{width:auto!important;height:auto!important;display:flex;flex-direction:column;align-items:center;padding:3px!important;background:#fff}.ppat canvas{width:78px;height:52px;border-radius:5px}.ppat small{font-size:11px}
 .pbgrow{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.pbgrow button{font-size:12.5px!important}
 .prow input[type=range]{width:90px;accent-color:#2f8792}
@@ -139,6 +139,10 @@ img{max-width:100%}[hidden]{display:none!important}
 .vbtn:disabled{opacity:.5}
 .vchk{font-size:13px;display:inline-flex;gap:5px;align-items:center}
 .vcuts{display:flex;flex-wrap:wrap;gap:6px}.vchip{font-size:12.5px;background:#fde3dc;color:#8a2a12;border-radius:999px;padding:3px 4px 3px 10px;display:inline-flex;gap:4px;align-items:center}
+.vvol{position:absolute;bottom:0;height:45%;background:#3a86ff;opacity:.75}.vvol.dn{background:#9aa5a7}
+.vblue{background:#e3eeff;color:#1d4fb8;border:1.5px solid #a9c8ff}.vgray{background:#eef1f2;color:#4a5557;border:1.5px solid #c9d2d4}
+.vnote{font-size:13px;font-weight:700;color:var(--muted)}
+.vchipb{background:#e3eeff;color:#1d4fb8}.vq.vsm{flex-direction:row;padding:6px 10px}
 .vchip button{border:0;background:#fff;border-radius:50%;width:20px;height:20px;cursor:pointer;line-height:1;padding:0}
 .vout{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
 .vq{font:inherit;font-size:13.5px;border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--field);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start}
@@ -313,8 +317,8 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
-<script src="poster.js?v=10"></script>
-<script src="video.js?v=1"></script>
+<script src="poster.js?v=11"></script>
+<script src="video.js?v=3"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -637,7 +641,7 @@ function itemEdit(it,subs){
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
     case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 미리캔버스처럼 꾸미고, 고른 것마다 그림자·투명도·회전도 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
     case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성’을 누르면 발표 순서(표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이 한 번에 생겨요. 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 꾸밀 수 있어요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-key="slides_'+id+'"></div>';
-    case "VE": return '<p class="guide">① 휴대폰으로 찍은 발표 영상을 골라요 (끊어서 찍었으면 여러 개를 골라 순서대로 이어 붙여요).\n② 실수한 곳에서 ‘✂ 여기부터 지우기 시작’ → 끝나는 곳에서 ‘✂ 여기까지 지우기’를 눌러요. 지울 부분은 빨갛게 표시돼요.\n③ 크기를 고르고 ‘🎬 다듬은 영상 만들기’를 누르면, 남길 영상 길이만큼 시간이 걸려요. 그동안 화면을 끄거나 다른 앱으로 가지 마세요.\n④ 다 만들면 ‘영상 제출’로 선생님께 올리고, ‘📤 카톡으로 보내기’로 카카오톡에도 보낼 수 있어요.</p><div id="videoMount" data-key="video_'+id+'"></div>';
+    case "VE": return '<p class="guide">① 휴대폰으로 찍은 발표 영상을 골라요 (끊어서 찍었으면 여러 개를 골라 순서대로 이어 붙여요).\n② 실수한 곳에서 ‘📍 여기부터’ → 끝나는 곳에서 ‘✂ 지우기’를 눌러요 (빨갛게 표시돼요). 목소리가 작은 부분은 ‘🔊 소리 크게’, 큰 부분은 ‘🔉 소리 작게’를 눌러요 (파랗게 표시돼요).\n③ ‘🔈 소리 조절’에서 영상 전체 소리를 키우거나, ‘목소리 고르게 맞추기’를 켜면 여러 친구 목소리 크기가 비슷해져요.\n④ 크기를 고르고 ‘🎬 다듬은 영상 만들기’를 누르면, 남길 영상 길이만큼 시간이 걸려요. 그동안 화면을 끄거나 다른 앱으로 가지 마세요.\n⑤ 다 만들면 ‘영상 제출’로 선생님께 올리고, ‘📤 카톡으로 보내기’로 카카오톡에도 보낼 수 있어요.</p><div id="videoMount" data-key="video_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
@@ -700,7 +704,7 @@ function renderForm(){
   h+='</div>';
   f.innerHTML=h;
   const vm=document.getElementById("videoMount");
-  if(vm&&window.FVideo) FVideo.mount(vm,{key:vm.dataset.key,get:idbGet,put:idbPut,onChange:resetSendIfNeeded,status:m=>{statusEl.textContent=m;},
+  if(vm&&window.FVideo) FVideo.mount(vm,{key:vm.dataset.key,get:idbGet,put:idbPut,onChange:resetSendIfNeeded,status:m=>{statusEl.textContent=m;},alert:(t,m)=>notice(false,t,m),
     name:()=>[(val("team")||"").replace(/\s+/g,""),(val("name")||"").trim(),"발표영상"].filter(Boolean).join("_").replace(/[\\/:*?"<>|]/g,"")});
   updBtn();
   const pm=document.getElementById("posterMount");
@@ -932,7 +936,11 @@ resetArea.addEventListener("click",e=>{
   if(e.target.id==="resetBtn"){resetArea.innerHTML='<span class="confirm">'+esc(isOwn()?OWNK.short:K().short)+' 내용을 지울까요? <button class="btn" id="rYes" type="button">지우기</button><button class="btn" id="rNo" type="button">취소</button></span>';}
   else if(e.target.id==="rYes"){const pre=isOwn()?oid(""):pid(""); Object.keys(S_.v).forEach(x=>{if(x.startsWith(pre)) delete S_.v[x];}); Object.keys(S_.ph).forEach(x=>{if(x.startsWith(pre)) delete S_.ph[x];});
     if(isOwn()){OWN=[]; idbPut("own_"+tk(),[]).catch(()=>{});}
-    if(kindKey()){ vItems().forEach(it=>{ delete FX[it.id]; idbPut(fxKey(it.id),null).catch(()=>{}); }); if(CN.length){ CN=[]; idbPut(cnKey(),[]).catch(()=>{}); } } dirty=true; phDirty=true; saveNow(); resetSend(); renderForm(); resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>'; statusEl.textContent="지웠어요 (학년·반·이름은 남겨 뒀어요)";}
+    if(kindKey()){ vItems().forEach(it=>{ delete FX[it.id]; idbPut(fxKey(it.id),null).catch(()=>{}); }); if(CN.length){ CN=[]; idbPut(cnKey(),[]).catch(()=>{}); } }
+    (async()=>{ // 포스터·슬라이드·발표 영상도 지우기
+      const keys=[]; if(kindKey()) K().secs.forEach(sc=>sc.items.forEach(it=>{ if(it.t==="PO") keys.push("poster_"+pid(it.id)); if(it.t==="SL") keys.push("slides_"+pid(it.id)); if(it.t==="VE") keys.push("video_"+pid(it.id)); }));
+      if(keys.length){ if(window.FPoster) await FPoster.flush(); keys.forEach(k=>{ if(k.startsWith("video_")&&window.FVideo&&FVideo.reset) FVideo.reset(k); }); for(const k of keys) await idbPut(k,null).catch(()=>{}); }
+      dirty=true; phDirty=true; saveNow(); resetSend(); renderForm(); })(); resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>'; statusEl.textContent="지웠어요 (학년·반·이름은 남겨 뒀어요)";}
   else if(e.target.id==="rNo"){resetArea.innerHTML='<button class="btn" id="resetBtn" type="button">이 보고서 지우기</button>';}
 });
 

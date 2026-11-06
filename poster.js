@@ -565,9 +565,11 @@ function recolor(oldT,newT){ const map={}; ["bg","main","sub","accent","ink"].fo
     if(P.bgx) ["c1","c2","color"].forEach(k=>{ if(P.bgx[k]) P.bgx[k]=m(P.bgx[k]); });
     P.items.forEach(it=>{ ["fill","stroke","color","tlc"].forEach(k=>{ if(it[k]) it[k]=m(it[k]); }); if(it.chart&&it.chart.color) it.chart.color=m(it.chart.color); });
     if(String(P.bg).toLowerCase()===oldT.bg.toLowerCase()) P.bg=newT.bg; }); }
+function keepIn(p){ if(!p||p.hidden) return; p.style.left=""; p.style.right=""; p.style.marginLeft="0"; const r=p.getBoundingClientRect(), vw=document.documentElement.clientWidth;
+  if(r.right>vw-8) p.style.marginLeft=Math.round(-(r.right-vw+8))+"px"; const r2=p.getBoundingClientRect(); if(r2.left<8) p.style.marginLeft=Math.round((parseFloat(p.style.marginLeft)||0)+8-r2.left)+"px"; }
 function onBar(e){
   const b=e.target.closest("button"); if(!b) return;
-  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); return; }
+  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
   bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true);
   const it=sel&&find(sel);
   if(b.dataset.tsty){ const pr=textPresets().find(x=>x[0]===b.dataset.tsty); if(pr) addItem(mk("text",JSON.parse(JSON.stringify(pr[2])))); return; }
@@ -798,7 +800,7 @@ function thumb(i){
 }
 function onStrip(e){
   const b=e.target.closest("button"); if(!b) return;
-  if(b.dataset.pop2){ const p=stripEl.querySelector("[data-popbox2]"); p.hidden=!p.hidden; return; }
+  if(b.dataset.pop2){ const p=stripEl.querySelector("[data-popbox2]"); p.hidden=!p.hidden; keepIn(p); return; }
   if(b.dataset.go!=null){ setCur(+b.dataset.go); sel=null; render(); strip(); return; }
   if(b.dataset.lay){ snap(); D.slides.splice(D.cur+1,0,slide(D.style||"band",b.dataset.lay)); setCur(D.cur+1); sel=null; render(); strip(); save(); return; }
   const a=b.dataset.sl; if(!a) return;
