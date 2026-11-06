@@ -56,6 +56,10 @@ img{max-width:100%}[hidden]{display:none!important}
 .subhead{font-weight:700;font-size:15.5px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line);padding:8px 2px;display:flex;gap:8px;align-items:center}
 .subhead input{flex:1;font-weight:700}
 .guide{font-size:13px;color:var(--muted);white-space:pre-line;margin:0}
+.tip{font-size:13px;white-space:pre-line;margin:2px 0 0;padding:7px 10px;border-radius:8px;background:#fff7dc;border:1px solid #f1dd9b;color:#5a4a12}
+.lesson{border:1px solid #f1dd9b;background:#fffbea;border-radius:12px;padding:10px 14px;font-size:14px}
+.lesson summary{cursor:pointer;font-weight:700;color:#5a4a12}
+.lesson ul{margin:6px 0 8px;padding-left:20px}.lesson li{margin:2px 0}.lesson h4{margin:8px 0 2px;font-size:14px}
 .q{display:flex;flex-direction:column;gap:6px}
 .q .qt{font-weight:700;font-size:14.5px}
 
@@ -197,6 +201,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="hints.js"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -473,6 +478,15 @@ function photoBox(id){
     '<button type="button" class="addph" data-add="'+id+'">+ 사진 넣기</button></div>';
 }
 const ta=(id,rows,label)=>'<textarea id="f_'+id+'" data-id="'+id+'" rows="'+rows+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>'+esc(val(id))+'</textarea>';
+/* 주제별 안내문구와 예시 (hints.js) */
+const TH=()=>(window.TOPIC_HINTS||{})[tk()]||null;
+const tip=key=>{const h=TH(); if(!h||!h.it) return ""; const t=h.it[key]||h.it[String(key).replace(/\d+$/,"")]; return t?'<p class="tip">💡 우리 수업: '+esc(t)+'</p>':"";};
+const phx=(key,def)=>{const h=TH(); return (h&&h.ph&&h.ph[key])||def;};
+function lessonBox(){ const h=TH(); if(!h) return "";
+  return '<details class="lesson" open><summary>📚 「'+esc(topicName())+'」 수업에서 배운 내용 · 쓸거리 (눌러서 접기)</summary>'+
+    '<h4>수업에서 배운 내용</h4><ul>'+h.cp.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>'+
+    (h.ideas?'<h4>이런 주제로 써 볼 수 있어요</h4><ul>'+h.ideas.map(c=>'<li>'+esc(c)+'</li>').join("")+'</ul>':'')+
+    '<div class="note">칸마다 노란 💡 상자에 우리 수업에 맞춘 도움말이 있어요. 활동지에 썼던 내용을 떠올리며 내 말로 써요.</div></details>'; }
 const ln=(id,hint,label)=>'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'" placeholder="'+esc(hint||"")+'"'+(label?' aria-label="'+esc(label)+'"':'')+'>';
 function itemEdit(it,subs){
   const id=pid(it.id);
@@ -482,17 +496,17 @@ function itemEdit(it,subs){
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
-    case "P": return '<div class="q">'+(it.label?'<span class="qt">'+esc(it.label)+'</span>':'')+'<p class="guide">'+esc(it.guide)+'</p>'+ta(id,it.rows,it.label||it.guide)+(it.photo?photoBox(id):"")+'</div>';
-    case "L": return '<div class="tbl"><div class="row"><label class="lab" for="f_'+id+'">'+esc(it.label)+'</label><div class="val">'+ln(id,it.hint)+'</div></div></div>';
+    case "P": return '<div class="q">'+(it.label?'<span class="qt">'+esc(it.label)+'</span>':'')+'<p class="guide">'+esc(it.guide)+'</p>'+tip(it.id)+ta(id,it.rows,it.label||it.guide)+(it.photo?photoBox(id):"")+'</div>';
+    case "L": return '<div class="tbl"><div class="row"><label class="lab" for="f_'+id+'">'+esc(it.label)+'</label><div class="val">'+ln(id,phx(it.id,it.hint))+'</div></div></div>';
     case "S": { const s=subs.find(x=>x.id===it.id);
-      return '<div class="q"><div class="subhead">'+esc((s.label?s.label+" ":"")+it.title)+'</div>'+(it.guide?'<p class="guide">'+esc(it.guide)+'</p>':'')+ta(id,it.rows,it.title).replace('<textarea ',it.limit?'<textarea data-limit="'+it.limit+'" ':'<textarea ')+(it.limit?'<div class="count" id="cnt_'+id+'">'+cntText(val(id),it.limit)+'</div>':'')+(it.photo?photoBox(id):"")+'</div>'; }
+      return '<div class="q"><div class="subhead">'+esc((s.label?s.label+" ":"")+it.title)+'</div>'+(it.guide?'<p class="guide">'+esc(it.guide)+'</p>':'')+tip(it.id)+ta(id,it.rows,it.title).replace('<textarea ',it.limit?'<textarea data-limit="'+it.limit+'" ':'<textarea ')+(it.limit?'<div class="count" id="cnt_'+id+'">'+cntText(val(id),it.limit)+'</div>':'')+(it.photo?photoBox(id):"")+'</div>'; }
     case "R": { const mine=subs.filter(x=>x.id===it.id);
       return '<div class="q" data-rep="'+it.id+'">'+mine.map((s,i)=>{const b=id+"_"+s.rk;
-        return '<div class="rep"><div class="subhead"><span class="repnum">'+esc(s.label)+'</span>'+ln(b+"_t",it.titleHint,it.label+" "+(i+1)+" 제목")+
+        return '<div class="rep"><div class="subhead"><span class="repnum">'+esc(s.label)+'</span>'+ln(b+"_t",(!it.added&&TH()&&TH().it&&TH().it[it.id+"_t"])||it.titleHint,it.label+" "+(i+1)+" 제목")+
           '<span data-delrep="'+it.id+'" data-k="'+s.rk+'"><button type="button" class="mini danger" data-ask="1">지우기</button></span></div>'+
-          '<p class="guide">'+esc(it.guide)+'</p>'+ta(b+"_b",6,it.label+" "+(i+1)+" 내용")+photoBox(b+"_b")+'</div>';}).join("")+
+          '<p class="guide">'+esc(it.guide)+'</p>'+(i===0&&!it.added?tip(it.id):'')+ta(b+"_b",6,it.label+" "+(i+1)+" 내용")+photoBox(b+"_b")+'</div>';}).join("")+
         '<button type="button" class="addrep" data-addrep="'+it.id+'">'+(it.added?'＋ 이 부분에 내가 쓰고 싶은 내용 추가하기':'+ '+esc(it.label)+' 소제목 하나 더 넣기')+'</button></div>'; }
-    case "Q": return '<div class="q"><span class="qt">'+esc(it.aLab)+'</span><p class="guide">'+esc(it.aGuide)+'</p>'+ta(id+"_a",3,it.aLab)+
+    case "Q": return '<div class="q"><span class="qt">'+esc(it.aLab)+'</span><p class="guide">'+esc(it.aGuide)+'</p>'+tip(it.id)+ta(id+"_a",3,it.aLab)+
       '<span class="qt">'+esc(it.bLab)+'</span><p class="guide">'+esc(it.bGuide)+'</p>'+ta(id+"_b",4,it.bLab)+'</div>';
   }
   return "";
@@ -522,11 +536,11 @@ function renderForm(){
   // 표지
   h+='<section class="page"><div class="ribbon c-dark">표지<small>학년·반·이름은 한 번만 쓰면 돼요</small></div><div class="pbody">'+
     infoGrid()+
-    '<label class="fld">'+(kindKey()==="ai"?"작품 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(k.autoTitle?"비워 두면 ‘"+k.autoTitle+"’(으)로 들어가요":k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
+    '<label class="fld">'+(kindKey()==="ai"?"작품 제목":"보고서 제목")+'<input type="text" id="f_'+pid("title")+'" data-id="'+pid("title")+'" value="'+esc(val(pid("title")))+'" placeholder="'+esc(TH()&&TH().title&&!k.autoTitle?TH().title:k.autoTitle?"비워 두면 ‘"+k.autoTitle+"’(으)로 들어가요":k.titleHint||(kindKey()==="book"?"예: 데미안을 읽고, 나의 꿈을 생각하다":"예: 미세플라스틱의 문제점과 우리가 할 수 있는 일"))+'"></label>'+
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     (k.solo?'':'<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>')+
-    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · 표지와 차례는 저절로 만들어져요</div>'+
+    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · 표지와 차례는 저절로 만들어져요</div>'+lessonBox()+
   '</div></section>';
   // 차례 미리보기
   h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
