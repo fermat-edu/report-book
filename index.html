@@ -55,6 +55,14 @@ img{max-width:100%}[hidden]{display:none!important}
 .pbody{padding:18px 20px 22px;display:flex;flex-direction:column;gap:14px}
 .subhead{font-weight:700;font-size:15.5px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line);padding:8px 2px;display:flex;gap:8px;align-items:center}
 .subhead input{flex:1;font-weight:700}
+#noticeBox{position:fixed;inset:0;z-index:999;background:rgba(20,26,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+#noticeBox[hidden]{display:none}
+.nb-card{background:var(--paper);color:var(--ink);border-radius:16px;border-top:8px solid var(--green);max-width:380px;width:100%;padding:24px 22px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:10px;align-items:center}
+.nb-card.bad{border-top-color:var(--coral)}
+.nb-ic{font-size:44px;line-height:1}
+.nb-card h2{font-family:var(--display);font-weight:400;font-size:26px;margin:0}
+.nb-m{margin:0;color:var(--muted);font-size:14.5px;white-space:pre-line}
+.nb-card .btn{min-width:140px}
 .guide{font-size:13px;color:var(--muted);white-space:pre-line;margin:0}
 .tip{font-size:13px;white-space:pre-line;margin:2px 0 0;padding:7px 10px;border-radius:8px;background:#fff7dc;border:1px solid #f1dd9b;color:#5a4a12}
 .lesson{border:1px solid #f1dd9b;background:#fffbea;border-radius:12px;padding:10px 14px;font-size:14px}
@@ -986,6 +994,19 @@ async function makeOwn(){
   finally{ pdfBtn.disabled=false; }
 }
 function blobToB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(b);});}
+/* 제출 결과 알림창 */
+function notice(ok,title,msg){
+  let o=document.getElementById("noticeBox");
+  if(!o){ o=document.createElement("div"); o.id="noticeBox";
+    o.innerHTML='<div class="nb-card" role="alertdialog" aria-modal="true" aria-labelledby="nbT"><div class="nb-ic"></div><h2 id="nbT"></h2><p class="nb-m"></p><button type="button" class="btn primary">확인</button></div>';
+    document.body.appendChild(o);
+    o.querySelector("button").addEventListener("click",()=>{o.hidden=true;});
+    o.addEventListener("click",e=>{ if(e.target===o) o.hidden=true; }); }
+  o.querySelector(".nb-ic").textContent=ok?"✅":"⚠️";
+  o.querySelector(".nb-card").classList.toggle("bad",!ok);
+  o.querySelector("h2").textContent=title; o.querySelector(".nb-m").textContent=msg;
+  o.hidden=false; o.querySelector("button").focus();
+}
 async function submitToTeacher(){
   if(!lastPdf) return;
   submitBtn.hidden=true;
@@ -1002,23 +1023,27 @@ async function submitToTeacher(){
     lastPdf.submitted=true;
     statusEl.textContent="✅ 선생님께 제출 완료! ("+shown+")"+warn+" 카톡으로도 보내려면 노란 버튼을 누르세요.";
     if((lastPdf.uploads||[]).length) await sendFiles(label);
+    else notice(true,"제출 완료되었습니다!",shown+warn);
   }catch(e){
     if(e instanceof TypeError){
       try{ await fetch(SUBMIT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body});
-        lastPdf.submitted=true; statusEl.textContent="✅ 선생님께 제출했어요. ("+shown+")"+warn; return; }catch(_){}
+        lastPdf.submitted=true; statusEl.textContent="✅ 선생님께 제출했어요. ("+shown+")"+warn; notice(true,"제출 완료되었습니다!",shown+warn); return; }catch(_){}
     }
     submitBtn.hidden=false;
     statusEl.textContent="⚠️ 제출하지 못했어요. 인터넷 연결을 확인하고 '다시 제출'을 눌러 주세요.";
+    notice(false,"제출하지 못했어요","인터넷 연결을 확인하고 '다시 제출'을 눌러 주세요.");
   }
 }
 async function sendFiles(label){
   let cur=null;
   try{ for(const u of lastPdf.uploads){ cur=u; await uploadFile(u,label); }
     submitBtn.hidden=true; submitBtn.textContent="다시 제출";
-    statusEl.textContent="✅ 보고서와 "+lastPdf.uploads.map(u=>u.label).join(", ")+" 모두 선생님께 제출 완료!"; }
+    statusEl.textContent="✅ 보고서와 "+lastPdf.uploads.map(u=>u.label).join(", ")+" 모두 선생님께 제출 완료!";
+    notice(true,"제출 완료되었습니다!","보고서와 "+lastPdf.uploads.map(u=>u.label).join(", ")+"까지 모두 선생님께 보냈어요."); }
   catch(e){ console.error(e); submitBtn.textContent=cur.label+" 다시 올리기"; submitBtn.hidden=false;
     statusEl.textContent=String(e.message||"")==="no file"?"⚠️ 보고서는 제출됐지만, 선생님 제출함이 아직 이 파일을 받을 수 있게 바뀌지 않았어요. 선생님께 말씀드려 주세요."
-      :"⚠️ 보고서는 제출됐지만 "+cur.label+"은(는) 끝까지 못 올렸어요 ("+Math.floor((cur.sent||0)/cur.size*100)+"%). 와이파이를 확인하고 '"+cur.label+" 다시 올리기'를 눌러 주세요."; }
+      :"⚠️ 보고서는 제출됐지만 "+cur.label+"은(는) 끝까지 못 올렸어요 ("+Math.floor((cur.sent||0)/cur.size*100)+"%). 와이파이를 확인하고 '"+cur.label+" 다시 올리기'를 눌러 주세요.";
+    notice(false,"보고서는 제출됐어요",statusEl.textContent.replace(/^⚠️ /,"")); }
 }
 submitBtn.addEventListener("click",async()=>{submitBtn.disabled=true; try{await submitToTeacher();}finally{submitBtn.disabled=false;}});
 
