@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>페르마 탐구 보고서 · 독서록</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap">
 <style>
 /* Layout: kind picker on top, then cover card, live TOC preview, section cards stacked like a booklet; sticky bottom bar */
 :root{
@@ -55,6 +55,49 @@ img{max-width:100%}[hidden]{display:none!important}
 .pbody{padding:18px 20px 22px;display:flex;flex-direction:column;gap:14px}
 .subhead{font-weight:700;font-size:15.5px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line);padding:8px 2px;display:flex;gap:8px;align-items:center}
 .subhead input{flex:1;font-weight:700}
+/* 통계포스터 편집기 */
+.poster-ed{display:flex;flex-direction:column;gap:10px}
+.pbar{position:sticky;top:0;z-index:20;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prow[hidden]{display:none}
+.prow button,.prow select,.ppop button,.pkinds button,.pmbtn button{font:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);cursor:pointer;white-space:nowrap}
+.prow button[aria-pressed="true"],.pkinds button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.plab{font-size:12px;font-weight:700;color:var(--muted);min-width:40px}
+.pinl{display:inline-flex;gap:4px;align-items:center;font-size:12.5px}
+.pinl input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
+.pdd{position:relative}
+.ppop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:120px}
+.ppop[hidden]{display:none}
+.pstk{flex-direction:row;flex-wrap:wrap;width:248px}
+.pstk button{font-size:20px;padding:3px 6px}
+.pdanger{color:var(--brand)!important}
+.pmain{background:#fee500!important;border-color:#e6cf00!important;color:#191600!important;font-weight:700}
+.pnum{min-width:24px;text-align:center;font-size:13px}
+.pwrap.zoomed{overflow:auto;-webkit-overflow-scrolling:touch}
+.psizer{position:relative}
+.pwrap{position:relative;width:100%;overflow:hidden;border-radius:4px;box-shadow:0 2px 14px rgba(0,0,0,.14);background:#e8ecec}
+.pboard{position:absolute;left:0;top:0;transform-origin:0 0;touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none;--inv:1}
+.pi{position:absolute;box-sizing:border-box;touch-action:none}
+.pi.on{outline:calc(3px*var(--inv)) solid #2f8792;outline-offset:calc(2px*var(--inv))}
+.pt{width:100%;height:100%;box-sizing:border-box;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;overflow:hidden;display:flex;flex-direction:column;outline:none}
+.pi.on .pt{user-select:text;-webkit-user-select:text;cursor:text}
+.pi canvas,.pi img{width:100%;height:100%;display:block}
+.pst{width:100%;height:100%;display:flex;align-items:center;justify-content:center;line-height:1}
+.hm{position:absolute;left:calc(-15px*var(--inv));top:calc(-15px*var(--inv));width:calc(30px*var(--inv));height:calc(30px*var(--inv));border-radius:50%;background:#2f8792;color:#fff;border:calc(2px*var(--inv)) solid #fff;font-size:calc(16px*var(--inv));line-height:1;cursor:move;touch-action:none;padding:0;z-index:5}
+.hr{position:absolute;right:calc(-11px*var(--inv));bottom:calc(-11px*var(--inv));width:calc(22px*var(--inv));height:calc(22px*var(--inv));border-radius:50%;background:#fff;border:calc(3px*var(--inv)) solid #2f8792;cursor:nwse-resize;touch-action:none;z-index:5;box-sizing:border-box}
+.pimg-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#eef2f2;color:#7a8b8d;font-size:22px;border:2px dashed #b9c6c7;box-sizing:border-box}
+.pempty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;color:#8a9799;line-height:1.7;pointer-events:none}
+.pmodal{position:fixed;inset:0;z-index:1000;background:rgba(20,26,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.pmcard{background:var(--paper);color:var(--ink);border-radius:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.pmcard h3{margin:0;font-family:var(--display);font-weight:400;font-size:22px}
+.pfld{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}
+.pfld input,.pfld textarea{font:inherit;font-weight:400;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--field);color:var(--ink)}
+.pkinds{display:flex;flex-wrap:wrap;gap:6px}
+.popts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.popts input[type=text]{font:inherit;border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:var(--field);color:var(--ink)}
+.pprev{width:100%;max-width:460px;align-self:center;border-radius:8px;border:1px solid var(--line)}
+.pmbtn{display:flex;justify-content:flex-end;gap:8px}
+.pnote{font-size:12.5px;color:var(--muted);margin:0}
 #noticeBox{position:fixed;inset:0;z-index:999;background:rgba(20,26,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 #noticeBox[hidden]{display:none}
 .nb-card{background:var(--paper);color:var(--ink);border-radius:16px;border-top:8px solid var(--green);max-width:380px;width:100%;padding:24px 22px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:10px;align-items:center}
@@ -209,7 +252,8 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="hints.js?v=6"></script>
+<script src="hints.js?v=7"></script>
+<script src="poster.js?v=3"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -382,43 +426,23 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
      {t:"V",id:"vfile",label:"발표 영상",guide:"발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 제출함에 함께 저장돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
   ]};
 /* 모든 양식: 칸마다 ‘이 부분 빼기’와 ‘내용 추가’를 할 수 있게 */
-KINDS.stat={name:"통계보고서",short:"통계 보고서",pre:"t2_",color:"c-teal",major:"num",sub:"ga",
-  desc:"궁금한 질문을 통계로 탐구해요. 전국학생통계활용대회 통계포스터처럼 동기 → 질문·가설 → 조사 → 분석 → 결론 순서로 써요.",
-  subLabel:null,titleHint:"예: 매운맛은 감각일까, 정보일까?",
+KINDS.stat={name:"통계보고서",short:"통계 보고서 (통계포스터)",pre:"t2_",color:"c-teal",major:"num",sub:"ga",noToc:true,
+  desc:"조별로 구글 설문지를 만들어 친구들에게 배포하고, 모은 결과로 B4 통계포스터를 자유롭게 만들어요.",
+  subLabel:null,titleHint:"예: 빌런은 없다! 우리 팀 환상의 조합 찾기",
   secs:[
-   {h:"한 줄 요약",nonum:true,items:[
-     L("subt","부제 (한 줄 요약)","예: 표시 방식에 따라 달라지는 음식 선택 분석"),
-     P("sum",3,"다른 칸을 다 쓴 다음 마지막에 써요. 무엇을 궁금해했고, 어떻게 조사해서, 무엇을 알게 되었는지 2~3문장으로 정리해요.",{label:"요약",photo:false})]},
-   {h:"탐구 동기 및 목적",items:[
-     S("why","탐구 동기",5,"생활 속에서 무엇을 보고 궁금해졌나요? 실제로 겪은 일이나 본 장면에서 시작하면 좋아요.\n예) 친구들과 모둠 활동을 할 때마다 갈등이 생겨서, 어떤 조합이 가장 좋은지 궁금해졌다."),
-     S("goal","탐구 목적",3,"이 탐구로 무엇을 알아내고 싶나요? 알아낸 것을 어디에 쓸 수 있나요?",{photo:false})]},
-   {h:"탐구 질문과 가설",items:[
-     S("q","탐구 질문",4,"통계로 답을 찾을 수 있는 질문을 차례대로 써요.\n예) 1) 청소년은 매운 음식을 고를 때 무엇을 보고 고를까?\n     2) 표시 방식이 바뀌면 선택이 달라질까?",{photo:false}),
-     S("hyp","가설",3,"질문에 대한 나의 예상을 ‘~할수록 ~할 것이다’처럼 확인할 수 있게 써요.\n예) 맵기를 숫자로 표시하면 그림으로 표시할 때보다 선택이 더 정확해질 것이다.",{photo:false})]},
-   {h:"사전 조사",items:[
-     R("prior","알아본 내용","예: 스코빌 지수란? / 비슷한 선행 연구","책, 기사, 논문, 통계청 자료 등에서 미리 찾아본 내용을 내 말로 정리해요. 출처도 함께 적어요.",1)]},
-   {h:"탐구 과정",items:[
-     S("method","조사 방법과 대상",5,"어떤 방법으로 자료를 모았나요? 누구에게, 언제, 몇 명에게 조사했나요?\n예) 설문조사 – ○○중학교 1~3학년 163명, 2026년 6월 / 공공데이터 – 국가데이터처 KOSIS"),
-     S("steps","탐구 순서",4,"탐구를 어떤 순서로 했는지 화살표로 정리해요.\n예) 사전조사 → 설문 설계 → 1차 설문 → 결과 분석 → 2차 설문 → 인터뷰 → 결론",{photo:false})]},
-   {h:"조사 결과와 분석",items:[
-     R("res","결과","예: 매운 음식을 고를 때 가장 많이 보는 것","그래프나 표를 사진으로 넣고, 아래에 해석을 써요.\n해석은 ‘사실(숫자) → 의미 → 이유’ 순서로!\n예) 응답자의 92%가 맵기 표시를 보고 골랐다. 표시가 선택에 큰 영향을 준다는 뜻이다. 실제로 먹어 보기 전에는 맛을 알 수 없기 때문으로 보인다.",2)]},
-   {h:"결론 및 제언",items:[
-     S("concl","결론",5,"탐구 질문마다 답을 쓰고, 가설이 맞았는지(맞다 / 틀리다 / 일부 맞다) 밝혀요.",{photo:false}),
-     S("sugg","제언",4,"알게 된 것을 바탕으로 누구에게 무엇을 제안하고 싶나요?\n예) 식품 회사: 맵기를 숫자와 단계로 함께 표시하자 / 학생: 표시를 꼭 확인하자",{photo:false})]},
-   {h:"느낀 점과 한계",items:[
-     S("feel","느낀 점",4,"통계로 탐구하면서 새롭게 배운 점, 팀 활동에서 느낀 점을 써요.",{photo:false}),
-     S("lim","탐구의 한계와 더 알아보고 싶은 점",3,"조사 대상이 적었거나 아쉬웠던 점, 다음에 더 탐구하고 싶은 점을 써요.",{photo:false})]},
-   {h:"더 쓰고 싶은 내용",nonum:false,optional:true,extra:true,items:[R("extra","추가 내용","예: 인터뷰 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
-   {h:"참고 자료",nonum:true,items:[
-     P("ref",3,"참고한 자료와 통계 출처를 적어요.\n예) 국가데이터처, 「청소년 통계」, 2026 / KOSIS 국가통계포털 https://kosis.kr",{photo:false})]},
-   {h:"부록",nonum:true,optional:true,items:[
-     P("appx",3,"설문지, 완성한 통계포스터 사진처럼 더 보여 주고 싶은 자료를 사진으로 넣어요. (없으면 비워 두세요)",{label:"부록"})]}
+   {h:"조사 활동 기록",items:[
+     L("survey","구글 설문지 링크","예: https://forms.gle/…",{url:true}),
+     L("n","응답자 수","예: 87명"),
+     L("period","조사 대상과 기간","예: ○○중 1~3학년 · 2026년 10월 7일~14일"),
+     S("roles","역할 나누기",3,"팀원마다 맡은 일을 써요.\n예) 김민지 – 설문지 만들기 / 이서준 – 그래프 / 박지호 – 포스터 꾸미기",{photo:false}),
+     S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false})]},
+   {h:"통계포스터 만들기",nonum:true,poster:true,items:[{t:"PO",id:"po"}]}
   ]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
   k.secs.forEach(s=>{ s.key=hkey(s.h);
-    if(k===KINDS.dream) return; // 꿈조사는 정해진 양식을 채우기만 함
+    if(k===KINDS.dream||k===KINDS.stat) return; // 꿈조사·통계포스터는 추가 칸 없음
     if(s.h==="책 정보"||s.items.every(i=>i.t==="V"||i.t==="C")) return; // 책 정보·파일 올리는 칸은 제외
     s.canOff=true;
     s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
@@ -489,6 +513,7 @@ function hasContent(sec){
     if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
     if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
     if(it.t==="V") return !!FX[it.id];
+    if(it.t==="PO") return false; // 포스터는 따로 그림으로 들어감
     return val(pid(it.id)).trim()||(S_.ph[pid(it.id)]||[]).length;
   });
 }
@@ -533,6 +558,7 @@ function itemEdit(it,subs){
   switch(it.t){
     case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div data-fxbox="'+it.id+'">'+fxBox(it)+'</div></div>';
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
+    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘추천 배치로 시작’을 누르면 대회 수상작처럼 기본 칸이 깔리고, 마음대로 옮기고 지우고 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
@@ -580,10 +606,10 @@ function renderForm(){
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     (k.solo?'':'<label class="fld">팀 이름 <span class="opt">(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)</span><input type="text" id="f_team" data-id="team" value="'+esc(val("team"))+'"></label>'+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>')+
-    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · 표지와 차례는 저절로 만들어져요</div>'+lessonBox()+
+    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
   '</div></section>';
   // 차례 미리보기
-  h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
+  if(!k.noToc) h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
   // 본문
   ol.forEach(o=>{
     const off=isOff(o.sec);
@@ -594,6 +620,10 @@ function renderForm(){
   });
   h+='</div>';
   f.innerHTML=h;
+  const pm=document.getElementById("posterMount");
+  if(pm&&window.FPoster) FPoster.mount(pm,{key:pm.dataset.key,get:idbGet,put:idbPut,onChange:resetSendIfNeeded,
+    title:()=>val(pid("title")),team:()=>[val("team"),[val("name"),val("mates")].filter(x=>x.trim()).join(", ")].filter(x=>x.trim()).join(" | "),
+    status:m=>{statusEl.textContent=m;}});
 }
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
@@ -610,7 +640,7 @@ function ownForm(){
   const cat=catKey();
   let h='<div style="display:flex;flex-direction:column;gap:20px">';
   h+=infoCard(
-    '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+ORDER.map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
+    '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+(topicKind()==="stat"?["stat",...ORDER]:ORDER).map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
     fld(oid("title"),"보고서 제목","내 보고서의 제목을 그대로 써요")+
     fld(oid("subj"),cat==="book"?"세부구분 (책 제목)":"세부구분 (탐구 주제)","비워 두면 ‘"+topicName()+"’(으)로 들어가요")+
     fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요)")+
@@ -636,14 +666,15 @@ const cntText=(v,L)=>"공백 제외 "+v.replace(/\s/g,"").length+" / "+L+"자";
 form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.v[t.dataset.id]=t.value; if(t.dataset.limit){const c=document.getElementById("cnt_"+t.dataset.id); if(c){c.textContent=cntText(t.value,+t.dataset.limit); c.style.color=t.value.replace(/\s/g,"").length>+t.dataset.limit?"var(--brand)":"";}} if(/_t$/.test(t.dataset.id)) refreshToc(); save(); resetSendIfNeeded();});
 document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic;
   const k=topicKind();
-  if(EXCL.includes(k)) S_.v.kind=k;
+  if(k==="stat"&&isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]="stat"; }
+  else if(EXCL.includes(k)) S_.v.kind=k;
   else if(EXCL.includes(S_.v.kind)) S_.v.kind=k||null;
   else if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
   save(); resetSendIfNeeded(); loadOwn(); renderForm(); loadVid();
   statusEl.textContent="‘"+topicName()+"’ 주제를 골랐어요"+(k&&!isOwn()?" → "+KINDS[k].short+"로 자동 선택했어요":"")+(!k&&!kindKey()&&!isOwn()?" · 이제 보고서 종류를 골라요":"");
   if(k&&!isOwn()){ const f=document.getElementById("form"); setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"start"}),50); }});
 document.getElementById("f_topic_etc").addEventListener("input",e=>{S_.v.topic_etc=e.target.value; save(); resetSendIfNeeded();});
-document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; save(); resetSendIfNeeded(); renderForm(); loadVid(); statusEl.textContent=(KINDS[b.dataset.kind]||OWNK).short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
+document.getElementById("kinds").addEventListener("click",e=>{const b=e.target.closest("[data-kind]"); if(!b)return; S_.v.kind=b.dataset.kind; if(isOwn()&&!val(oid("cat"))&&topicKind()&&KINDS[topicKind()]) S_.v[oid("cat")]=topicKind(); save(); resetSendIfNeeded(); renderForm(); loadVid(); statusEl.textContent=(KINDS[b.dataset.kind]||OWNK).short+"를 골랐어요 · 다른 종류로 바꿔도 쓴 내용은 따로 저장돼요";});
 
 /* 소제목 늘리기·지우기 */
 form.addEventListener("click",e=>{
@@ -768,6 +799,7 @@ const cloudBtn=document.getElementById("cloudSaveBtn");
 cloudBtn.addEventListener("click",async()=>{
   if(needId()) return;
   saveNow(); cloudBtn.disabled=true; statusEl.textContent="☁️ 중간 저장하는 중… 창을 닫지 마세요.";
+  if(window.FPoster&&FPoster.flush) await FPoster.flush();
   try{
     const all=await idbAll().catch(()=>({})), files={}; let skipped=0, size=0;
     for(const [k,v] of Object.entries(all)){
@@ -963,6 +995,7 @@ pdfBtn.addEventListener("click",async()=>{
   if(!val(pid("title")).trim()&&!K().autoTitle) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
   if(kindKey()==="ai"&&!FX.vfile&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
     statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
+  if(kindKey()==="stat") return makePoster();
   if(!outline(true).length){ statusEl.textContent="아직 쓴 내용이 없어요. 문항을 하나 이상 채운 뒤 제출해 주세요."; return; }
   pdfBtn.disabled=true;
   try{
@@ -997,6 +1030,25 @@ pdfBtn.addEventListener("click",async()=>{
   finally{ pdfBtn.disabled=false; }
 });
 
+/* 통계포스터: 1쪽 B4 포스터 + 활동 기록(A4) */
+async function makePoster(){
+  if(!window.FPoster||!FPoster.hasContent()){ statusEl.textContent="통계포스터를 먼저 만들어 주세요. ‘추천 배치로 시작’을 누르면 쉽게 시작할 수 있어요."; const m=document.getElementById("posterMount"); if(m) m.scrollIntoView({block:"start"}); return; }
+  pdfBtn.disabled=true;
+  try{
+    statusEl.textContent="포스터를 PDF로 만드는 중…";
+    const poster=await FPoster.toImage();
+    let pages=[];
+    if(outline(true).length){ statusEl.textContent="활동 기록 쪽 만드는 중…"; pages=(await paginate(buildBlocks(),()=>{})).pages; }
+    const {jsPDF}=window.jspdf, P=FPoster.SIZE; const pdf=new jsPDF({orientation:"p",unit:"mm",format:[P.w,P.h]});
+    pdf.addImage(poster,"JPEG",0,0,P.w,P.h);
+    pages.forEach(u=>{ pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
+    const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
+    lastPdf={blob:pdf.output("blob"),name:topicName()+"_통계포스터_"+nm+".pdf",shots:[poster,...pages],uploads:[],failed:0};
+    pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false;
+    await submitToTeacher();
+  }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
+  finally{ pdfBtn.disabled=false; }
+}
 /* 다른 양식: 표지(선택) + 올린 파일을 순서대로 이어 붙이기 */
 async function makeOwn(){
   if(!window.PDFLib){statusEl.textContent="PDF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
