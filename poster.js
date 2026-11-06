@@ -674,5 +674,54 @@ async function present(){
   if(O.status) O.status("발표 중 · 화면을 누르거나 → 키로 넘겨요. Esc나 ‘✕ 끝내기’로 나가요.");
 }
 
-window.FPoster={mount,flush,hasContent,toImage,toImages,parseData,SIZE:{w:257,h:364},size:()=>SL()?{w:338.67,h:190.5}:{w:257,h:364},count:()=>pagesOf().length,present};
+/* ---------- PowerPoint(.pptx) 파일로 만들기: 글·도형·그래프를 고칠 수 있게 그대로 옮겨요 ---------- */
+function loadPptxLib(){
+  if(window.PptxGenJS) return Promise.resolve();
+  return new Promise((res,rej)=>{ const s=document.createElement("script"); s.src=(O.pptxSrc||"vendor/pptxgen.bundle.js"); s.onload=()=>window.PptxGenJS?res():rej(new Error("pptx")); s.onerror=()=>rej(new Error("pptx")); document.head.appendChild(s); });
+}
+async function toPptx(){
+  await loadPptxLib(); const all=pagesOf().flatMap(P=>P.items); await loadImgs(all);
+  const pp=new window.PptxGenJS(); pp.layout="LAYOUT_WIDE"; pp.title=(O.title&&O.title())||"발표자료";
+  const I=v=>Math.round(v/96*1000)/1000, PT=v=>Math.round(v*0.75*10)/10;
+  const hx=c=>{ const m=String(c||"").match(/^#?([0-9a-f]{6})$/i); return m?m[1].toUpperCase():null; };
+  const FF=f=>f==="Noto Serif KR"?"바탕":"맑은 고딕";
+  const strong=it=>!!it.bold||["Black Han Sans","Do Hyeon","Jua"].includes(it.font);
+  const geo=(it,x,y,w,h)=>({x:I(x),y:I(y),w:I(Math.max(1,w)),h:I(Math.max(1,h))});
+  const round=(r,w,h)=>{ const R=Math.min(r||0,w/2,h/2); return R>0?{shape:pp.ShapeType.roundRect,rectRadius:I(R)}:{shape:pp.ShapeType.rect}; };
+  const box=(s,it,x,y,w,h)=>{ const f=hx(it.fill), st=it.stroke&&it.sw?hx(it.stroke):null; if(!f&&!st) return;
+    const r=round(it.radius,w,h); s.addShape(r.shape,Object.assign(geo(it,x,y,w,h),{fill:f?{color:f}:{type:"none"},line:st?{color:st,width:PT(it.sw)}:{type:"none"}},r.shape===pp.ShapeType.roundRect?{rectRadius:r.rectRadius}:{})); };
+  for(const P of pagesOf()){
+    const s=pp.addSlide(); s.background={color:hx(P.bg)||"FFFFFF"};
+    for(const it of P.items){
+      const g=geo(it,it.x,it.y,it.w,it.h), t=th();
+      if(it.type==="text"){ const f=hx(it.fill), st=it.stroke&&it.sw?hx(it.stroke):null, r=round(it.radius,it.w,it.h);
+        s.addText(it.text||"",Object.assign(g,{shape:r.shape,fontFace:FF(it.font),fontSize:PT(it.size),bold:strong(it),color:hx(it.color)||"222222",
+          align:it.align||"left",valign:it.valign==="middle"?"middle":"top",margin:PT(it.pad||0),lineSpacingMultiple:1.15,wrap:true},
+          f?{fill:{color:f}}:{}, st?{line:{color:st,width:PT(it.sw)}}:{}, r.rectRadius?{rectRadius:r.rectRadius}:{})); }
+      else if(it.type==="shape"){ const f=hx(it.fill)||hx(it.stroke)||"333333", st=it.stroke&&it.sw?hx(it.stroke):null;
+        if(it.shape==="line"){ s.addShape(pp.ShapeType.line,{x:g.x,y:I(it.y+it.h/2),w:g.w,h:0,line:{color:f,width:PT(Math.max(2,it.h))}}); continue; }
+        if(it.shape==="ellipse"||it.shape==="arrow"){ s.addShape(it.shape==="ellipse"?pp.ShapeType.ellipse:pp.ShapeType.rightArrow,Object.assign(g,{fill:hx(it.fill)?{color:hx(it.fill)}:{type:"none"},line:st?{color:st,width:PT(it.sw)}:{type:"none"}})); continue; }
+        box(s,{fill:it.fill,stroke:it.stroke,sw:it.sw,radius:it.shape==="rect"?0:(it.radius||24)},it.x,it.y,it.w,it.h); }
+      else if(it.type==="sticker"){ s.addText(it.emoji,Object.assign(g,{fontFace:"Segoe UI Emoji",fontSize:PT(Math.min(it.w,it.h)*0.7),align:"center",valign:"middle",margin:0})); }
+      else if(it.type==="image"){ const im=it.src&&IMG.get(it.src); if(!im) continue;
+        const iw=im.naturalWidth||im.width, ih=im.naturalHeight||im.height;
+        if(it.fit==="contain"){ const k=Math.min(it.w/iw,it.h/ih), w=iw*k, h=ih*k; s.addImage({data:it.src,x:I(it.x+(it.w-w)/2),y:I(it.y+(it.h-h)/2),w:I(w),h:I(h)}); }
+        else{ const k=Math.max(it.w/iw,it.h/ih); s.addImage({data:it.src,x:g.x,y:g.y,w:I(iw*k),h:I(ih*k),sizing:{type:"cover",w:g.w,h:g.h}}); }
+        if(it.stroke&&it.sw) box(s,{stroke:it.stroke,sw:it.sw,radius:it.radius},it.x,it.y,it.w,it.h); }
+      else if(it.type==="chart"){ box(s,it,it.x,it.y,it.w,it.h);
+        const c=it.chart||{}, n=Math.min((c.labels||[]).length,(c.values||[]).length); if(!n) continue;
+        const ink=(it.fill&&isDark(it.fill))?"F1F5F5":(hx(t.ink)||"222222"), pie=c.kind==="pie"||c.kind==="donut";
+        const type=pie?(c.kind==="donut"?pp.ChartType.doughnut:pp.ChartType.pie):c.kind==="line"?pp.ChartType.line:pp.ChartType.bar;
+        const cols=c.mono||c.kind==="line"?[hx(c.color)||hx(t.main)]:PAL.map(hx);
+        const fnt={catAxisLabelFontFace:"맑은 고딕",valAxisLabelFontFace:"맑은 고딕",dataLabelFontFace:"맑은 고딕",legendFontFace:"맑은 고딕",titleFontFace:"맑은 고딕"};
+        s.addChart(type,[{name:c.title||"응답",labels:c.labels.slice(0,n),values:c.values.slice(0,n).map(v=>+v||0)}],Object.assign({x:I(it.x+8),y:I(it.y+8),w:I(it.w-16),h:I(it.h-16),
+          showTitle:!!c.title,title:c.title||"",titleFontSize:14,titleColor:ink,chartColors:cols,showValue:!!c.showVal,dataLabelFontSize:10,dataLabelColor:pie?"FFFFFF":ink,
+          catAxisLabelFontSize:10,catAxisLabelColor:ink,valAxisLabelFontSize:9,valAxisLabelColor:ink,valGridLine:{color:"D9DFE0",size:0.5},
+          barDir:c.kind==="hbar"?"bar":"col",barGapWidthPct:60,showLegend:pie,legendPos:"r",legendFontSize:10,legendColor:ink,showPercent:pie&&!!c.showVal,holeSize:50,
+          lineSize:2,lineDataSymbol:"circle",lineDataSymbolSize:7},fnt,c.kind==="hbar"?{catAxisOrientation:"maxMin"}:{})); }
+    }
+  }
+  return await pp.write({outputType:"blob"});
+}
+window.FPoster={mount,flush,hasContent,toImage,toImages,toPptx,parseData,SIZE:{w:257,h:364},size:()=>SL()?{w:338.67,h:190.5}:{w:257,h:364},count:()=>pagesOf().length,present};
 })();

@@ -271,7 +271,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
-<script src="poster.js?v=8"></script>
+<script src="poster.js?v=9"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -453,17 +453,19 @@ KINDS.stat={name:"통계보고서",short:"통계 보고서 (통계포스터)",pr
      L("n","응답자 수","예: 87명"),
      L("period","조사 대상과 기간","예: ○○중 1~3학년 · 2026년 10월 7일~14일"),
      S("roles","역할 나누기",3,"팀원마다 맡은 일을 써요.\n예) 김민지 – 설문지 만들기 / 이서준 – 그래프 / 박지호 – 포스터 꾸미기",{photo:false}),
-     S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false})]},
+     S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false}),
+     {t:"V",id:"vfile",label:"발표 영상",guide:"우리 조가 발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 페이지에서 우리 조 포스터·PPT와 함께 모여요. 조원 중 한 명만 올려도 돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]},
    {h:"통계포스터 만들기",nonum:true,poster:true,items:[{t:"PO",id:"po"}]}
   ]};
 KINDS.sppt={name:"통계발표PPT",short:"발표용 PPT (통계 발표)",pre:"t3_",color:"c-coral",major:"num",sub:"ga",noToc:true,slides:true,
-  desc:"조에서 발표를 맡은 친구가 16:9 발표 슬라이드를 만들어요. 사진·그래프를 넣고, 이 화면에서 바로 발표도 할 수 있어요.",
+  desc:"조에서 발표를 맡은 친구가 16:9 발표 슬라이드를 만들어요. 사진·그래프를 넣고 바로 발표할 수 있고, 제출하면 PPT 파일(.pptx)로 저장돼요.",
   subLabel:null,titleHint:"예: 빌런은 없다! 우리 팀 환상의 조합 찾기",
   secs:[
    {h:"발표용 PPT 만들기",nonum:true,poster:true,items:[{t:"SL",id:"sl"}]},
    {h:"발표 기록",items:[
      S("script","발표 대본 메모",4,"슬라이드마다 할 말을 짧게 적어 두면 발표가 쉬워져요. (선택)\n예) 1번: 안녕하세요, ○조 발표를 맡은 ○○○입니다.",{photo:false}),
-     S("feel","발표를 준비하며 느낀 점",3,"발표 자료를 만들고 발표하면서 배운 점, 아쉬운 점을 써요.",{photo:false})]}
+     S("feel","발표를 준비하며 느낀 점",3,"발표 자료를 만들고 발표하면서 배운 점, 아쉬운 점을 써요.",{photo:false}),
+     {t:"V",id:"vfile",label:"발표 영상",guide:"우리 조가 발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 페이지에서 우리 조 포스터·PPT와 함께 모여요. 조원 중 한 명만 올려도 돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
   ]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
@@ -634,7 +636,7 @@ function renderForm(){
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     (k.solo?'':teamField()+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>')+
-    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.slides?'PDF에 슬라이드가 한 장씩 들어가고, 발표 기록을 쓰면 뒤에 붙어요':k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
+    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.slides?'제출하면 PPT 파일(.pptx)과 PDF가 함께 선생님께 가요':k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
   '</div></section>';
   // 차례 미리보기
   if(!k.noToc) h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
@@ -655,11 +657,10 @@ function renderForm(){
 }
 /* 팀 이름: 통계 보고서는 조 번호를 골라서 같은 조 자료가 선생님 페이지에 함께 묶여요 */
 function teamField(){
-  if(topicKind()==="stat"){ const cur=val("team"), L=Array.from({length:12},(_,i)=>(i+1)+"조"); if(cur&&!L.includes(cur)) L.unshift(cur);
-    return '<label class="fld">우리 조 <span class="opt">(포스터·발표 PPT를 따로 만들어도 조원 모두 같은 조를 고르면 선생님 페이지에 함께 묶여요)</span><select id="f_team" data-id="team" style="font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink)"><option value="">조를 골라요</option>'+L.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join("")+'</select></label>'; }
+  if(topicKind()==="stat") return fld("team","우리 조 이름","예: 빌런없조","(조원 모두 같은 이름을 쓰면 포스터·PPT·발표 영상이 선생님 페이지에 한 조로 모여요 · 띄어쓰기는 달라도 괜찮아요)");
   return fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요 · 같은 팀은 이름을 똑같이 쓰면 선생님 페이지에 함께 묶여요)");
 }
-const teamTag=()=>{ if(K()&&K().solo&&!isOwn()) return ""; const t=val("team").replace(/[\s_\\/:*?"<>|]+/g,"").slice(0,15); return t?"__조_"+t:""; };
+const teamTag=()=>{ if(K()&&K().solo&&!isOwn()) return ""; const t=val("team").replace(/[_\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,20); return t?"__조_"+t:""; };
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
   return '<div class="info">'+[["grade","학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
@@ -1010,9 +1011,9 @@ let dlPromise=null;
 try{ if(window.claude&&typeof window.claude.use==="function") dlPromise=window.claude.use("downloads").catch(()=>null); }catch(e){}
 const pdfBtn=document.getElementById("pdfBtn"), saveBtn=document.getElementById("saveBtn"), submitBtn=document.getElementById("submitBtn");
 let lastPdf=null;
-function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
+function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;saveBtn.textContent="파일로 저장";submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
 function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
-saveBtn.addEventListener("click",()=>{ if(lastPdf) download(lastPdf.blob,lastPdf.name); });
+saveBtn.addEventListener("click",()=>{ if(!lastPdf) return; if(lastPdf.pptx){ download(lastPdf.pptx.blob,lastPdf.pptx.name); statusEl.textContent="PPT 파일을 저장했어요. 파워포인트나 구글 슬라이드에서 열어 고칠 수 있어요."; } else download(lastPdf.blob,lastPdf.name); });
 function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
 
 pdfBtn.addEventListener("click",async()=>{
@@ -1079,8 +1080,14 @@ async function makePoster(){
     pics.forEach((u,i)=>{ if(i) pdf.addPage(isSl?[P.h,P.w]:[P.w,P.h],isSl?"l":"p"); pdf.addImage(u,"JPEG",0,0,P.w,P.h); });
     pages.forEach(u=>{ pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
     const nm=(val("name")||"학생").replace(/[\\/:*?"<>|]/g,"").trim()||"학생";
-    lastPdf={blob:pdf.output("blob"),name:topicName()+(isSl?"_발표PPT_":"_통계포스터_")+nm+".pdf",shots:[...pics,...pages],uploads:[],failed:0};
-    pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false;
+    const uploads=[];
+    if(isSl){ statusEl.textContent="PPT 파일(.pptx) 만드는 중…";
+      try{ const px=await FPoster.toPptx(); uploads.push({name:topicName()+"_발표PPT_"+nm+".pptx",size:px.size,type:"application/vnd.openxmlformats-officedocument.presentationml.presentation",blob:px,tag:"발표자료",icon:"📊",label:"PPT 파일"}); }
+      catch(e){ console.error(e); } }
+    vItems().filter(it=>FX[it.id]).forEach(it=>uploads.push({...FX[it.id],tag:it.tag,icon:it.icon,label:it.label}));
+    lastPdf={blob:pdf.output("blob"),name:topicName()+(isSl?"_발표PPT_":"_통계포스터_")+nm+".pdf",shots:[...pics,...pages],uploads,failed:0,pptx:isSl?uploads.find(u=>u.tag==="발표자료"):null};
+    if(isSl&&!lastPdf.pptx) notice(false,"PPT 파일을 만들지 못했어요","PDF는 그대로 제출돼요. 새로고침한 뒤 다시 제출해 보세요.");
+    pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false; saveBtn.textContent=lastPdf.pptx?"PPT 파일로 저장":"파일로 저장";
     await submitToTeacher();
   }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
   finally{ pdfBtn.disabled=false; }
