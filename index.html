@@ -68,6 +68,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .pdd{position:relative}
 .ppop{position:absolute;top:calc(100% + 4px);left:0;z-index:30;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:120px}
 .ppop[hidden]{display:none}
+.ptplnote{font-size:12.5px;color:var(--muted);flex:1 1 220px;line-height:1.4}.ptplnote b{color:var(--ink)}
 .ptpl{min-width:230px}.ptpl button{text-align:left;white-space:normal;line-height:1.35}.ptpl small{color:var(--muted)}
 .pstk{flex-direction:row;flex-wrap:wrap;width:248px}
 .pstk button{font-size:20px;padding:3px 6px}
@@ -255,7 +256,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=7"></script>
-<script src="poster.js?v=5"></script>
+<script src="poster.js?v=7"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -560,7 +561,7 @@ function itemEdit(it,subs){
   switch(it.t){
     case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div data-fxbox="'+it.id+'">'+fxBox(it)+'</div></div>';
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
-    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘추천 배치로 시작’에서 수상작 2단형·3단 신문형·간단형 중 하나를 고르면 기본 칸이 깔리고, 마음대로 옮기고 지우고 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
+    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
@@ -1034,7 +1035,7 @@ pdfBtn.addEventListener("click",async()=>{
 
 /* 통계포스터: 1쪽 B4 포스터 + 활동 기록(A4) */
 async function makePoster(){
-  if(!window.FPoster||!FPoster.hasContent()){ statusEl.textContent="통계포스터를 먼저 만들어 주세요. ‘추천 배치로 시작’을 누르면 쉽게 시작할 수 있어요."; const m=document.getElementById("posterMount"); if(m) m.scrollIntoView({block:"start"}); return; }
+  if(!window.FPoster||!FPoster.hasContent()){ statusEl.textContent="통계포스터를 먼저 만들어 주세요. ‘✨ 추천 배치’을 누르면 쉽게 시작할 수 있어요."; const m=document.getElementById("posterMount"); if(m) m.scrollIntoView({block:"start"}); return; }
   pdfBtn.disabled=true;
   try{
     statusEl.textContent="포스터를 PDF로 만드는 중…";

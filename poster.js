@@ -28,7 +28,7 @@ const find=id=>S.items.find(x=>x.id===id);
 const blank=()=>({v:1,theme:"mint",bg:THEMES.mint.bg,items:[]});
 
 /* ---------- 저장 · 되돌리기 ---------- */
-function save(now){ clearTimeout(tSave); const go=()=>{ if(O.put) O.put(KEY,JSON.parse(JSON.stringify(S))).catch(()=>{}); }; if(now) go(); else tSave=setTimeout(go,500); if(O.onChange) O.onChange(); }
+function save(now,keepFresh){ if(!keepFresh&&S) S.fresh=false; clearTimeout(tSave); const go=()=>{ if(O.put) O.put(KEY,JSON.parse(JSON.stringify(S))).catch(()=>{}); }; if(now) go(); else tSave=setTimeout(go,500); if(O.onChange) O.onChange(); }
 function snap(){ hist.push(JSON.stringify(S)); if(hist.length>40) hist.shift(); }
 function undo(){ if(!hist.length) return; S=JSON.parse(hist.pop()); if(sel&&!find(sel)) sel=null; render(); save(); }
 
@@ -50,6 +50,11 @@ function addItem(it){ snap(); // 화면에 보이는 위치에 놓기
   S.items.push(it); sel=it.id; render(); save(); }
 
 /* ---------- 추천 배치 (전국학생통계활용대회 수상작 구성 참고) ---------- */
+const TPLS=[["a","수상작 2단형","위에 탐구 동기와 순서도, 가운데에 그래프 3개와 추가 조사, 아래에 결론"],
+  ["b","3단 신문형","왼쪽 단에 동기·질문·과정, 가운데·오른쪽 단에 그래프 4개와 추가 조사"],
+  ["d","큰 그래프 강조형","위에 동기·질문·방법 3칸, 핵심 그래프 하나를 크게, 작은 그래프 3개"],
+  ["e","지그재그 이야기형","그래프와 해석이 왼쪽·오른쪽을 번갈아 나오는 이야기 흐름"],
+  ["c","간단형","큰 글 칸과 그래프 2개, 처음 해 보는 팀에게 좋아요"]];
 function template(kind){
   const t=th(), dark=S.theme==="dark", panel=dark?t.sub:"#ffffff", items=[], push=o=>items.push(o);
   const team=(O.team&&O.team())||"팀명 | 팀원 이름", title=(O.title&&O.title())||"우리의 궁금증을 질문으로 써요?";
@@ -78,6 +83,36 @@ function template(kind){
     push(mk("shape",{shape:"line",x:798,y:166,w:150,h:4,fill:t.main}));
     push(mk("text",{x:724,y:196,w:264,h:38,text:team,size:14,bold:true,color:t.main,fill:panel,stroke:t.main,sw:2,radius:999,align:"center",valign:"middle",pad:6}));
   };
+  if(kind==="d"){ // 큰 그래프 강조형: 위 3칸 → 대표 그래프 크게 → 작은 그래프 3개 → 결론
+    header(); const X=[40,364,688], CW=300;
+    head(X[0],248,CW,"1. 탐구 동기"); body(X[0],296,CW,170,"생활 속에서 궁금해진 장면\n알아내고 싶은 것");
+    head(X[1],248,CW,"2. 탐구 질문과 가설"); body(X[1],296,CW,170,"질문 1)\n질문 2)\n가설: ~할수록 ~할 것이다.");
+    head(X[2],248,CW,"3. 조사 방법"); body(X[2],296,CW,170,"구글 설문지\n대상: ○○중 ○○명\n기간: ○월 ○일~○일");
+    head(40,482,948,"4. 가장 중요한 결과");
+    chart(40,530,620,330,"bar","우리 탐구의 핵심 그래프",["항목 A","항목 B","항목 C","항목 D","항목 E"],[38,27,19,11,5]);
+    call(680,530,308,330,"→ 핵심 결과를 크게!\n\n숫자: \n의미: \n이유: ");
+    head(40,876,948,"5. 더 알아본 결과");
+    chart(X[0],924,CW,210,"pie","질문 2",["예","아니요","모르겠다"],[41,22,9]);
+    chart(X[1],924,CW,210,"hbar","질문 3",["항목 A","항목 B","항목 C"],[27,19,12]);
+    chart(X[2],924,CW,210,"donut","질문 4",["매우 그렇다","그렇다","보통","아니다"],[14,30,18,7]);
+    call(X[0],1140,CW,56,"→ 알게 된 점 한 줄"); call(X[1],1140,CW,56,"→ 알게 된 점 한 줄"); call(X[2],1140,CW,56,"→ 알게 된 점 한 줄");
+    head(40,1212,600,"6. 결론 및 제언"); body(40,1260,600,160,"결론: 질문마다 답, 가설이 맞았는지\n제언: 누구에게 무엇을 제안할까?");
+    head(660,1212,328,"7. 느낀 점과 한계"); body(660,1260,328,160,"배운 점, 아쉬운 점");
+    return items;
+  }
+  if(kind==="e"){ // 지그재그 이야기형: 글과 그래프가 왼쪽·오른쪽을 번갈아
+    header();
+    head(40,248,460,"1. 탐구 동기 및 목적"); body(40,296,460,176,"생활 속에서 무엇이 궁금했나요?\n이 탐구로 무엇을 알아내고 싶나요?");
+    head(528,248,460,"2. 탐구 과정"); flow(528,296,460,176,["질문 정하기","설문 만들기","배포","분석","결론"]);
+    head(40,488,948,"3. 결과 ① 질문 1");
+    chart(40,536,560,232,"bar","질문 1 그래프",["1학년","2학년","3학년"],[18,24,30]); body(620,536,368,172,"해석\n사실(숫자) → 의미 → 이유"); call(620,716,368,52,"→ 핵심 한 줄");
+    head(40,784,948,"4. 결과 ② 질문 2");
+    body(40,832,368,172,"해석\n사실(숫자) → 의미 → 이유"); call(40,1012,368,52,"→ 핵심 한 줄"); chart(428,832,560,232,"pie","질문 2 그래프",["예","아니요","모르겠다"],[41,22,9]);
+    head(40,1080,600,"5. 결론 및 제언"); body(40,1128,600,180,"결론: 질문마다 답, 가설이 맞았는지\n제언: 누구에게 무엇을 제안할까?",{fill:dark?panel:t.sub,stroke:""});
+    head(660,1080,328,"6. 추가 조사",{fill:t.accent}); push(mk("image",{x:660,y:1128,w:328,h:180,radius:10}));
+    head(40,1324,948,"7. 느낀 점과 한계"); body(40,1372,948,48,"배운 점, 아쉬운 점, 더 알아보고 싶은 점",{valign:"middle"});
+    return items;
+  }
   if(kind==="b"){ // 수상작 3단 신문형: 왼쪽 단은 탐구 흐름, 가운데·오른쪽 단은 그래프
     header(); const X=[40,364,688], CW=300;
     head(X[0],244,CW,"1. 탐구 동기"); body(X[0],292,CW,180,"생활 속에서 궁금해진 장면에서 시작해요.\n이 탐구로 알아내고 싶은 것은?");
@@ -269,7 +304,7 @@ function render(){
   board.style.background=S.bg; board.innerHTML="";
   S.items.forEach(it=>board.appendChild(elFor(it)));
   if(S.frame){ const f=document.createElement("div"); f.className="pframe"; f.style.border=S.frame+"px solid "+(S.frameC||th().main); board.appendChild(f); }
-  if(!S.items.length) board.insertAdjacentHTML("beforeend",'<div class="pempty"><b>B4 포스터 판</b><br>위에서 ‘추천 배치로 시작’을 누르거나<br>제목·글 상자·그래프를 하나씩 넣어 보세요.</div>');
+  if(!S.items.length) board.insertAdjacentHTML("beforeend",'<div class="pempty"><b>B4 포스터 판</b><br>위에서 ‘✨ 추천 배치’을 누르거나<br>제목·글 상자·그래프를 하나씩 넣어 보세요.</div>');
   panel(); toolbarState();
 }
 function fit(){ const w=wrap.clientWidth||W; scale=w/W*zoom; sizer.style.width=Math.round(W*scale)+"px"; sizer.style.height=Math.round(H*scale)+"px"; board.style.transform="scale("+scale+")"; board.style.setProperty("--inv",(1/scale).toFixed(3)); wrap.style.height=zoom>1?Math.min(Math.round(H*scale),Math.round(window.innerHeight*0.75))+"px":Math.round(H*scale)+"px"; wrap.classList.toggle("zoomed",zoom>1); const z=bar&&bar.querySelector(".pzoom"); if(z) z.textContent=Math.round(zoom*100)+"%"; }
@@ -288,16 +323,15 @@ function toolbar(){
      '<label class="pinl">테마 <select data-theme>'+Object.entries(THEMES).map(([k,v])=>'<option value="'+k+'">'+v.name+'</option>').join("")+'</select></label>'+
      '<label class="pinl">배경 <input type="color" data-bg></label>'+
      '<label class="pinl">바깥 테두리 <select data-frame><option value="0">없음</option><option value="4">얇게</option><option value="8">보통</option><option value="14">두껍게</option></select></label>'+
-     '<span class="pinl">보기 <button type="button" data-zoom="-1" aria-label="작게 보기">−</button><span class="pzoom pnum">100%</span><button type="button" data-zoom="1" aria-label="크게 보기">＋</button></span><span class="pdd"><button type="button" data-pop="tpl" class="pmain">✨ 추천 배치로 시작 ▾</button><span class="ppop ptpl" data-popbox="tpl" hidden>'+
-       '<button type="button" data-tpl="a"><b>수상작 2단형</b><br><small>동기·과정 → 넓은 결과 → 결론</small></button>'+
-       '<button type="button" data-tpl="b"><b>수상작 3단 신문형</b><br><small>왼쪽 탐구 흐름 + 그래프 4개</small></button>'+
-       '<button type="button" data-tpl="c"><b>간단형</b><br><small>큰 칸, 그래프 2개</small></button>'+
-       '<span class="pnote">누르면 지금 포스터 대신 새 배치가 깔려요 (↶ 되돌리기 가능)</span></span></span><button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">모두 지우기</button>'+
+     '<span class="pinl">보기 <button type="button" data-zoom="-1" aria-label="작게 보기">−</button><span class="pzoom pnum">100%</span><button type="button" data-zoom="1" aria-label="크게 보기">＋</button></span>'+
+   '</div><div class="prow"><span class="plab">배치</span><button type="button" data-tpl="next" class="pmain">✨ 추천 배치</button><span class="ptplnote" aria-live="polite"></span></span><button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">모두 지우기</button>'+
    '</div>'+
    '<div class="prow psel" hidden></div>'+
   '</div>';
 }
-function toolbarState(){ const fr=bar.querySelector("[data-frame]"); if(fr) fr.value=String(S.frame||0); const ts=bar.querySelector("[data-theme]"); if(ts) ts.value=S.theme; const bg=bar.querySelector("[data-bg]"); if(bg) bg.value=/^#[0-9a-f]{6}$/i.test(S.bg)?S.bg:"#ffffff"; }
+function tplNote(){ const el=bar&&bar.querySelector(".ptplnote"); if(!el) return; const i=S.tplIdx;
+  el.innerHTML=i==null?'누를 때마다 수상작을 참고한 배치 <b>5가지</b>가 차례로 바뀌어요.':'<b>지금 '+(i+1)+'/'+TPLS.length+' · '+esc(TPLS[i][1])+'</b> – '+esc(TPLS[i][2])+'<br>다시 누르면 다음 배치 → ‘'+esc(TPLS[(i+1)%TPLS.length][1])+'’'; }
+function toolbarState(){ tplNote(); const fr=bar.querySelector("[data-frame]"); if(fr) fr.value=String(S.frame||0); const ts=bar.querySelector("[data-theme]"); if(ts) ts.value=S.theme; const bg=bar.querySelector("[data-bg]"); if(bg) bg.value=/^#[0-9a-f]{6}$/i.test(S.bg)?S.bg:"#ffffff"; }
 const colIn=(k,v,label)=>'<label class="pinl">'+label+' <input type="color" data-k="'+k+'" value="'+(/^#[0-9a-f]{6}$/i.test(v)?v:"#ffffff")+'"></label>';
 function panel(){
   const box=bar.querySelector(".psel"), it=sel&&find(sel); if(!it){ box.hidden=true; box.innerHTML=""; return; }
@@ -408,7 +442,12 @@ function onBar(e){
     addItem(mk(t)); if(t==="chart") setTimeout(()=>chartModal(find(sel)),50); return; }
   if(b.dataset.shape){ const s=b.dataset.shape; addItem(mk("shape",{shape:s,h:s==="line"?8:s==="arrow"?100:180,w:s==="line"?400:s==="arrow"?220:300,fill:s==="line"?th().ink:th().sub})); return; }
   if(b.dataset.stk){ addItem(mk("sticker",{emoji:b.dataset.stk})); return; }
-  if(b.dataset.tpl){ snap(); S.bg=th().bg; S.items=template(b.dataset.tpl); S.frame=b.dataset.tpl==="c"?0:8; S.frameC=th().main; sel=null; render(); save(); if(O.status) O.status("배치를 깔았어요. 마음대로 옮기고 지우고 바꿔 보세요! (잘못 눌렀으면 ↶ 되돌리기)"); return; }
+  if(b.dataset.tpl){
+    if(S.items.length&&!S.fresh&&!b.dataset.sure){ b.dataset.sure="1"; b.textContent="한 번 더 누르면 새 배치로 바뀌어요"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="✨ 추천 배치"; },3500); return; }
+    delete b.dataset.sure; b.textContent="✨ 추천 배치";
+    const n=((S.tplIdx==null?-1:S.tplIdx)+1)%TPLS.length, T=TPLS[n];
+    snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; S.tplIdx=n; sel=null; render(); save(false,true); S.fresh=true;
+    if(O.status) O.status("추천 배치 "+(n+1)+"/"+TPLS.length+" ‘"+T[1]+"’을 깔았어요. 다시 누르면 다음 배치로 바뀌어요."); return; }
   if(b.dataset.zoom){ const Z=[1,1.5,2,3]; zoom=Z[clamp(Z.indexOf(zoom)+(+b.dataset.zoom),0,Z.length-1)]; fit(); return; }
   if(b.dataset.undo){ undo(); return; }
   if(b.dataset.clear){ if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="정말 모두 지울까요? 한 번 더 누르기"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="모두 지우기"; },3500); return; }
