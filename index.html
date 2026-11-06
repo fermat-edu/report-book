@@ -123,6 +123,30 @@ img{max-width:100%}[hidden]{display:none!important}
 .pshowbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:6px 10px;font-size:14px;opacity:.35;transition:opacity .2s}
 .pshowbar:hover{opacity:1}
 .pshowbar button{font:inherit;background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:999px;padding:6px 12px;cursor:pointer}
+.vedit{display:flex;flex-direction:column;gap:10px}
+.vclips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.vclip{font:inherit;font-size:13px;border:1.5px solid var(--line);background:var(--field);color:var(--ink);border-radius:10px;padding:6px 10px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vclip.on{border-color:#2f8792;box-shadow:0 0 0 2px #2f8792}.vclip small{color:var(--muted)}
+.vplayer{width:100%;max-height:60vh;background:#000;border-radius:10px}.vplayer.vsmall{max-height:36vh;margin-top:6px}
+.vtl{position:relative;height:30px;background:#dfe7e8;border-radius:8px;cursor:pointer;touch-action:none;overflow:hidden}
+.vcut{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,#e4572e,#e4572e 6px,#f08a6c 6px,#f08a6c 12px);opacity:.9}
+.vmark{position:absolute;top:0;bottom:0;width:3px;margin-left:-1px;background:#e4572e}
+.vpos{position:absolute;top:-2px;bottom:-2px;width:3px;margin-left:-1px;background:#1f2a2c;border-radius:2px}
+.vrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.vtime{font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:700;min-width:120px}
+.vbtn{font:inherit;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:10px 14px;cursor:pointer}
+.vred{background:#fde3dc;color:#b8371a;border:1.5px solid #f0a08a}.vgo{background:#fee500;color:#191600}
+.vbtn:disabled{opacity:.5}
+.vchk{font-size:13px;display:inline-flex;gap:5px;align-items:center}
+.vcuts{display:flex;flex-wrap:wrap;gap:6px}.vchip{font-size:12.5px;background:#fde3dc;color:#8a2a12;border-radius:999px;padding:3px 4px 3px 10px;display:inline-flex;gap:4px;align-items:center}
+.vchip button{border:0;background:#fff;border-radius:50%;width:20px;height:20px;cursor:pointer;line-height:1;padding:0}
+.vout{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.vq{font:inherit;font-size:13.5px;border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--field);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start}
+.vq small{font-size:11.5px;color:var(--muted)}.vq.on{border-color:#2f8792;background:#e6f4f5}
+.vest{margin:0;font-size:13.5px}
+.vprog{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}.vprog[hidden]{display:none}
+.vbar{flex:1 1 200px;height:12px;background:#e3e9ea;border-radius:999px;overflow:hidden}.vbar i{display:block;height:100%;width:0;background:#2f8792;transition:width .2s}
+.vres{border:2px solid #8fd6b0;background:#effaf4;border-radius:12px;padding:10px;font-size:14px}
 .pmodal{position:fixed;inset:0;z-index:1000;background:rgba(20,26,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .pmcard{background:var(--paper);color:var(--ink);border-radius:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
 .pmcard h3{margin:0;font-family:var(--display);font-weight:400;font-size:22px}
@@ -290,6 +314,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
 <script src="poster.js?v=10"></script>
+<script src="video.js?v=1"></script>
 <script>
 (function(){
 const SUBMIT_URL="https://script.google.com/macros/s/AKfycbzffLVS4wcRspUWGvEN1DbOxQob5ZX-Zb0ckccVD1LppKr-Rn9Vxgxz5DL-Srmla53s/exec";
@@ -471,8 +496,7 @@ KINDS.stat={name:"통계보고서",short:"통계 보고서 (통계포스터)",pr
      L("n","응답자 수","예: 87명"),
      L("period","조사 대상과 기간","예: ○○중 1~3학년 · 2026년 10월 7일~14일"),
      S("roles","역할 나누기",3,"팀원마다 맡은 일을 써요.\n예) 김민지 – 설문지 만들기 / 이서준 – 그래프 / 박지호 – 포스터 꾸미기",{photo:false}),
-     S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false}),
-     {t:"V",id:"vfile",label:"발표 영상",guide:"우리 조가 발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 페이지에서 우리 조 포스터·PPT와 함께 모여요. 조원 중 한 명만 올려도 돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]},
+     S("feel","느낀 점",4,"설문을 만들고, 배포하고, 결과를 분석하면서 새로 배운 점과 느낀 점을 써요.",{photo:false})]},
    {h:"통계포스터 만들기",nonum:true,poster:true,items:[{t:"PO",id:"po"}]}
   ]};
 KINDS.sppt={name:"통계발표PPT",short:"발표용 PPT (통계 발표)",pre:"t3_",color:"c-coral",major:"num",sub:"ga",noToc:true,slides:true,
@@ -482,21 +506,27 @@ KINDS.sppt={name:"통계발표PPT",short:"발표용 PPT (통계 발표)",pre:"t3
    {h:"발표용 PPT 만들기",nonum:true,poster:true,items:[{t:"SL",id:"sl"}]},
    {h:"발표 기록",items:[
      S("script","발표 대본 메모",4,"슬라이드마다 할 말을 짧게 적어 두면 발표가 쉬워져요. (선택)\n예) 1번: 안녕하세요, ○조 발표를 맡은 ○○○입니다.",{photo:false}),
-     S("feel","발표를 준비하며 느낀 점",3,"발표 자료를 만들고 발표하면서 배운 점, 아쉬운 점을 써요.",{photo:false}),
-     {t:"V",id:"vfile",label:"발표 영상",guide:"우리 조가 발표하는 모습을 찍은 영상을 올려요 (mp4·mov, 300MB까지). 선생님 페이지에서 우리 조 포스터·PPT와 함께 모여요. 조원 중 한 명만 올려도 돼요.",accept:"video/*",tag:"영상",icon:"🎬",max:300}]}
+     S("feel","발표를 준비하며 느낀 점",3,"발표 자료를 만들고 발표하면서 배운 점, 아쉬운 점을 써요.",{photo:false})]}
   ]};
+KINDS.svid={name:"통계발표영상",short:"발표 영상 (다듬어서 올리기)",pre:"t4_",color:"c-teal",major:"num",sub:"ga",noToc:true,autoTitle:"발표 영상",
+  desc:"발표를 찍은 영상에서 실수한 부분을 지우고 이어 붙인 뒤, 카카오톡으로 보낼 수 있는 크기로 줄여서 선생님께 올려요.",
+  subLabel:null,titleHint:"비워 두면 ‘발표 영상’으로 들어가요",
+  secs:[{h:"발표 영상 다듬기",nonum:true,poster:true,items:[{t:"VE",id:"ve"}]}]};
+KINDS.dvid={...KINDS.svid,name:"꿈조사발표영상",short:"꿈조사 발표 영상 (다듬어서 올리기)",pre:"t5_",color:"c-green",solo:true,
+  desc:"꿈조사 발표를 찍은 영상에서 실수한 부분을 지우고 이어 붙인 뒤, 카카오톡으로 보낼 수 있는 크기로 줄여서 선생님께 올려요.",
+  secs:[{h:"발표 영상 다듬기",nonum:true,poster:true,items:[{t:"VE",id:"ve"}]}]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
   k.secs.forEach(s=>{ s.key=hkey(s.h);
-    if(k===KINDS.dream||k===KINDS.stat||k===KINDS.sppt) return; // 꿈조사·통계포스터는 추가 칸 없음
+    if(k===KINDS.dream||k===KINDS.stat||k===KINDS.sppt||k===KINDS.svid||k===KINDS.dvid) return; // 꿈조사·통계포스터는 추가 칸 없음
     if(s.h==="책 정보"||s.items.every(i=>i.t==="V"||i.t==="C")) return; // 책 정보·파일 올리는 칸은 제외
     s.canOff=true;
     s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
   });
 });
 const isOff=sec=>!!(sec.canOff&&S_.v[pid("off_"+sec.key)]);
-const EXCL=["ai","dream","stat","sppt"];
+const EXCL=["ai","dream","stat","sppt","svid","dvid"];
 const ORDER=["topic","subject","book"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 const GA="가나다라마바사아자차카타파하".split("");
@@ -560,7 +590,7 @@ function hasContent(sec){
     if(it.t==="R") return (repKeys(it.id)||[]).some(r=>val(pid(it.id)+"_"+r+"_b").trim()||(S_.ph[pid(it.id)+"_"+r+"_b"]||[]).length);
     if(it.t==="Q") return val(pid(it.id)+"_a").trim()||val(pid(it.id)+"_b").trim();
     if(it.t==="V") return !!FX[it.id];
-    if(it.t==="PO"||it.t==="SL") return false; // 포스터·슬라이드는 따로 그림으로 들어감
+    if(it.t==="PO"||it.t==="SL"||it.t==="VE") return false; // 포스터·슬라이드는 따로 그림으로 들어감
     return val(pid(it.id)).trim()||(S_.ph[pid(it.id)]||[]).length;
   });
 }
@@ -607,6 +637,7 @@ function itemEdit(it,subs){
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
     case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누를 때마다 수상작을 참고한 배치 5가지가 차례로 바뀌고, 마음대로 옮기고 지우고 바꿀 수 있어요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 미리캔버스처럼 꾸미고, 고른 것마다 그림자·투명도·회전도 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
     case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성’을 누르면 발표 순서(표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이 한 번에 생겨요. 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 꾸밀 수 있어요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-key="slides_'+id+'"></div>';
+    case "VE": return '<p class="guide">① 휴대폰으로 찍은 발표 영상을 골라요 (끊어서 찍었으면 여러 개를 골라 순서대로 이어 붙여요).\n② 실수한 곳에서 ‘✂ 여기부터 지우기 시작’ → 끝나는 곳에서 ‘✂ 여기까지 지우기’를 눌러요. 지울 부분은 빨갛게 표시돼요.\n③ 크기를 고르고 ‘🎬 다듬은 영상 만들기’를 누르면, 남길 영상 길이만큼 시간이 걸려요. 그동안 화면을 끄거나 다른 앱으로 가지 마세요.\n④ 다 만들면 ‘영상 제출’로 선생님께 올리고, ‘📤 카톡으로 보내기’로 카카오톡에도 보낼 수 있어요.</p><div id="videoMount" data-key="video_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
     case "C": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><button type="button" class="addrep" data-cnadd="1">+ 커리어넷 검사 결과 올리기 (PDF · 사진)</button><div class="pdfs cnlist">'+cnList()+'</div></div>';
@@ -637,10 +668,10 @@ function renderTopics(){
 function renderKinds(){
   renderTopics();
   const cur=S_.v.kind;
-  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?(topicKind()==="stat"?["stat","sppt","own"]:[topicKind()]):[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
+  document.getElementById("kinds").innerHTML=(EXCL.includes(topicKind())?(({stat:["stat","sppt","svid","own"],dream:["dream","dvid"]})[topicKind()]||[topicKind()]):[...ORDER,"own"]).map(k=>{const x=KINDS[k]||OWNK; const rec=k===topicKind(); return '<button type="button" class="kind" data-kind="'+k+'" aria-pressed="'+(k===cur)+'"><b>'+esc(x.short)+(rec?' <em class="rec">이 주제</em>':'')+'</b><span>'+esc(x.desc)+'</span></button>';}).join("");
 }
 function renderForm(){
-  renderKinds();
+  renderKinds(); updBtn();
   const f=document.getElementById("form");
   if(!tk()){ f.innerHTML='<div class="pick-first">① 비교과 주제를 먼저 골라 주세요.</div>'; return; }
   if(isOwn()){ f.innerHTML=ownForm(); return; }
@@ -654,7 +685,7 @@ function renderForm(){
     (k.subLabel?'<label class="fld">'+esc(k.subLabel)+'<input type="text" id="f_'+pid("subj")+'" data-id="'+pid("subj")+'" value="'+esc(val(pid("subj")))+'" placeholder="비워 두면 ‘'+esc(topicName())+'’(으)로 들어가요"></label>':'')+
     (k.solo?'':teamField()+
     '<label class="fld">함께한 친구 이름 <span class="opt">(나 말고 같이 한 친구가 있으면 쉼표로 적어요)</span><input type="text" id="f_mates" data-id="mates" value="'+esc(val("mates"))+'" placeholder="예: 김민지, 이서준"></label>')+
-    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(k.slides?'제출하면 PPT 파일(.pptx)과 PDF가 함께 선생님께 가요':k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
+    '<div class="auto">비교과 주제: <b>'+esc(topicName())+'</b> · 출품부문: <b>'+esc(k.name)+'</b> · '+(kindKey()==="svid"?'영상은 우리 조 포스터·PPT와 함께 선생님 페이지에 모여요':kindKey()==="dvid"?'영상은 내 꿈조사 보고서와 함께 선생님 페이지에 모여요':k.slides?'제출하면 PPT 파일(.pptx)과 PDF가 함께 선생님께 가요':k.noToc?'PDF 첫 쪽에 B4 포스터, 다음 쪽에 활동 기록이 들어가요':'표지와 차례는 저절로 만들어져요')+'</div>'+lessonBox()+
   '</div></section>';
   // 차례 미리보기
   if(!k.noToc) h+='<section class="page"><div class="ribbon c-dark">차례<small>자동으로 만들어져요 · 쪽 번호는 PDF에 들어가요</small></div><div class="pbody"><div class="toc" id="tocPrev">'+tocHtml()+'</div></div></section>';
@@ -668,6 +699,10 @@ function renderForm(){
   });
   h+='</div>';
   f.innerHTML=h;
+  const vm=document.getElementById("videoMount");
+  if(vm&&window.FVideo) FVideo.mount(vm,{key:vm.dataset.key,get:idbGet,put:idbPut,onChange:resetSendIfNeeded,status:m=>{statusEl.textContent=m;},
+    name:()=>[(val("team")||"").replace(/\s+/g,""),(val("name")||"").trim(),"발표영상"].filter(Boolean).join("_").replace(/[\\/:*?"<>|]/g,"")});
+  updBtn();
   const pm=document.getElementById("posterMount");
   if(pm&&window.FPoster) FPoster.mount(pm,{key:pm.dataset.key,mode:pm.dataset.mode||"poster",get:idbGet,put:idbPut,onChange:resetSendIfNeeded,
     title:()=>val(pid("title")),team:()=>[val("team"),[val("name"),val("mates")].filter(x=>x.trim()).join(", ")].filter(x=>x.trim()).join(" | "),
@@ -721,7 +756,7 @@ form.addEventListener("input",e=>{const t=e.target; if(!t.dataset.id)return; S_.
 document.getElementById("topics").addEventListener("click",e=>{const b=e.target.closest("[data-topic]"); if(!b)return; S_.v.topic=b.dataset.topic;
   const k=topicKind();
   if(k==="stat"&&isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]="stat"; }
-  else if(EXCL.includes(k)){ if(!(k==="stat"&&S_.v.kind==="sppt")) S_.v.kind=k; }
+  else if(EXCL.includes(k)){ if(!(k==="stat"&&["sppt","svid"].includes(S_.v.kind))&&!(k==="dream"&&S_.v.kind==="dvid")) S_.v.kind=k; }
   else if(EXCL.includes(S_.v.kind)) S_.v.kind=k||null;
   else if(k){ if(isOwn()){ if(!val(oid("cat"))) S_.v[oid("cat")]=k; } else S_.v.kind=k; }
   save(); resetSendIfNeeded(); loadOwn(); renderForm(); loadVid();
@@ -1029,13 +1064,16 @@ let dlPromise=null;
 try{ if(window.claude&&typeof window.claude.use==="function") dlPromise=window.claude.use("downloads").catch(()=>null); }catch(e){}
 const pdfBtn=document.getElementById("pdfBtn"), saveBtn=document.getElementById("saveBtn"), submitBtn=document.getElementById("submitBtn");
 let lastPdf=null;
-function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent="PDF 만들고 제출";lastPdf=null;saveBtn.hidden=true;saveBtn.textContent="파일로 저장";submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
+function btnLabel(){ return isOwn()?"PDF 만들고 제출":({sppt:"PPT 만들고 제출",stat:"포스터 만들고 제출",svid:"영상 제출",dvid:"영상 제출"})[kindKey()]||"PDF 만들고 제출"; }
+function updBtn(){ const b=document.getElementById("pdfBtn"); if(b&&b.dataset.mode!=="send") b.textContent=btnLabel(); }
+function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent=btnLabel();lastPdf=null;saveBtn.hidden=true;saveBtn.textContent="파일로 저장";submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
 function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
 saveBtn.addEventListener("click",()=>{ if(!lastPdf) return; if(lastPdf.pptx){ download(lastPdf.pptx.blob,lastPdf.pptx.name); statusEl.textContent="PPT 파일을 저장했어요. 파워포인트나 구글 슬라이드에서 열어 고칠 수 있어요."; } else download(lastPdf.blob,lastPdf.name); });
 function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
 
 pdfBtn.addEventListener("click",async()=>{
-  if(lastPdf && pdfBtn.dataset.mode==="send"){ return deliver(lastPdf.blob,lastPdf.name); }
+  if(lastPdf && pdfBtn.dataset.mode==="send"){ return lastPdf.pptx?deliver(lastPdf.pptx.blob,lastPdf.pptx.name):deliver(lastPdf.blob,lastPdf.name); }
+  if((kindKey()==="svid"||kindKey()==="dvid")&&!isOwn()) return submitVideo();
   if(!tk()||(!kindKey()&&!isOwn())){ statusEl.textContent="먼저 맨 위에서 비교과 주제와 보고서 종류를 골라 주세요."; scrollTo({top:0,behavior:"smooth"}); return; }
   if(!window.html2canvas||!window.jspdf){statusEl.textContent="PDF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
   if(val("cls").trim()&&!who().g) return goTo("grade","학년(7·8·9)을 써 주세요.");
@@ -1105,9 +1143,27 @@ async function makePoster(){
     vItems().filter(it=>FX[it.id]).forEach(it=>uploads.push({...FX[it.id],tag:it.tag,icon:it.icon,label:it.label}));
     lastPdf={blob:pdf.output("blob"),name:topicName()+(isSl?"_발표PPT_":"_통계포스터_")+nm+".pdf",shots:[...pics,...pages],uploads,failed:0,pptx:isSl?uploads.find(u=>u.tag==="발표자료"):null};
     if(isSl&&!lastPdf.pptx) notice(false,"PPT 파일을 만들지 못했어요","PDF는 그대로 제출돼요. 새로고침한 뒤 다시 제출해 보세요.");
-    pdfBtn.textContent="카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false; saveBtn.textContent=lastPdf.pptx?"PPT 파일로 저장":"파일로 저장";
+    pdfBtn.textContent=lastPdf.pptx?"PPT 카톡으로 보내기":"카톡으로 보내기"; pdfBtn.dataset.mode="send"; saveBtn.hidden=false; saveBtn.textContent=lastPdf.pptx?"PPT 파일로 저장":"파일로 저장";
     await submitToTeacher();
   }catch(e){ console.error(e); statusEl.textContent="PDF를 만들지 못했어요. 사진 개수를 줄이고 다시 해 보세요."; document.getElementById("pdfStage").innerHTML=""; }
+  finally{ pdfBtn.disabled=false; }
+}
+/* 발표 영상: PDF 없이 영상만 선생님 제출함에 올리기 (조 이름이 붙어 같은 조로 묶여요) */
+let vidUp=null;
+async function submitVideo(){
+  for(const [id,l] of [["cls","반"],["name","이름"]]) if(!val(id).trim()) return goTo(id,"표지의 "+l+"을(를) 먼저 써 주세요. 선생님께 이 이름으로 제출돼요.");
+  if(val("cls").trim()&&!who().g) return goTo("grade","학년(7·8·9)을 써 주세요.");
+  if(kindKey()==="svid"&&!val("team").trim()) return goTo("team","우리 조 이름을 써 주세요. 그래야 조원들의 포스터·PPT와 함께 묶여요.");
+  if(window.FVideo&&FVideo.busy()){ statusEl.textContent="영상을 만드는 중이에요. 다 끝난 뒤 제출해 주세요."; return; }
+  const r=window.FVideo&&FVideo.result(); if(!r||!r.blob){ statusEl.textContent="올릴 영상을 먼저 만들어 주세요. (‘🎬 다듬은 영상 만들기’ 또는 ‘원본 그대로 쓰기’)"; const m=document.getElementById("videoMount"); if(m) m.scrollIntoView({block:"start"}); return; }
+  if(r.size>300*1048576){ notice(false,"영상이 너무 커요","300MB가 넘어요. 크기를 ‘작게’로 골라 다시 만들어 주세요."); return; }
+  const w=who(), label=topicName().replace(/_+/g," ").replace(/\s+/g," ").trim()+"__"+(catName()+"__"+w.g+"학년"+w.c+"반_"+w.name).replace(/\s+/g,"")+teamTag();
+  if(!vidUp||vidUp.blob!==r.blob||vidUp.lab!==label) vidUp={name:r.name,size:r.size,type:r.type||"video/mp4",blob:r.blob,tag:"영상",icon:"🎬",label:"발표 영상",lab:label};
+  pdfBtn.disabled=true;
+  try{ await uploadFile(vidUp,label); statusEl.textContent="✅ 발표 영상을 선생님께 제출했어요!"; notice(true,"제출 완료되었습니다!",topicName()+" · 발표 영상 · "+w.g+"학년 "+w.c+"반 "+w.name+(teamTag()?" ("+val("team").trim()+")":"")); }
+  catch(e){ console.error(e); const pc=vidUp.size?Math.floor((vidUp.sent||0)/vidUp.size*100):0;
+    statusEl.textContent=String(e.message||"")==="no file"?"⚠️ 선생님 제출함이 아직 영상을 받을 수 있게 바뀌지 않았어요. 선생님께 말씀드려 주세요.":"⚠️ 영상을 끝까지 못 올렸어요 ("+pc+"%). 와이파이를 확인하고 ‘영상 제출’을 다시 누르면 이어서 올라가요.";
+    notice(false,"제출하지 못했어요",statusEl.textContent.replace(/^⚠️ /,"")); }
   finally{ pdfBtn.disabled=false; }
 }
 /* 다른 양식: 표지(선택) + 올린 파일을 순서대로 이어 붙이기 */
@@ -1200,7 +1256,7 @@ async function deliver(blob,name){
       if(e&&e.code==="rate_limited"){statusEl.textContent="잠시 후 다시 눌러 주세요.";return;} }
   }
   if(window.claude){ showShots(); return; }
-  let file=null; try{ file=new File([blob],name,{type:"application/pdf"}); }catch(e){}
+  let file=null; try{ file=new File([blob],name,{type:blob.type||"application/pdf"}); }catch(e){}
   if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
     try{ await navigator.share({files:[file],title:name}); statusEl.textContent="보냈어요! 공유 화면에 카카오톡이 안 보였다면 '파일로 저장' 후 카톡에 첨부하세요."; return; }
     catch(e){
