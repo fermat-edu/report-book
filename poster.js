@@ -519,7 +519,7 @@ function render(){
   S.items.forEach(it=>board.appendChild(elFor(it))); paintBg();
   if(S.frame){ const f=document.createElement("div"); f.className="pframe"; f.style.border=S.frame+"px solid "+(S.frameC||th().main); board.appendChild(f); }
   board.insertAdjacentHTML("beforeend",'<div class="pguide pgv" hidden></div><div class="pguide pgh" hidden></div>');
-  if(!S.items.length) board.insertAdjacentHTML("beforeend",SL()?'<div class="pempty"><b>'+(D.cur+1)+'번 슬라이드</b><br>위에서 ‘✨ 추천 구성’을 누르면 발표 순서대로 슬라이드가 한 번에 생겨요.<br>제목·글 상자·사진을 하나씩 넣어도 돼요.</div>':'<div class="pempty"><b>B4 포스터 판</b><br>위에서 ‘✨ 추천 배치’을 누르거나<br>제목·글 상자·그래프를 하나씩 넣어 보세요.</div>');
+  if(!S.items.length) board.insertAdjacentHTML("beforeend",SL()?'<div class="pempty"><b>'+(D.cur+1)+'번 슬라이드</b><br>위에서 ‘✨ 추천 구성 만들기’를 누르면 발표 순서대로 슬라이드가 한 번에 생겨요.<br>제목·글 상자·사진을 하나씩 넣어도 돼요.</div>':'<div class="pempty"><b>B4 포스터 판</b><br>위에서 ‘✨ 추천 배치’를 고르거나<br>제목·글 상자·그래프를 하나씩 넣어 보세요.</div>');
   panel(); toolbarState();
 }
 function fit(){ const w=wrap.clientWidth||W; scale=w/W*zoom; sizer.style.width=Math.round(W*scale)+"px"; sizer.style.height=Math.round(H*scale)+"px"; board.style.transform="scale("+scale+")"; board.style.setProperty("--inv",(1/scale).toFixed(3)); wrap.style.height=zoom>1?Math.min(Math.round(H*scale),Math.round(window.innerHeight*0.75))+"px":Math.round(H*scale)+"px"; wrap.classList.toggle("zoomed",zoom>1); const z=bar&&bar.querySelector(".pzoom"); if(z) z.textContent=Math.round(zoom*100)+"%"; }
@@ -580,12 +580,20 @@ function toolbar(){
      '<label class="pinl">색 조합 <select data-theme>'+Object.entries(THEMES).map(([k,v])=>'<option value="'+k+'">'+v.name+'</option>').join("")+'</select></label>'+
      (SL()?'':'<label class="pinl">바깥 테두리 <select data-frame><option value="0">없음</option><option value="4">얇게</option><option value="8">보통</option><option value="14">두껍게</option></select></label>')+
      '<span class="pinl">보기 <button type="button" data-zoom="-1" aria-label="작게 보기">−</button><span class="pzoom pnum">100%</span><button type="button" data-zoom="1" aria-label="크게 보기">＋</button></span>'+
-   '</div><div class="prow"><span class="plab">'+(SL()?'구성':'배치')+'</span><button type="button" data-tpl="next" class="pmain">'+(SL()?'✨ 추천 구성':'✨ 추천 배치')+'</button><span class="ptplnote" aria-live="polite"></span></span>'+(SL()?'':dzPop())+'<button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">'+(SL()?'처음부터 다시':'모두 지우기')+'</button>'+
+   '</div><div class="prow"><span class="plab">'+(SL()?'구성':'배치')+'</span>'+(SL()?'<button type="button" data-tpl="deck" class="pmain">✨ 추천 구성 만들기</button>'+sdzPop():tplPop()+dzPop())+'<span class="ptplnote" aria-live="polite"></span><button type="button" data-undo="1">↶ 되돌리기</button><button type="button" data-clear="1" class="pdanger">'+(SL()?'처음부터 다시':'모두 지우기')+'</button>'+
    '</div>'+
    '<div class="prow psel" hidden></div><div class="prow psel2" hidden></div>'+
   '</div>';
 }
+function tplPop(){ return '<span class="pdd"><button type="button" data-pop="tpl" class="pmain">✨ 추천 배치 ▾</button><span class="ppop pdz ptplp" data-popbox="tpl" hidden><b>고르면 바로 깔려요 · 6~10번은 수상작처럼 내용이 많아요</b><span class="pdzg">'+
+  TPLS.map((T,i)=>'<button type="button" data-tplk="'+i+'"'+(D.tplIdx===i?' class="on"':'')+'><canvas data-tplpv="'+i+'"></canvas><b>'+(i+1)+'. '+esc(T[1])+'</b><small>'+esc(T[2])+'</small></button>').join("")+'</span></span></span>'; }
+function drawTplPreviews(){ const keepS=S;
+  bar.querySelectorAll("[data-tplpv]").forEach(cv=>{ const k=TPLS[+cv.dataset.tplpv][0]; S={bg:th().bg,bgx:keepS.bgx,items:template(k),frame:k==="c"?0:8,frameC:th().main}; if(D.dz!=null) applyDesign(D.dz,true); pvCanvas(cv,S,120); });
+  S=keepS; }
+function applyTpl(n){ const T=TPLS[n]; snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; D.tplIdx=n; if(D.dz!=null) applyDesign(D.dz,true); sel=null; render(); save(false,true); D.fresh=true;
+  if(O.status) O.status("추천 배치 ‘"+(n+1)+". "+T[1]+"’을 깔았어요. 다른 배치는 ‘✨ 추천 배치’에서 다시 골라요."); }
 function tplNote(){ const el=bar&&bar.querySelector(".ptplnote"); if(!el) return; if(SL()) return deckNote(el); const i=D.tplIdx;
+  el.innerHTML=i==null?'‘✨ 추천 배치’에서 10가지 중 골라요. ‘🎨 추천 디자인’은 배치는 그대로 두고 색·배경·글꼴만 바꿔요.':'지금 배치: <b>'+(i+1)+'. '+esc(TPLS[i][1])+'</b>'+(D.dz!=null?' · 디자인: <b>'+esc(DZ[D.dz].n)+'</b>':''); return;
   el.innerHTML=i==null?'누를 때마다 수상작을 참고한 배치 <b>'+TPLS.length+'가지</b>가 차례로 바뀌어요. 6번부터는 내용을 많이 넣는 수상작형이에요.':'<b>지금 '+(i+1)+'/'+TPLS.length+' · '+esc(TPLS[i][1])+'</b> – '+esc(TPLS[i][2])+'<br>다시 누르면 다음 배치 → ‘'+esc(TPLS[(i+1)%TPLS.length][1])+'’'; }
 function toolbarState(){ tplNote(); const fr=bar.querySelector("[data-frame]"); if(fr) fr.value=String(S.frame||0); const ts=bar.querySelector("[data-theme]"); if(ts) ts.value=D.theme; const bg=bar.querySelector("[data-bg]"); if(bg) bg.value=/^#[0-9a-f]{6}$/i.test(S.bg)?S.bg:"#ffffff"; }
 function panel(){
@@ -705,10 +713,15 @@ function keepIn(p){ if(!p||p.hidden) return; p.style.left=""; p.style.right=""; 
   if(r.right>vw-8) p.style.marginLeft=Math.round(-(r.right-vw+8))+"px"; const r2=p.getBoundingClientRect(); if(r2.left<8) p.style.marginLeft=Math.round((parseFloat(p.style.marginLeft)||0)+8-r2.left)+"px"; }
 function onBar(e){
   const b=e.target.closest("button"); if(!b) return;
-  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
+  if(b.dataset.tplk!=null){ const n=+b.dataset.tplk;
+    if(S.items.length&&!D.fresh&&!b.classList.contains("sure")){ bar.querySelectorAll("[data-tplk].sure").forEach(x=>{ x.classList.remove("sure"); x.querySelector("small").textContent=TPLS[+x.dataset.tplk][2]; });
+      b.classList.add("sure"); b.querySelector("small").textContent="한 번 더 누르면 바뀌어요 (지금 포스터 내용은 지워져요 · ↶ 되돌리기 가능)"; return; }
+    bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true); applyTpl(n); return; }
+  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); if(pop==="tpl") drawTplPreviews(); if(pop==="sdz") drawSdzPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
   bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true);
   const it=sel&&find(sel);
   if(b.dataset.dz!=null){ applyDesign(+b.dataset.dz); return; }
+  if(b.dataset.sdz!=null){ applySlideDesign(+b.dataset.sdz); return; }
   if(b.dataset.tsty){ const pr=textPresets().find(x=>x[0]===b.dataset.tsty); if(pr) addItem(mk("text",JSON.parse(JSON.stringify(pr[2])))); return; }
   if(b.dataset.bgs!=null){ snap(); S.bg=b.dataset.bgs; delete S.bgx; render(); save(); return; }
   if(b.dataset.bgg!=null){ const g=bgPresets().grad[+b.dataset.bgg]; snap(); S.bg=g[0]; S.bgx={type:"grad",c1:g[0],c2:g[1],dir:g[2]}; render(); save(); return; }
@@ -725,17 +738,12 @@ function onBar(e){
     addItem(mk("shape",{shape:k,w:sz[0],h:sz[1],lw:6,fill:L?t.ink:k==="note"?"#fff3b0":k==="tape"?t.sub:["star","heart","burst"].includes(k)?t.accent:k==="ribbon"?t.main:t.sub,shadow:k==="note",radius:24,op:k==="tape"?0.85:1})); return; }
   if(b.dataset.stk){ addItem(mk("sticker",{emoji:b.dataset.stk})); return; }
   if(b.dataset.tpl){
-    if(SL()){ if(hasContent()&&!D.fresh&&!b.dataset.sure){ b.dataset.sure="1"; b.textContent="한 번 더 누르면 모든 슬라이드가 바뀌어요"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="✨ 추천 구성"; },3500); return; }
-      delete b.dataset.sure; b.textContent="✨ 추천 구성"; applyDeck(); return; }
-    if(S.items.length&&!D.fresh&&!b.dataset.sure){ b.dataset.sure="1"; b.textContent="한 번 더 누르면 새 배치로 바뀌어요"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="✨ 추천 배치"; },3500); return; }
-    delete b.dataset.sure; b.textContent="✨ 추천 배치";
-    const n=((D.tplIdx==null?-1:D.tplIdx)+1)%TPLS.length, T=TPLS[n];
-    snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; D.tplIdx=n; if(D.dz!=null) applyDesign(D.dz,true); sel=null; render(); save(false,true); D.fresh=true;
-    if(O.status) O.status("추천 배치 "+(n+1)+"/"+TPLS.length+" ‘"+T[1]+"’을 깔았어요. 다시 누르면 다음 배치로 바뀌어요."); return; }
+    if(hasContent()&&!D.fresh&&!b.dataset.sure){ b.dataset.sure="1"; b.textContent="한 번 더 누르면 모든 슬라이드가 새로 바뀌어요"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="✨ 추천 구성 만들기"; },3500); return; }
+    delete b.dataset.sure; b.textContent="✨ 추천 구성 만들기"; applyDeck(); return; }
   if(b.dataset.zoom){ const Z=[1,1.5,2,3]; zoom=Z[clamp(Z.indexOf(zoom)+(+b.dataset.zoom),0,Z.length-1)]; fit(); return; }
   if(b.dataset.undo){ undo(); return; }
   if(b.dataset.clear){ if(!b.dataset.sure){ b.dataset.sure="1"; b.textContent="정말 모두 지울까요? 한 번 더 누르기"; setTimeout(()=>{ delete b.dataset.sure; b.textContent="모두 지우기"; },3500); return; }
-    snap(); if(SL()){ D.slides=[{id:uid(),bg:"#ffffff",items:[]}]; D.deckIdx=null; setCur(0); strip(); } else S.items=[]; sel=null; render(); save(); return; }
+    snap(); if(SL()){ D.slides=[{id:uid(),bg:"#ffffff",items:[]}]; setCur(0); strip(); } else S.items=[]; sel=null; render(); save(); return; }
   if(!it) return;
   if(b.dataset.sw){ snap(); const k=b.dataset.sw, c=b.dataset.c; it[k]=c; if(k==="stroke"&&c&&!it.sw) it.sw=2; render(); save(); return; }
   if(b.dataset.rot0){ snap(); it.rot=0; render(); save(); return; }
@@ -753,7 +761,7 @@ function onBar(e){
 let rngSnap=false;
 function onBarChange(e){
   const t=e.target;
-  if(t.matches("[data-theme]")){ snap(); const o=th(); delete D.pal; delete D.dz; D.theme=t.value; recolor(o,th()); const tmp=document.createElement("div"); tmp.innerHTML=toolbar(); bar.innerHTML=tmp.firstChild.innerHTML; render(); strip(); save(); return; }
+  if(t.matches("[data-theme]")){ snap(); const o=th(); delete D.pal; delete D.dz; delete D.sdz; D.theme=t.value; recolor(o,th()); const tmp=document.createElement("div"); tmp.innerHTML=toolbar(); bar.innerHTML=tmp.firstChild.innerHTML; render(); strip(); save(); return; }
   if(t.matches("[data-frame]")){ snap(); S.frame=+t.value; if(!S.frameC) S.frameC=th().main; render(); save(); return; }
   if(t.matches("[data-bg]")){ if(!rngSnap){ snap(); rngSnap=true; } S.bg=t.value; if(S.bgx&&S.bgx.type!=="pat") delete S.bgx; board.style.background=S.bg; paintBg(); save(); if(e.type==="change") rngSnap=false; return; }
   const it=sel&&find(sel); if(!it) return;
@@ -822,82 +830,135 @@ function drawItem(ctx,it){
     ctx.restore();
 }
 /* ---------- 발표자료 (16:9 슬라이드 여러 장) ---------- */
-const DESIGNS=[["band","띠 제목형","위쪽 색 띠에 제목, 깔끔하고 읽기 쉬워요"],["side","사이드 바형","왼쪽 색 막대와 큰 제목, 세련된 느낌"],["card","카드형","색 배경 위 하얀 카드, 귀엽고 부드러운 느낌"]];
+const FRAMES={band:"띠 제목",side:"사이드 바",card:"카드",line:"밑줄 제목"};
+const AOF={band:{x:56,y:144,w:1168,h:528},side:{x:72,y:156,w:1152,h:516},card:{x:72,y:156,w:1136,h:496},line:{x:64,y:150,w:1152,h:522}};
 const LAYOUTS=[["text","제목 + 글"],["two","글 두 칸"],["chart","그래프 + 해석"],["photo","사진 + 글"],["big","사진 크게"],["flow","순서도"],["cover","표지"],["end","끝 인사"],["blank","빈 슬라이드"]];
 function slideFrame(style,title){
-  const t=th(), dark=dk(), items=[], push=o=>items.push(o); let bg=t.bg, A;
+  const t=th(), dark=dk(), items=[], push=o=>items.push(Object.assign(o,{tag:o.tag||"DEC"})); let bg=t.bg;
   if(style==="side"){ bg=dark?t.bg:"#ffffff";
     push(mk("shape",{shape:"rect",x:0,y:0,w:28,h:H,fill:t.main,radius:0}));
-    push(mk("title",{x:72,y:36,w:1140,h:80,text:title,size:46,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+    push(mk("title",{tag:"STT",x:72,y:36,w:1140,h:80,text:title,size:46,color:t.main,fill:"",radius:0,align:"left",pad:0}));
     push(mk("shape",{shape:"line",x:72,y:122,w:120,h:6,fill:t.accent}));
-    A={x:72,y:156,w:1152,h:516};
   } else if(style==="card"){ bg=t.sub;
     push(mk("shape",{shape:"round",x:36,y:36,w:W-72,h:H-72,fill:dark?t.bg:"#ffffff",radius:28}));
-    push(mk("title",{x:72,y:64,w:560,h:64,text:title,font:"Do Hyeon",size:34,color:"#ffffff",fill:t.main,radius:999,align:"center",pad:10}));
-    A={x:72,y:156,w:1136,h:496};
+    push(mk("title",{tag:"STT",x:72,y:64,w:560,h:64,text:title,font:"Do Hyeon",size:34,color:"#ffffff",fill:t.main,radius:999,align:"center",pad:10}));
+  } else if(style==="line"){ bg=t.bg;
+    push(mk("title",{tag:"STT",x:64,y:38,w:1152,h:78,text:title,size:46,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+    push(mk("shape",{shape:"line",x:64,y:122,w:1152,h:4,fill:t.ink}));
   } else { bg=dark?t.bg:"#ffffff";
     push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:112,fill:t.main,radius:0}));
-    push(mk("title",{x:56,y:20,w:W-112,h:72,text:title,size:44,fill:"",radius:0,align:"left",pad:0}));
+    push(mk("title",{tag:"STT",x:56,y:20,w:W-112,h:72,text:title,size:44,fill:"",radius:0,align:"left",pad:0}));
     push(mk("shape",{shape:"rect",x:0,y:H-10,w:W,h:10,fill:t.sub,radius:0}));
-    A={x:56,y:144,w:1168,h:528};
   }
-  return {bg,items,A};
+  return {bg,items,A:AOF[style]||AOF.band};
 }
 function slide(style,kind,o){
   o=o||{}; const t=th(), dark=dk(), panel=dark?t.sub:"#ffffff";
-  const team=(O.team&&O.team())||(O.deck==="dream"?"○학년 ○반 이름":"○조 | 발표자 이름"), ttl=(O.title&&O.title())||(O.deck==="dream"?"나의 꿈: ○○○":"우리 탐구의 제목을 써요");
+  const team=o.team!=null?o.team:(O.team&&O.team())||(O.deck==="dream"?"○학년 ○반 이름":"○조 | 발표자 이름"), ttl=(O.title&&O.title())||(O.deck==="dream"?"나의 꿈: ○○○":"우리 탐구의 제목을 써요");
   if(kind==="cover"||kind==="end"){
-    const items=[], push=x=>items.push(x), big=kind==="cover"?ttl:"감사합니다!", sub=kind==="cover"?(o.sub||"부제: 무엇을 어떻게 조사했는지 한 줄로"):"궁금한 점이 있으면 질문해 주세요 🙋";
-    let bg=dark?t.bg:"#ffffff";
+    const items=[], push=x=>items.push(Object.assign(x,{tag:x.tag||"DEC"}));
+    const big=o.big!=null?o.big:kind==="cover"?ttl:"감사합니다!", sub=o.sub!=null?o.sub:kind==="cover"?"부제: 무엇을 어떻게 조사했는지 한 줄로":"궁금한 점이 있으면 질문해 주세요 🙋";
+    let bg=dark?t.bg:"#ffffff"; const big1=kind==="cover";
     if(style==="side"){
       push(mk("shape",{shape:"rect",x:0,y:0,w:420,h:H,fill:t.main,radius:0}));
-      push(mk("sticker",{emoji:kind==="cover"?"📊":"🙌",x:130,y:280,w:160,h:160}));
-      push(mk("title",{x:480,y:150,w:740,h:240,text:big,size:kind==="cover"?62:84,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+      push(mk("sticker",{emoji:big1?(O.deck==="dream"?"🌟":"📊"):"🙌",x:130,y:280,w:160,h:160}));
+      push(mk("title",{tag:"CT",x:480,y:150,w:740,h:240,text:big,size:big1?62:84,color:t.main,fill:"",radius:0,align:"left",pad:0}));
       push(mk("shape",{shape:"line",x:480,y:410,w:160,h:8,fill:t.accent}));
-      push(mk("text",{x:480,y:440,w:740,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
-      push(mk("text",{x:480,y:520,w:740,h:56,text:team,size:24,color:t.main,bold:true,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
+      push(mk("text",{tag:"CS",x:480,y:440,w:740,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
+      push(mk("text",{tag:"CM",x:480,y:520,w:740,h:56,text:team,size:24,color:t.main,bold:true,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
     } else if(style==="card"){ bg=t.sub;
       push(mk("shape",{shape:"round",x:36,y:36,w:W-72,h:H-72,fill:dark?t.bg:"#ffffff",radius:28}));
-      push(mk("title",{x:100,y:150,w:W-200,h:220,text:big,size:kind==="cover"?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
-      push(mk("text",{x:100,y:384,w:W-200,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
-      push(mk("text",{x:340,y:476,w:600,h:60,text:team,size:24,bold:true,color:"#ffffff",fill:t.main,stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+      push(mk("title",{tag:"CT",x:100,y:150,w:W-200,h:220,text:big,size:big1?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
+      push(mk("text",{tag:"CS",x:100,y:384,w:W-200,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:340,y:476,w:600,h:60,text:team,size:24,bold:true,color:"#ffffff",fill:t.main,stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+    } else if(style==="line"){ bg=t.bg;
+      push(mk("shape",{shape:"line",x:80,y:150,w:1120,h:6,fill:t.ink}));
+      push(mk("title",{tag:"CT",x:80,y:176,w:1120,h:230,text:big,size:big1?70:90,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+      push(mk("shape",{shape:"line",x:80,y:424,w:1120,h:3,fill:t.ink}));
+      push(mk("text",{tag:"CS",x:80,y:444,w:1120,h:60,text:sub,size:28,bold:true,color:t.ink,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:80,y:516,w:1120,h:56,text:team,size:26,bold:true,color:t.main,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
     } else {
       push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:440,fill:t.main,radius:0}));
-      push(mk("title",{x:80,y:90,w:W-160,h:230,text:big,size:kind==="cover"?68:90,fill:"",radius:0,align:"left",pad:0}));
-      push(mk("text",{x:80,y:330,w:W-160,h:60,text:sub,size:28,bold:true,color:"#ffffff",fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
-      push(mk("text",{x:80,y:490,w:W-160,h:60,text:team,size:28,bold:true,color:t.ink,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+      push(mk("title",{tag:"CT",x:80,y:90,w:W-160,h:230,text:big,size:big1?68:90,fill:"",radius:0,align:"left",pad:0}));
+      push(mk("text",{tag:"CS",x:80,y:330,w:W-160,h:60,text:sub,size:28,bold:true,color:"#ffffff",fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:80,y:490,w:W-160,h:60,text:team,size:28,bold:true,color:t.ink,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
       push(mk("shape",{shape:"line",x:80,y:570,w:200,h:8,fill:t.accent}));
     }
-    return {id:uid(),bg,items};
+    return {id:uid(),bg,items,kind,st:style};
   }
   const F=slideFrame(style,o.title||({text:"제목을 써요",two:"제목을 써요",chart:"조사 결과",photo:"제목을 써요",big:"사진으로 보는 우리 탐구",flow:"조사 방법",blank:""}[kind]||""));
   const A=F.A, items=F.items, push=x=>items.push(x);
-  if(kind==="blank"&&!o.title) items.splice(0,items.length,...items.filter(it=>it.role!=="title"));
-  const body=(x,y,w,h,txt,ex)=>push(mk("text",Object.assign({x,y,w,h,text:txt,size:26,fill:panel,stroke:t.sub,sw:2,radius:16,pad:22},ex||{})));
-  const head=(x,y,w,txt)=>push(mk("text",{x,y,w,h:48,text:txt,font:"Do Hyeon",size:32,color:t.main,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
-  const call=(x,y,w,h,txt)=>push(mk("text",{x,y,w,h,text:txt,size:24,bold:true,color:dark?t.accent:t.main,fill:dark?"":t.sub,stroke:"",sw:0,radius:12,valign:"middle",pad:16}));
+  if(kind==="blank"&&!o.title) items.splice(0,items.length,...items.filter(it=>it.tag!=="STT"));
+  const body=(x,y,w,h,txt,ex,tg)=>push(mk("text",Object.assign({tag:tg||"B",x,y,w,h,text:txt,size:26,fill:panel,stroke:t.sub,sw:2,radius:16,pad:22},ex||{})));
+  const head=(x,y,w,txt)=>push(mk("text",{tag:"H",x,y,w,h:48,text:txt,font:"Do Hyeon",size:32,color:t.main,fill:"",stroke:"",sw:0,pad:0,valign:"middle"}));
+  const call=(x,y,w,h,txt)=>push(mk("text",{tag:"C",x,y,w,h,text:txt,size:24,bold:true,color:dark?t.accent:t.main,fill:dark?"":t.sub,stroke:"",sw:0,radius:12,valign:"middle",pad:16}));
   if(kind==="text") body(A.x,A.y,A.w,A.h,o.body||"• 첫 번째로 말할 내용\n• 두 번째로 말할 내용\n• 세 번째로 말할 내용");
   if(kind==="two"){ const cw=(A.w-32)/2;
     head(A.x,A.y,cw,o.h1||"왼쪽 소제목"); body(A.x,A.y+60,cw,A.h-60,o.b1||"내용을 써요");
-    head(A.x+cw+32,A.y,cw,o.h2||"오른쪽 소제목"); body(A.x+cw+32,A.y+60,cw,A.h-60,o.b2||"내용을 써요",o.fill2?{fill:dark?panel:t.sub,stroke:""}:null); }
+    head(A.x+cw+32,A.y,cw,o.h2||"오른쪽 소제목"); body(A.x+cw+32,A.y+60,cw,A.h-60,o.b2||"내용을 써요",o.fill2?{fill:dark?panel:t.sub,stroke:""}:null,o.fill2?"B2":"B"); }
   if(kind==="chart"){ const cw=r4(A.w*0.6);
-    push(mk("chart",{x:A.x,y:A.y,w:cw,h:A.h,radius:16,fill:panel,chart:Object.assign({kind:"bar",title:"질문 그래프",labels:["항목 A","항목 B","항목 C","항목 D"],values:[34,21,15,8],unit:"명",showVal:true,mono:false,color:t.main},o.chart||{})}));
+    push(mk("chart",{tag:"G",x:A.x,y:A.y,w:cw,h:A.h,radius:16,fill:panel,chart:Object.assign({kind:"bar",title:"질문 그래프",labels:["항목 A","항목 B","항목 C","항목 D"],values:[34,21,15,8],unit:"명",showVal:true,mono:false,color:t.main},o.chart||{})}));
     body(A.x+cw+28,A.y,A.w-cw-28,A.h-108,o.body||"해석\n\n사실(숫자): \n의미: \n이유: ");
     call(A.x+cw+28,A.y+A.h-92,A.w-cw-28,92,o.call||"→ 핵심을 한 줄로!"); }
   if(kind==="photo"){ const cw=r4(A.w*0.5);
     push(mk("image",{tag:"I",x:A.x,y:A.y,w:cw,h:A.h,radius:16}));
     body(A.x+cw+28,A.y,A.w-cw-28,A.h,o.body||"사진에 대한 설명을 써요."); }
   if(kind==="big"){ push(mk("image",{tag:"I",x:A.x,y:A.y,w:A.w,h:A.h-72,radius:16}));
-    push(mk("text",{x:A.x,y:A.y+A.h-60,w:A.w,h:60,text:o.body||"사진 설명: 무엇을, 언제, 어디서",size:24,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0})); }
+    push(mk("text",{tag:"CAP",x:A.x,y:A.y+A.h-60,w:A.w,h:60,text:o.body||"사진 설명: 무엇을, 언제, 어디서",size:24,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0})); }
   if(kind==="flow"){ const steps=o.steps||["설문 문항 만들기","구글 설문지 배포","응답 모으기","그래프로 정리","분석 · 결론"], n=steps.length, fh=260, slot=A.w/n, d=96;
-    push(mk("shape",{shape:"round",x:A.x,y:A.y,w:A.w,h:fh,fill:panel,stroke:t.sub,sw:2,radius:16}));
+    push(mk("shape",{tag:"FB",shape:"round",x:A.x,y:A.y,w:A.w,h:fh,fill:panel,stroke:t.sub,sw:2,radius:16}));
     steps.forEach((st,k)=>{ const cx=A.x+slot*k+slot/2;
-      push(mk("shape",{shape:"ellipse",x:r4(cx-d/2),y:A.y+30,w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
-      push(mk("text",{x:r4(cx-d/2),y:A.y+30,w:d,h:d,text:String(k+1),font:"Black Han Sans",size:44,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
-      push(mk("text",{x:r4(cx-slot/2+6),y:A.y+140,w:r4(slot-12),h:100,text:st,size:24,bold:true,align:"center",fill:"",stroke:"",sw:0,pad:2}));
-      if(k<n-1) push(mk("shape",{shape:"arrow",x:r4(cx+d/2+8),y:A.y+66,w:Math.max(16,r4(slot-d-16)),h:24,fill:t.sub,radius:0})); });
+      push(mk("shape",{tag:"FC",alt:k%2,shape:"ellipse",x:r4(cx-d/2),y:A.y+30,w:d,h:d,fill:k%2?t.accent:t.main,radius:0}));
+      push(mk("text",{tag:"FN",x:r4(cx-d/2),y:A.y+30,w:d,h:d,text:String(k+1),font:"Black Han Sans",size:44,color:"#ffffff",fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+      push(mk("text",{tag:"FT",x:r4(cx-slot/2+6),y:A.y+140,w:r4(slot-12),h:100,text:st,size:24,bold:true,align:"center",fill:"",stroke:"",sw:0,pad:2}));
+      if(k<n-1) push(mk("shape",{tag:"FA",shape:"arrow",x:r4(cx+d/2+8),y:A.y+66,w:Math.max(16,r4(slot-d-16)),h:24,fill:t.sub,radius:0})); });
     body(A.x,A.y+fh+24,A.w,A.h-fh-24,o.body||"대상: ○○중 ○학년 ○○명\n기간: ○월 ○일 ~ ○월 ○일 · 질문 수: ○개",{valign:"middle"}); }
-  return {id:uid(),bg:F.bg,items};
+  return {id:uid(),bg:F.bg,items,kind,st:style};
+}
+/* 발표자료 추천 디자인 10가지: 틀(띠·사이드·카드·밑줄) + 색 + 배경 + 글꼴 + 상자 모양 */
+const SDZ=[
+ {n:"깔끔 블루",d:"파란 띠 제목, 하얀 바탕",fr:"band",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#dbe7fb",accent:"#f28c28",ink:"#1d2a3a"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{}},
+ {n:"민트 사이드",d:"왼쪽 민트 막대, 둥근 테두리 상자",fr:"side",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
+ {n:"파스텔 카드",d:"분홍 땡땡이 배경 위 하얀 카드",fr:"card",pal:{bg:"#fff8fb",main:"#e889b5",sub:"#fde3ef",accent:"#7cc6c0",ink:"#3a2a33"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.7,size:40},f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},s:{B:{stroke:"$sub",sw:3,radius:20}}},
+ {n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리",fr:"line",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:10,pad:10},B:{stroke:"$ink",sw:3,radius:12},B2:{fill:"#8fd6b0",stroke:"$ink",sw:3},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:12},FB:{stroke:"$ink",sw:3,radius:12}}},
+ {n:"네이비 비즈니스",d:"남색 띠, 금색 포인트, 그림자 카드",fr:"band",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},bg:"#f5f7fb",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
+  s:{H:{bold:true},B:{stroke:"",sw:0,radius:6,shadow:true},B2:{fill:"#fff4d0"},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"",sw:0,radius:6,shadow:true},FB:{stroke:"",sw:0,radius:6,shadow:true}}},
+ {n:"선셋 그라데이션",d:"주황→노랑 그라데이션 위 하얀 카드",fr:"card",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"",sw:0,shadow:true,radius:18},G:{shadow:true}}},
+ {n:"라벤더 땡땡이",d:"연보라 땡땡이, 보라 사이드 막대",fr:"side",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bg:"#f3efff",bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.12,size:40},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18}}},
+ {n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",fr:"line",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
+  s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:10,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},B2:{fill:"$sub"},C:{fill:"",color:"$accent"},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0}}},
+ {n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 카드 제목",fr:"card",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#ffe45c",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.5,size:36},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{B:{stroke:"$main",sw:3,radius:16},B2:{fill:"#fff7c2",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
+ {n:"모눈 노트",d:"모눈종이 배경, 손글씨 제목, 파란 펜",fr:"line",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:32},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0"},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}}
+];
+const SDZ_BASE={H:{color:"$main",fill:"",stroke:"",sw:0},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,color:"$ink",shadow:false},B2:{fill:"$sub",stroke:"",sw:0,color:"$ink"},
+  C:{fill:"$sub",color:"$main",stroke:"",sw:0},G:{fill:"#ffffff",stroke:"",sw:0,radius:16,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,shadow:false},
+  FC:{},FN:{color:"#ffffff"},FT:{color:"$ink"},FA:{fill:"$sub"},CAP:{color:"$ink"},CS:{},CM:{},CT:{},STT:{},I:{}};
+const CONTENT_TAGS=["B","B2","H","C","G","I","FB","FC","FN","FT","FA","CAP"];
+function styleSlide(P,z){ // 색·글꼴·상자 모양만 (위치는 그대로)
+  const pal=z.pal, rv=v=>typeof v==="string"&&v[0]==="$"?pal[v.slice(1)]:v;
+  if(z.bg) P.bg=z.bg; if(z.bgx) P.bgx=JSON.parse(JSON.stringify(z.bgx)); else delete P.bgx;
+  P.items.forEach(it=>{ const tg=it.tag; if(!tg||tg==="DEC") return; const st=Object.assign({},SDZ_BASE[tg]||{},z.s[tg]||{}); if(tg==="FC") st.fill=it.alt?pal.accent:pal.main;
+    for(const [k,v] of Object.entries(st)) it[k]=rv(v);
+    if(it.type==="text"){ const f=tg==="STT"||tg==="CT"?z.f.T:tg==="H"?z.f.H:["B","B2","C","CS","CM","FT","CAP"].includes(tg)?z.f.B:null; if(f) it.font=f; }
+    if(it.type==="chart"&&it.chart) it.chart.color=pal.main; });
+}
+function restyleSlide(P,z){ // 틀을 새로 깔고 내용은 새 틀 안으로 옮겨요
+  if(!P.kind||!P.st){ styleSlide(P,z); return P; }
+  const txt=tg=>{ const it=P.items.find(x=>x.tag===tg); return it?it.text:null; };
+  const extra=P.items.filter(it=>!it.tag);
+  if(P.kind==="cover"||P.kind==="end"){ const N=slide(z.fr,P.kind,{big:txt("CT"),sub:txt("CS"),team:txt("CM")}); N.id=P.id; N.items.push(...extra); styleSlide(N,z); return N; }
+  const oA=AOF[P.st]||AOF.band, F=slideFrame(z.fr,txt("STT")||""), nA=F.A, sx=nA.w/oA.w, sy=nA.h/oA.h;
+  if(P.kind==="blank"&&txt("STT")==null) F.items.splice(0,F.items.length,...F.items.filter(it=>it.tag!=="STT"));
+  const content=P.items.filter(it=>CONTENT_TAGS.includes(it.tag)).map(it=>Object.assign(it,{x:r4(nA.x+(it.x-oA.x)*sx),y:r4(nA.y+(it.y-oA.y)*sy),w:Math.max(8,r4(it.w*sx)),h:Math.max(8,r4(it.h*sy))}));
+  const N={id:P.id,bg:F.bg,items:F.items.concat(content,extra),kind:P.kind,st:z.fr}; styleSlide(N,z); return N;
+}
+function applySlideDesign(i){
+  const z=SDZ[i]; if(!z) return; snap(); D.pal=Object.assign({name:z.n},z.pal); D.sdz=i; D.style=z.fr;
+  D.slides=D.slides.map(P=>restyleSlide(P,z)); setCur(D.cur); sel=null; render(); strip(); save();
+  if(O.status) O.status("추천 디자인 ‘"+z.n+"’을 모든 슬라이드에 입혔어요. 쓴 내용은 그대로예요. (↶ 되돌리기로 돌아갈 수 있어요)");
 }
 function deck(style){
   if(O.deck==="dream") return [slide(style,"cover",{sub:"나의 꿈과 진로를 소개합니다"}),
@@ -922,14 +983,23 @@ function deck(style){
     slide(style,"two",{title:"7. 느낀 점과 역할",h1:"느낀 점",b1:"배운 점, 아쉬운 점, 더 알아보고 싶은 점",h2:"역할 나누기",b2:"이름 – 맡은 일\n이름 – 맡은 일\n이름 – 맡은 일"}),
     slide(style,"end")];
 }
+function newSlide(kind){ const z=D.sdz!=null?SDZ[D.sdz]:null, P=slide(z?z.fr:(D.style||"band"),kind); if(z) styleSlide(P,z); return P; }
 function applyDeck(){
-  const n=((D.deckIdx==null?-1:D.deckIdx)+1)%DESIGNS.length, T=DESIGNS[n];
-  snap(); D.style=T[0]; D.deckIdx=n; D.slides=deck(T[0]); setCur(0); sel=null; render(); strip(); save(false,true); D.fresh=true;
-  if(O.status) O.status("추천 구성 "+(n+1)+"/"+DESIGNS.length+" ‘"+T[1]+"’으로 슬라이드 "+D.slides.length+"장을 만들었어요. 다시 누르면 다음 디자인으로 바뀌어요.");
+  snap(); const z=D.sdz!=null?SDZ[D.sdz]:null; D.slides=deck(z?z.fr:(D.style||"band")); if(z) D.slides.forEach(P=>styleSlide(P,z));
+  setCur(0); sel=null; render(); strip(); save(false,true); D.fresh=true;
+  if(O.status) O.status("발표 순서대로 슬라이드 "+D.slides.length+"장을 만들었어요."+(z?" (디자인: "+z.n+")":" ‘🎨 추천 디자인’에서 디자인을 골라 보세요."));
 }
-function deckNote(el){ const i=D.deckIdx;
-  el.innerHTML=i==null?'누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요. 누를 때마다 디자인 <b>3가지</b>가 차례로 바뀌어요.'
-    :'<b>지금 '+(i+1)+'/'+DESIGNS.length+' · '+esc(DESIGNS[i][1])+'</b> – '+esc(DESIGNS[i][2])+'<br>다시 누르면 다음 디자인 → ‘'+esc(DESIGNS[(i+1)%DESIGNS.length][1])+'’ (쓴 내용은 새로 바뀌어요 · 색만 바꾸려면 ‘테마’)'; }
+function deckNote(el){ const z=D.sdz!=null?SDZ[D.sdz]:null;
+  el.innerHTML='누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요.<br>'+(z?'지금 디자인: <b>'+esc(z.n)+'</b>':'디자인은 옆의 ‘🎨 추천 디자인’에서 10가지 중에 골라요 (쓴 내용은 그대로).'); }
+/* 미리보기: 디자인·배치를 작은 그림으로 */
+function pvCanvas(cv,page,w){ const s=w/W; cv.width=Math.round(w*2); cv.height=Math.round(H*s*2); const c=cv.getContext("2d"); c.setTransform(2*s,0,0,2*s,0,0); drawPage(c,page); }
+function sdzPop(){ return '<span class="pdd"><button type="button" data-pop="sdz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz psdz" data-popbox="sdz" hidden><b>쓴 내용은 그대로, 틀·색·배경·글꼴이 바뀌어요</b><span class="pdzg">'+
+  SDZ.map((z,i)=>'<button type="button" data-sdz="'+i+'"'+(D.sdz===i?' class="on"':'')+'><canvas data-sdzpv="'+i+'"></canvas><b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>').join("")+'</span></span></span>'; }
+function drawSdzPreviews(){
+  const keep=D.pal; bar.querySelectorAll("[data-sdzpv]").forEach(cv=>{ const z=SDZ[+cv.dataset.sdzpv]; D.pal=z.pal;
+    const P=slide(z.fr,"two",{title:O.deck==="dream"?"4. 이 직업은 어떤 일을 할까?":"2. 탐구 질문과 가설",h1:O.deck==="dream"?"하는 일":"탐구 질문",b1:"• 내용을 써요\n• 내용을 써요",h2:O.deck==="dream"?"필요한 능력":"가설",b2:"~할수록 ~할 것이다.",fill2:true}); styleSlide(P,z); pvCanvas(cv,P,176); });
+  if(keep) D.pal=keep; else delete D.pal;
+}
 function strip(){
   if(!SL()||!stripEl) return;
   stripEl.innerHTML='<div class="pstools"><b>슬라이드 '+(D.cur+1)+' / '+D.slides.length+'</b>'+
@@ -949,7 +1019,7 @@ function onStrip(e){
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.pop2){ const p=stripEl.querySelector("[data-popbox2]"); p.hidden=!p.hidden; keepIn(p); return; }
   if(b.dataset.go!=null){ setCur(+b.dataset.go); sel=null; render(); strip(); return; }
-  if(b.dataset.lay){ snap(); D.slides.splice(D.cur+1,0,slide(D.style||"band",b.dataset.lay)); setCur(D.cur+1); sel=null; render(); strip(); save(); return; }
+  if(b.dataset.lay){ snap(); D.slides.splice(D.cur+1,0,newSlide(b.dataset.lay)); setCur(D.cur+1); sel=null; render(); strip(); save(); return; }
   const a=b.dataset.sl; if(!a) return;
   if(a==="show"){ present(); return; }
   if(a==="dup"){ snap(); const c=JSON.parse(JSON.stringify(S)); c.id=uid(); c.items.forEach(it=>it.id=uid()); D.slides.splice(D.cur+1,0,c); setCur(D.cur+1); }
