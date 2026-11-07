@@ -106,6 +106,15 @@ img{max-width:100%}[hidden]{display:none!important}
 .pst{width:100%;height:100%;display:flex;align-items:center;justify-content:center;line-height:1}
 .hm{position:absolute;left:calc(-15px*var(--inv));top:calc(-15px*var(--inv));width:calc(30px*var(--inv));height:calc(30px*var(--inv));border-radius:50%;background:#2f8792;color:#fff;border:calc(2px*var(--inv)) solid #fff;font-size:calc(16px*var(--inv));line-height:1;cursor:move;touch-action:none;padding:0;z-index:5}
 .hr{position:absolute;right:calc(-11px*var(--inv));bottom:calc(-11px*var(--inv));width:calc(22px*var(--inv));height:calc(22px*var(--inv));border-radius:50%;background:#fff;border:calc(3px*var(--inv)) solid #2f8792;cursor:nwse-resize;touch-action:none;z-index:5;box-sizing:border-box}
+.pched{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:inherit;font-weight:700;font-size:calc(17px*var(--inv));padding:calc(10px*var(--inv)) calc(16px*var(--inv));border-radius:999px;border:calc(2px*var(--inv)) solid #fff;background:#2f8792;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;z-index:4;white-space:nowrap}
+.pchtag{position:absolute;right:calc(6px*var(--inv));top:calc(6px*var(--inv));font-size:calc(12px*var(--inv));font-weight:700;padding:calc(3px*var(--inv)) calc(8px*var(--inv));border-radius:999px;background:rgba(47,135,146,.92);color:#fff;pointer-events:none;white-space:nowrap;z-index:3}
+.ptbl{display:flex;flex-direction:column;gap:6px}
+.ptr{display:grid;grid-template-columns:1fr 96px 34px;gap:6px}
+.ptr input{font:inherit;font-weight:400;border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:var(--field);color:var(--ink);min-width:0}
+.ptr button{font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);cursor:pointer}
+.paddrow{align-self:flex-start;font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border:1px dashed var(--accent);border-radius:8px;background:transparent;color:var(--accent);cursor:pointer}
+.ppaste summary{cursor:pointer;font-weight:700;font-size:13px;padding:4px 0}
+.ppaste[open]{display:flex;flex-direction:column;gap:6px}
 .pimg-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.4;cursor:pointer;background:#eef2f2;color:#7a8b8d;font-size:22px;border:2px dashed #b9c6c7;box-sizing:border-box}
 .pempty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;color:#8a9799;line-height:1.7;pointer-events:none}
 .pstrip{display:flex;flex-direction:column;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px}
@@ -294,7 +303,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-07f";
+window.APP_VER="2026-11-07g";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -357,7 +366,7 @@ window.APP_VER="2026-11-07f";
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
-<script src="poster.js?v=16"></script>
+<script src="poster.js?v=17"></script>
 <script src="video.js?v=3"></script>
 <script>
 (function(){

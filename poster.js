@@ -82,7 +82,7 @@ function template(kind){
   const head=(x,y,w,txt,o)=>push(mk("title",Object.assign({tag:"H",x,y,w,h:40,text:txt,font:"Do Hyeon",size:23,align:"left",radius:8,pad:12,fill:t.main},o||{})));
   const body=(x,y,w,h,txt,o)=>push(mk("text",Object.assign({tag:"B",x,y,w,h,text:txt,size:15,fill:panel,radius:10},o||{})));
   const call=(x,y,w,h,txt)=>push(mk("text",{tag:"C",x,y,w,h,text:txt,size:15,bold:true,color:dark?t.accent:t.main,fill:dark?"":t.sub,stroke:"",sw:0,radius:8,valign:"middle",pad:10}));
-  const chart=(x,y,w,h,kind,ttl,labels,values,unit)=>push(mk("chart",{tag:"G",x,y,w,h,radius:10,fill:panel,chart:{kind,title:ttl,labels,values,unit:unit||"명",showVal:true,mono:false,color:t.main}}));
+  const chart=(x,y,w,h,kind,ttl,labels,values,unit)=>push(mk("chart",{tag:"G",x,y,w,h,radius:10,fill:panel,chart:{kind,title:ttl,labels,values,unit:unit||"명",showVal:true,mono:false,color:t.main,demo:true}}));
   const img=(x,y,w,h)=>push(mk("image",{tag:"I",x,y,w,h,radius:10}));
   const stat=(x,y,w,h,num,lab)=>{ body(x,y,w,h,""); push(mk("text",{tag:"N",x,y:y+10,w,h:h-50,text:num,font:"Black Han Sans",size:50,color:t.accent,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
     push(mk("text",{tag:"NL",x,y:y+h-44,w,h:36,text:lab,size:15,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:2})); };
@@ -591,6 +591,7 @@ function elFor(it){
   } else if(it.type==="sticker"){
     const s=document.createElement("div"); s.className="pst"; s.textContent=it.emoji; s.style.fontSize=Math.min(it.w,it.h)*0.8+"px"; if(it.shadow) s.style.filter=DROP_CSS; d.appendChild(s);
   } else { const cv=document.createElement("canvas"); if(it.shadow) cv.style.filter=DROP_CSS; d.appendChild(cv); paintCanvas(cv,it,it.type); }
+  if(it.type==="chart") d.insertAdjacentHTML("beforeend",sel===it.id?'<button type="button" class="pched">✏️ 그래프 고치기</button>':'<span class="pchtag">'+(it.chart&&it.chart.demo?'예시 숫자 · 눌러서 고치기':'✏️ 눌러서 고치기')+'</span>');
   if(sel===it.id){ d.insertAdjacentHTML("beforeend",'<button type="button" class="hm" title="옮기기" aria-label="옮기기">✥</button><span class="hr" title="크기 바꾸기"></span>'); }
   return d;
 }
@@ -734,12 +735,14 @@ function panel(){
 function chartModal(it){
   const c=JSON.parse(JSON.stringify(it.chart)); let src=c.src||c.labels.map((l,i)=>l+"\t"+c.values[i]).join("\n");
   const m=document.createElement("div"); m.className="pmodal";
-  m.innerHTML='<div class="pmcard" role="dialog" aria-modal="true" aria-label="그래프 만들기"><h3>📊 그래프 만들기</h3>'+
+  m.innerHTML='<div class="pmcard" role="dialog" aria-modal="true" aria-label="그래프 고치기"><h3>📊 그래프 고치기</h3>'+
    '<label class="pfld">그래프 제목<input type="text" data-ct value="'+esc(c.title)+'"></label>'+
    '<div class="pkinds">'+[["bar","세로 막대"],["hbar","가로 막대"],["pie","원"],["donut","도넛"],["line","꺾은선"]].map(([k,l])=>'<button type="button" data-ck="'+k+'" aria-pressed="'+(c.kind===k)+'">'+l+'</button>').join("")+'</div>'+
-   '<label class="pfld">데이터 붙여 넣기<textarea data-cd rows="7" spellcheck="false">'+esc(src)+'</textarea></label>'+
-   '<p class="pnote">① 구글 설문지 → 응답 → <b>스프레드시트에서 보기</b> → 한 질문의 칸(열)을 통째로 복사해 붙여 넣으면 같은 답끼리 자동으로 세어 줘요.<br>② 또는 <b>항목, 숫자</b>를 한 줄씩 써요. 예) 예, 20</p>'+
-   '<div class="popts"><label><input type="checkbox" data-ch> 첫 줄은 질문 제목이에요 (빼고 세기)</label><label><input type="checkbox" data-cm> 여러 개 고른 답(쉼표로 나뉨)은 나눠서 세기</label>'+
+   '<div class="pfld">항목과 숫자 고치기<div class="ptbl" data-tbl></div><button type="button" data-radd="1" class="paddrow">＋ 항목 더하기</button></div>'+
+   '<details class="ppaste"'+(c.demo?'':'')+'><summary>구글 설문 응답 붙여 넣기 (한 번에 세기)</summary>'+
+   '<label class="pfld">데이터 붙여 넣기<textarea data-cd rows="6" spellcheck="false">'+esc(src)+'</textarea></label>'+
+   '<p class="pnote">① 구글 설문지 → 응답 → <b>스프레드시트에서 보기</b> → 한 질문의 칸(열)을 통째로 복사해 붙여 넣으면 같은 답끼리 자동으로 세어 줘요.<br>② 또는 <b>항목, 숫자</b>를 한 줄씩 써요. 예) 예, 20</p><div class="popts"><label><input type="checkbox" data-ch> 첫 줄은 질문 제목이에요 (빼고 세기)</label><label><input type="checkbox" data-cm> 여러 개 고른 답(쉼표로 나뉨)은 나눠서 세기</label></div></details>'+
+   '<div class="popts">'+
    '<label><input type="checkbox" data-cv'+(c.showVal?" checked":"")+'> 숫자 보이기</label><label><input type="checkbox" data-cmono'+(c.mono?" checked":"")+'> 한 가지 색으로</label><label>단위 <input type="text" data-cu value="'+esc(c.unit||"")+'" style="width:56px"></label></div>'+
    '<p class="pnote" data-cinfo></p><canvas class="pprev"></canvas>'+
    '<div class="pmbtn"><button type="button" data-cancel="1">취소</button><button type="button" data-ok="1" class="pmain">그래프에 적용</button></div></div>';
@@ -751,11 +754,19 @@ function chartModal(it){
     c.title=q("[data-ct]").value; c.unit=q("[data-cu]").value; c.showVal=q("[data-cv]").checked; c.mono=q("[data-cmono]").checked;
     q("[data-cinfo]").textContent=d.labels.length?(d.mode==="count"?"응답 "+d.n+"개를 세었어요 → 답 "+d.labels.length+"가지":"항목 "+d.labels.length+"개")+(d.labels.length>12?" (그래프에는 많은 순서로 12개까지만 보여요)":""):"데이터를 붙여 넣어 주세요.";
     const cv=q(".pprev"), pi=prevIt(); cv.width=920; cv.height=600; const ctx=cv.getContext("2d"); ctx.setTransform(2,0,0,2,0,0); drawBox(ctx,pi,0,0,460,300); drawChart(ctx,pi,0,0,460,300); }
-  m.addEventListener("input",recompute); m.addEventListener("change",recompute);
+  const tbl=q("[data-tbl]");
+  function drawTbl(){ tbl.innerHTML=c.labels.map((l,i)=>'<div class="ptr"><input type="text" data-rl value="'+esc(l)+'" aria-label="항목 이름"><input type="number" data-rv value="'+(c.values[i]??"")+'" aria-label="숫자" inputmode="decimal"><button type="button" data-rdel="'+i+'" aria-label="이 항목 지우기">✕</button></div>').join("")||'<p class="pnote">항목이 없어요. ＋ 항목 더하기를 눌러요.</p>'; }
+  function fromTbl(){ const rows=[...tbl.querySelectorAll(".ptr")].map(r=>[r.querySelector("[data-rl]").value.trim(),r.querySelector("[data-rv]").value]);
+    q("[data-cd]").value=rows.filter(r=>r[0]||r[1]!=="").map(r=>(r[0]||"항목")+"\t"+(r[1]===""?0:r[1])).join("\n"); q("[data-ch]").checked=false; }
+  m.addEventListener("input",e=>{ if(e.target.closest("[data-tbl]")){ fromTbl(); recompute(); return; } recompute(); if(e.target.matches("[data-cd]")) drawTbl(); });
+  m.addEventListener("change",e=>{ if(e.target.closest("[data-tbl]")) return; recompute(); if(e.target.matches("[data-ch],[data-cm]")) drawTbl(); });
+  m.addEventListener("click",e=>{ const a=e.target.closest("[data-radd]"), dl=e.target.closest("[data-rdel]");
+    if(a){ tbl.insertAdjacentHTML("beforeend",'<div class="ptr"><input type="text" data-rl value="" placeholder="항목 이름" aria-label="항목 이름"><input type="number" data-rv value="" placeholder="숫자" aria-label="숫자" inputmode="decimal"><button type="button" data-rdel="x" aria-label="이 항목 지우기">✕</button></div>'); const pn=tbl.querySelector(":scope>p"); if(pn) pn.remove(); tbl.querySelector(".ptr:last-child [data-rl]").focus(); }
+    if(dl){ dl.closest(".ptr").remove(); fromTbl(); recompute(); } });
   m.addEventListener("click",e=>{ const k=e.target.closest("[data-ck]"); if(k){ c.kind=k.dataset.ck; m.querySelectorAll("[data-ck]").forEach(b=>b.setAttribute("aria-pressed",String(b===k))); recompute(); }
     if(e.target.closest("[data-cancel]")||e.target===m) m.remove();
-    if(e.target.closest("[data-ok]")){ snap(); it.chart=c; m.remove(); upd(it); save(); } });
-  recompute(); setTimeout(()=>q("[data-cd]").focus(),30);
+    if(e.target.closest("[data-ok]")){ snap(); delete c.demo; it.chart=c; m.remove(); render(); save(); } });
+  recompute(); drawTbl(); setTimeout(()=>{ const f=tbl.querySelector("[data-rv]"); if(f) f.focus(); },30);
 }
 
 /* ---------- 사진 ---------- */
@@ -775,7 +786,8 @@ function onDown(e){
   const pi=e.target.closest(".pi");
   if(!pi){ if(sel){ sel=null; typed=false; render(); } return; }
   const it=find(pi.dataset.id); if(!it) return;
-  const isRes=e.target.classList.contains("hr"), isMove=e.target.classList.contains("hm"), inText=!!e.target.closest(".pt");
+  if(e.target.closest(".pched")){ e.preventDefault(); chartModal(it); return; }
+  const isRes=e.target.classList.contains("hr"), isMove=e.target.classList.contains("hm"), inText=!!e.target.closest(".pt"), wasSel=sel===it.id;
   if(sel===it.id&&inText&&!isRes&&!isMove) return;          // 글 고치는 중
   e.preventDefault();
   if(sel!==it.id){ sel=it.id; typed=false; render(); }
@@ -789,7 +801,7 @@ function onDown(e){
       if(sx2) it.x=Math.round((W-it.w)/2); if(sy2) it.y=Math.round((H-it.h)/2);
       if(gv) gv.hidden=!sx2; if(gh) gh.hidden=!sy2; }
     upd(it); };
-  const up=()=>{ board.querySelectorAll(".pguide").forEach(g=>g.hidden=true); window.removeEventListener("pointermove",mv); window.removeEventListener("pointerup",up); window.removeEventListener("pointercancel",up); if(moved) save(); };
+  const up=()=>{ board.querySelectorAll(".pguide").forEach(g=>g.hidden=true); window.removeEventListener("pointermove",mv); window.removeEventListener("pointerup",up); window.removeEventListener("pointercancel",up); if(moved) save(); else if(wasSel&&it.type==="chart"&&!isRes&&!isMove) chartModal(it); };
   window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up); window.addEventListener("pointercancel",up);
 }
 function onKey(e){
@@ -886,7 +898,7 @@ async function mount(el,opts){
   let data=null; try{ data=O.get?await O.get(KEY):null; }catch(e){}
   D=data&&(SL()?Array.isArray(data.slides)&&data.slides.length:Array.isArray(data.items))?data:blank(); setCur(SL()?D.cur:0);
   el.innerHTML='<div class="poster-ed'+(SL()?' slides-ed':'')+'">'+toolbar()+(SL()?'<div class="pstrip"></div>':'')+'<div class="pwrap"><div class="psizer"><div class="pboard"></div></div></div>'+
-    '<p class="pnote">글 상자는 한 번 눌러 고르고, 다시 누르면 글을 고칠 수 있어요. ✥를 끌면 옮겨지고, 오른쪽 아래 점을 끌면 크기가 바뀌어요.'+(SL()?' 사진 자리는 두 번 누르면 사진을 고를 수 있어요.':'')+' 자동으로 저장돼요.</p></div>';
+    '<p class="pnote">글 상자는 한 번 눌러 고르고, 다시 누르면 글을 고칠 수 있어요. ✥를 끌면 옮겨지고, 오른쪽 아래 점을 끌면 크기가 바뀌어요.'+(SL()?' 사진 자리는 두 번 누르면 사진을 고를 수 있어요.':'')+' 그래프는 눌러서 고른 뒤 한 번 더 누르면 항목과 숫자를 고칠 수 있어요. 자동으로 저장돼요.</p></div>';
   bar=el.querySelector(".pbar"); stripEl=el.querySelector(".pstrip"); if(stripEl){ stripEl.addEventListener("click",onStrip); } wrap=el.querySelector(".pwrap"); sizer=el.querySelector(".psizer"); board=el.querySelector(".pboard"); zoom=1;
   board.style.width=W+"px"; board.style.height=H+"px";
   board.addEventListener("pointerdown",onDown);
@@ -1062,7 +1074,7 @@ function slide(style,kind,o){
     head(A.x,A.y,cw,o.h1||"왼쪽 소제목"); body(A.x,A.y+60,cw,A.h-60,o.b1||"내용을 써요");
     head(A.x+cw+32,A.y,cw,o.h2||"오른쪽 소제목"); body(A.x+cw+32,A.y+60,cw,A.h-60,o.b2||"내용을 써요",o.fill2?{fill:dark?panel:t.sub,stroke:""}:null,o.fill2?"B2":"B"); }
   if(kind==="chart"){ const cw=r4(A.w*0.6);
-    push(mk("chart",{tag:"G",x:A.x,y:A.y,w:cw,h:A.h,radius:16,fill:panel,chart:Object.assign({kind:"bar",title:"질문 그래프",labels:["항목 A","항목 B","항목 C","항목 D"],values:[34,21,15,8],unit:"명",showVal:true,mono:false,color:t.main},o.chart||{})}));
+    push(mk("chart",{tag:"G",x:A.x,y:A.y,w:cw,h:A.h,radius:16,fill:panel,chart:Object.assign({kind:"bar",title:"질문 그래프",labels:["항목 A","항목 B","항목 C","항목 D"],values:[34,21,15,8],unit:"명",showVal:true,mono:false,color:t.main,demo:true},o.chart||{})}));
     body(A.x+cw+28,A.y,A.w-cw-28,A.h-108,o.body||"해석\n\n사실(숫자): \n의미: \n이유: ");
     call(A.x+cw+28,A.y+A.h-92,A.w-cw-28,92,o.call||"→ 핵심을 한 줄로!"); }
   if(kind==="photo"){ const cw=r4(A.w*0.5);
