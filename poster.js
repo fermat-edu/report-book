@@ -25,7 +25,7 @@ const PAL=["#3e9ca7","#f2827f","#f2c14e","#6a8fd8","#8bc28c","#b48ad6","#ef9a5b"
 const FONTS=[["Noto Sans KR","본문체"],["Gowun Dodum","고운돋움"],["Sunflower","해바라기"],["Do Hyeon","도현체"],["Black Han Sans","검은고딕"],["Jua","주아체"],["Yeon Sung","연성체"],["Gugi","구기체"],["Gaegu","개구 (손글씨)"],["Nanum Pen Script","나눔펜 (손글씨)"],["Gamja Flower","감자꽃 (손글씨)"],["Hi Melody","하이멜로디 (손글씨)"],["Dokdo","독도체 (붓글씨)"],["Noto Serif KR","명조체"],["Song Myung","송명체"]];
 const SHAPES=[["rect","네모"],["round","둥근 네모"],["ellipse","동그라미"],["triangle","세모"],["diamond","마름모"],["hexagon","육각형"],["star","별"],["heart","하트"],["burst","뾰족 배지"],["bubble","말풍선"],["ribbon","리본"],["note","메모지"],["tape","테이프"],["arrow","화살표"],["line","선"],["dash","점선"],["dot","동글 점선"],["wave","물결선"]];
 const LINES=["line","dash","dot","wave"];
-const STKCAT=[["통계·공부","📊📈📉🧮🔢📋📝🗳️🔍💡📌📎✏️📏🗂️📚🔬🧪"],["학교·생활","🏫🎒🧑‍🏫👩‍🎓👨‍🎓🎨🎵⚽🏀🍱⏰📱💻🎧🚌🏠🛒💰"],["사람·표정","😀😄😍🥰🤔😮😢😡😴🤗😎🥳👍👏🙌🙋💪👥🫶❤️"],["자연·음식","🌍🌱🌸🌻🌞🌈⛅❄️🔥💧🍎🍜🍕🍫☕🍔🌶️🐶🐱🐰"],["기호·꾸미기","✅❌❗❓⭐🌟✨💯🎯🏆🥇⚠️➡️⬅️⬆️⬇️🔴🟠🟡🟢🔵🟣💬💭🎀🎉"]];
+const STKCAT=[["진로·직업","👩‍⚕️👨‍⚕️👩‍🏫👨‍🍳👩‍🔬👨‍💻👩‍🎨👮👨‍🚒👩‍✈️👨‍🌾👩‍⚖️🧑‍🔧🧑‍🚀🧑‍💼🎤🎬📷🩺⚖️🔧🎮🎹✈️🏥🏛️"],["동물·캐릭터","🐶🐱🐰🐻🐼🦊🐯🦁🐸🐵🐧🐥🦄🐳🐬🦋🐝🐢🦖👻🤖👽🐙🦉"],["반짝·강조","💫🌙☀️🔔📣📢💥💢💤🔑🎁🎈🪄🧩🎊🌟⭐✨💖💎🍀👑🚩📍"],["통계·공부","📊📈📉🧮🔢📋📝🗳️🔍💡📌📎✏️📏🗂️📚🔬🧪"],["학교·생활","🏫🎒🧑‍🏫👩‍🎓👨‍🎓🎨🎵⚽🏀🍱⏰📱💻🎧🚌🏠🛒💰"],["사람·표정","😀😄😍🥰🤔😮😢😡😴🤗😎🥳👍👏🙌🙋💪👥🫶❤️"],["자연·음식","🌍🌱🌸🌻🌞🌈⛅❄️🔥💧🍎🍜🍕🍫☕🍔🌶️🐶🐱🐰"],["기호·꾸미기","✅❌❗❓⭐🌟✨💯🎯🏆🥇⚠️➡️⬅️⬆️⬇️🔴🟠🟡🟢🔵🟣💬💭🎀🎉"]];
 const STK_OLD=["📊","📈","📉","🔍","💡","✅","❗","❓","⭐","🎯","📌","📱","📚","🏫","🍜","🌶️","😀","😮","🤔","👍","👥","🗳️","🧮","🌍","❤️","⚠️","➡️","🏆"];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -265,51 +265,89 @@ function template(kind){
   return items;
 }
 
-/* ---------- 추천 디자인 (전국학생통계활용대회 수상작 디자인 참고) ----------
-   배치는 그대로 두고 배경·제목·소제목·글 상자·그래프 상자의 색과 글꼴만 바꿔요. */
+/* ---------- 추천 디자인 20가지 (미리캔버스·캔바·수상작 스타일 참고) ----------
+   디자인마다 모양(제목·소제목·글 상자·배경·장식)이 달라요. 색은 아래 8가지 색 묶음 중에 따로 골라요.
+   배치(위치)와 쓴 내용은 그대로 둬요. */
+const FAM={
+  blue:  {n:"블루",  main:"#2f6fd6",sub:"#dbe7fb",accent:"#f5a524",ink:"#1d2a3a",light:"#f2f6ff",deep:"#173a7a",on:"#ffffff"},
+  mint:  {n:"민트",  main:"#13a19e",sub:"#d3f1ef",accent:"#ff7a59",ink:"#15333a",light:"#effaf9",deep:"#0b5654",on:"#ffffff"},
+  coral: {n:"코랄",  main:"#e8574b",sub:"#fde0dc",accent:"#2f9e9a",ink:"#2f1d1b",light:"#fff5f2",deep:"#8a2a22",on:"#ffffff"},
+  yellow:{n:"옐로",  main:"#f2b320",sub:"#fff0c2",accent:"#2f5bd3",ink:"#2b2410",light:"#fffaea",deep:"#6b4c00",on:"#2b2410"},
+  purple:{n:"퍼플",  main:"#7b5cc9",sub:"#e7dffb",accent:"#f2a33a",ink:"#251f36",light:"#f7f4ff",deep:"#3b2a70",on:"#ffffff"},
+  green: {n:"그린",  main:"#2e9e57",sub:"#d7f1df",accent:"#ff8a3d",ink:"#18301f",light:"#f2fbf4",deep:"#145c2f",on:"#ffffff"},
+  pink:  {n:"핑크",  main:"#e8609a",sub:"#fde2ee",accent:"#3f9be0",ink:"#3a1f2c",light:"#fff5f9",deep:"#87244f",on:"#ffffff"},
+  navy:  {n:"네이비",main:"#24365c",sub:"#e2e7f0",accent:"#e0a526",ink:"#1b2230",light:"#f4f5f8",deep:"#121c33",on:"#ffffff"}
+};
+const FAMK=Object.keys(FAM);
+const mixC=(a,b,t)=>{ const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)); const A=p(a),B=p(b); return "#"+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,"0")).join(""); };
+function makePal(z,fk){ const F=FAM[fk&&FAM[fk]?fk:(z.fam||"blue")], m=z.mode||"light";
+  const bg={light:F.light,white:"#ffffff",cream:"#fbf6ec",tint:F.sub,color:F.main,dark:F.deep,board:mixC(F.deep,"#1f3b2d",0.55),kraft:"#e9dbc2"}[m]||F.light;
+  const darkish=["color","dark","board"].includes(m)&&!(m==="color"&&F.on!=="#ffffff");
+  return {name:z.n,bg,main:F.main,sub:F.sub,accent:F.accent,ink:F.ink,light:F.light,deep:F.deep,on:F.on,
+    bgink:darkish?"#ffffff":F.ink, panel:m==="board"?mixC(bg,"#ffffff",0.1):mixC(F.deep,"#ffffff",0.12), soft:mixC(F.main,"#ffffff",0.82)}; }
 const DZ=[
- {k:"news",deco:[["band", "top", 10, "$ink"], ["flank", "📰", null, 54]],n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},frame:4,
-  f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},C:{fill:"",color:"$accent",bold:true},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},TM:{fill:"",stroke:"$main",sw:1,radius:0,color:"$ink"},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},L:{fill:"$ink"}}},
- {k:"pop",deco:[["blob", 0.02, 0.0, 0.2, "#ffffff", 0.35], ["blob", 1.0, 1.0, 0.24, "$main", 0.14], ["flank", "⭐", "⭐", 58]],n:"패스트푸드 팝",d:"노란 배경, 빨간 알약 소제목, 테두리 제목",pal:{bg:"#ffd23f",main:"#e63946",sub:"#fff1c1",accent:"#2a9d8f",ink:"#2b2118"},bgx:{type:"pat",pat:"stripes",color:"#ffffff",a:0.22,size:40},frame:10,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#ffffff",tshadow:true},H:{radius:999},B:{stroke:"$ink",sw:2,radius:14},C:{fill:"$sub",color:"$main"},G:{stroke:"$ink",sw:2,radius:14},FB:{stroke:"$ink",sw:2,radius:14}}},
- {k:"lav",deco:[["blob", 0.04, 0.02, 0.18, "$sub", 1], ["blob", 0.97, 0.98, 0.24, "$sub", 1], ["dots", "tr", "$main", 0.35], ["flank", "💜", "💜", 48]],n:"라벤더 카드",d:"연보라 땡땡이, 보라 테두리 카드",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.13,size:36},frame:0,
-  f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{H:{radius:12},B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18},FB:{stroke:"$main",sw:2,radius:18}}},
- {k:"mint",deco:[["ring", 1.0, 0.0, 0.2, "$main", 7, 0.5], ["ring", 0.0, 1.0, 0.18, "$accent", 7, 0.5], ["mark", "$sub", 1]],n:"민트 라인",d:"하얀 바탕, 민트색 둥근 테두리",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},frame:6,
-  f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{H:{radius:999},B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
- {k:"navy",deco:[["band", "top", 14, "$accent"], ["pix", "tr", "$accent", 0.9], ["pix", "bl", "$sub", 1]],n:"네이비 클래식",d:"남색 굵은 테두리, 그림자 카드",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},frame:14,
-  f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{H:{radius:0,bold:true},B:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},FB:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true}}},
- {k:"sale",deco:[["half", "tl", "#ffffff", 0.24, 0.12], ["half", "br", "#7f0000", 0.3, 0.25], ["flank", "🔥", "🔥", 58]],n:"레드 세일",d:"빨간 바탕, 노란 테두리 제목, 하얀 카드",pal:{bg:"#c62828",main:"#c62828",sub:"#ffe0b2",accent:"#ffca28",ink:"#2b1a12"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$accent",tline:6,tlc:"#7f0000",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$accent",stroke:"",sw:0,color:"$ink"},H:{fill:"$accent",color:"$ink",radius:6},B:{stroke:"",sw:0,radius:10,shadow:true},C:{fill:"#fff7ec",color:"$main"},G:{stroke:"",sw:0,radius:10,shadow:true},FB:{stroke:"",sw:0,radius:10},NL:{color:"$ink"}}},
- {k:"sunset",deco:[["blob", 0.92, 0.05, 0.17, "#ffffff", 0.35], ["blob", 0.08, 0.96, 0.22, "#ffffff", 0.3], ["flank", "☀️", "✨", 56]],n:"선셋 그라데이션",d:"주황→노랑 그라데이션, 둥근 그림자 카드",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"b"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:5,tlc:"#c2410c"},ST:{color:"#ffffff"},L:{fill:"#ffffff"},H:{radius:999,shadow:true},B:{stroke:"",sw:0,radius:18,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18}}},
- {k:"retro",deco:[["mark", "$sub", 1], ["pix", "tl", "$ink", 1], ["pix", "br", "$main", 1]],n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리, 노란 소제목",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},frame:8,frameC:"#1f1f1f",
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:8},B:{stroke:"$ink",sw:3,radius:10},C:{fill:"#8fd6b0",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:10},FB:{stroke:"$ink",sw:3,radius:10},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
- {k:"yb",deco:[["ring", 1.0, 0.0, 0.17, "#ffffff", 10, 0.8], ["ring", 0.0, 1.0, 0.15, "$main", 8, 0.35], ["flank", "⭐", "⭐", 56]],n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 소제목, 테두리 제목",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#fff7c2",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.45,size:34},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:5,tlc:"#ffffff"},H:{radius:10},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
- {k:"note",deco:[["tape", "#fff3b0", 0.9, -1.2], ["flank", null, "✏️", 56]],n:"모눈 노트",d:"모눈종이, 손글씨 제목, 파란 펜 느낌",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:28},frame:0,
-  f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
- /* 11~20: 미리캔버스 설문·통계·과학 포스터 스타일 참고 */
- {k:"qblue",deco:[["blob", 1.0, 0.0, 0.24, "#ffffff", 0.12], ["blob", 0.0, 1.0, 0.26, "#ffffff", 0.1], ["flank", "📊", "✨", 62]],n:"설문 블루 인포",d:"파란 바탕, 하얀 둥근 카드, 분홍 알약 소제목",pal:{bg:"#2563d9",main:"#2563d9",sub:"#ffe1e8",accent:"#f0587d",ink:"#1d2a4a"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#0f2f7a",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"#ffffff",stroke:"",sw:0,color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"",sw:0,radius:24,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:24,shadow:true},FB:{stroke:"",sw:0,radius:24},NL:{color:"#ffffff"}}},
- {k:"calendar",deco:[["pix", "tl", "$accent", 1], ["pix", "br", "$main", 0.9], ["flank", "📅", "✨", 58]],n:"오렌지 네이비 달력",d:"노란 바탕, 남색 굵은 글씨, 주황 소제목",pal:{bg:"#ffc531",main:"#1f2f63",sub:"#fff3d6",accent:"#f26b1d",ink:"#1f2f63"},bgx:{type:"pat",pat:"waves",color:"#f26b1d",a:0.16,size:56},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffc531"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
- {k:"infomap",deco:[["mark", "$sub", 0.95], ["dots", "tr", "$main", 0.45], ["dots", "bl", "$main", 0.3], ["flank", "📍", null, 56]],n:"인포그래픽 지도형",d:"하얀 바탕, 검은 테두리 카드, 파랑·노랑 라벨",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#f7d046",accent:"#f7d046",ink:"#222222"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:6},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
- {k:"bluegrid",deco:[["ring", 0.0, 0.0, 0.16, "#ffffff", 9, 0.7], ["blob", 1.0, 1.0, 0.2, "$sub", 0.25], ["flank", "👍", "⭐", 62]],n:"블루 모눈 팝",d:"파란 모눈 바탕, 까만 테두리 하얀 카드",pal:{bg:"#2f6ef0",main:"#2f6ef0",sub:"#ffe14d",accent:"#ffe14d",ink:"#141414"},bgx:{type:"pat",pat:"grid",color:"#ffffff",a:0.18,size:32},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#141414",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$sub",stroke:"$ink",color:"$ink"},H:{fill:"#ffffff",color:"$main",stroke:"$ink",sw:3,radius:999},B:{stroke:"$ink",sw:3,radius:14},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:14},FB:{stroke:"$ink",sw:3,radius:14},NL:{color:"#ffffff"}}},
- {k:"report",deco:[["band", "top", 10, "$accent"], ["flank", "🔬", "🧪", 54]],n:"탐구 보고서 표형",d:"하얀 바탕, 검은 칸막이 표, 노란 칸",pal:{bg:"#ffffff",main:"#1f1f1f",sub:"#ffe9a8",accent:"#f5a524",ink:"#1f1f1f"},frame:6,frameC:"#1f1f1f",
-  f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{stroke:"$ink",sw:2,radius:0},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:2,radius:0},FB:{stroke:"$ink",sw:2,radius:0},TM:{fill:"$sub",stroke:"$ink",radius:0,color:"$ink"},L:{fill:"$accent"}}},
- {k:"yellowline",deco:[["dots", "tl", "$ink", 0.22], ["dots", "br", "$ink", 0.22], ["stars", "$ink"]],n:"흑백 라인 옐로",d:"크림 바탕, 노란 제목, 까만 선 카드",pal:{bg:"#fbfaf3",main:"#1f1f1f",sub:"#ffd65a",accent:"#ffd65a",ink:"#1f1f1f"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$sub",tline:5,tlc:"#1f1f1f",tshadow:true},H:{fill:"$sub",color:"$ink",radius:999},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$ink",color:"$sub"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{fill:"$ink",stroke:"",color:"#ffffff"},L:{fill:"$ink"}}},
- {k:"glass",deco:[["blob", 0.86, 0.05, 0.2, "#ffffff", 0.65], ["blob", 0.08, 0.92, 0.22, "$main", 0.12], ["flank", "📢", null, 62]],n:"민트 유리 카드",d:"민트→하늘 그라데이션, 반투명 하얀 카드",pal:{bg:"#d4f5e4",main:"#2b7fff",sub:"#eaf3ff",accent:"#22b45e",ink:"#16233b"},bgx:{type:"grad",c1:"#c4f3d9",c2:"#d9e8ff",dir:"b"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$accent",radius:999},B:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22,shadow:true},C:{fill:"$main",color:"#ffffff"},G:{fill:"#ffffffdd",stroke:"#ffffff",sw:2,radius:22,shadow:true},FB:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22},TM:{fill:"$accent",stroke:"",color:"#ffffff"}}},
- {k:"sky",deco:[["blob", 0.07, 0.04, 0.12, "#ffffff", 0.75], ["blob", 0.94, 0.09, 0.09, "#ffffff", 0.75], ["flank", "💬", "😊", 58]],n:"하늘 말풍선",d:"하늘색 그라데이션, 노란 테두리 제목",pal:{bg:"#9ad4ff",main:"#1f6fd1",sub:"#dff0ff",accent:"#ffd84d",ink:"#1d2a5c"},bgx:{type:"grad",c1:"#86cbff",c2:"#eef8ff",dir:"b"},frame:0,
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$accent",tline:7,tlc:"#1d2a5c",tshadow:true},H:{radius:6},B:{stroke:"$ink",sw:3,radius:20},C:{fill:"$accent",color:"$ink"},G:{stroke:"$ink",sw:3,radius:20},FB:{stroke:"$ink",sw:3,radius:20},TM:{fill:"#ffffff",stroke:"$ink",color:"$ink"}}},
- {k:"earth",deco:[["stars", "$main"], ["flank", null, "🌏", 58]],n:"지구 아치 민트",d:"연민트 모눈, 갈색 굵은 틀, 둥근 카드",pal:{bg:"#dff3f1",main:"#4a3b33",sub:"#ffffff",accent:"#4fb86b",ink:"#3b2f2a"},bgx:{type:"pat",pat:"grid",color:"#8fc7bf",a:0.3,size:40},frame:10,frameC:"#4a3b33",
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"$main",color:"#dff3f1",radius:0},B:{stroke:"$main",sw:3,radius:24},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"$main",sw:3,radius:24},FB:{stroke:"$main",sw:3,radius:24},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
- {k:"green",deco:[["blob", 1.0, 0.32, 0.11, "$sub", 0.6], ["blob", 0.0, 0.7, 0.09, "$sub", 0.5], ["flank", "❗", "⭐", 58]],n:"그린 굵은 팝",d:"초록 테두리, 까만 그림자 제목, 분홍 포인트",pal:{bg:"#eaf6ee",main:"#22b04f",sub:"#ffc2cd",accent:"#ff7a93",ink:"#141414"},frame:16,frameC:"#22b04f",
-  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#141414",tshadow:true},H:{fill:"$main",stroke:"$ink",sw:2,radius:999},B:{stroke:"$ink",sw:3,radius:18},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:3,radius:18},FB:{stroke:"$ink",sw:3,radius:18},TM:{fill:"$main",stroke:"$ink",color:"#ffffff"},L:{fill:"$ink"}}}
+ {k:"card",n:"기본 카드",d:"연한 바탕 · 그림자 카드 · 알약 소제목",fam:"blue",mode:"light",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"$on",radius:999},B:{stroke:"",sw:0,radius:16,shadow:true},G:{stroke:"",sw:0,radius:16,shadow:true},FB:{stroke:"",sw:0,radius:16,shadow:true},C:{fill:"$sub",color:"$main"}},
+  deco:[["blob",1,0,0.2,"$sub",1],["blob",0,1,0.22,"$sub",1],["flank","📊","✨",58]]},
+ {k:"news",n:"신문 기사형",d:"누런 신문지 · 검은 줄 · 명조체",fam:"navy",mode:"cream",frame:4,frameC:"$ink",f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
+  s:{T:{color:"$ink"},L:{fill:"$ink"},TM:{fill:"",stroke:"$ink",sw:1,radius:0,color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:0,bold:true},B:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0},C:{fill:"",color:"$main",bold:true},G:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0},FB:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0}},
+  deco:[["band","top",10,"$ink"],["flank","📰",null,54]]},
+ {k:"retro",n:"레트로 굵은 선",d:"크림 바탕 · 까만 굵은 테두리 · 픽셀",fam:"coral",mode:"cream",frame:8,frameC:"#1f1f1f",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"#1f1f1f"},L:{fill:"#1f1f1f"},TM:{stroke:"#1f1f1f",color:"#1f1f1f"},H:{fill:"$main",color:"$on",stroke:"#1f1f1f",sw:3,radius:8},B:{stroke:"#1f1f1f",sw:3,radius:10},C:{fill:"$sub",color:"#1f1f1f",stroke:"#1f1f1f",sw:2},G:{stroke:"#1f1f1f",sw:3,radius:10},FB:{stroke:"#1f1f1f",sw:3,radius:10}},
+  deco:[["mark","$accent",0.45],["pix","tl","#1f1f1f",1],["pix","br","$main",1]]},
+ {k:"memo",n:"메모지 보드",d:"모눈 보드에 접힌 메모지 · 테이프 소제목",fam:"yellow",mode:"light",bgx:{type:"pat",pat:"grid",color:"$main",a:0.16,size:34},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{T:{color:"$ink"},H:{fill:"$main",color:"$on",bshape:"tape",radius:0},B:{fill:"$sub",stroke:"",sw:0,radius:0,bshape:"note",shadow:true},G:{fill:"#ffffff",stroke:"",sw:0,radius:4,shadow:true},FB:{fill:"#ffffff",stroke:"",sw:0,radius:4,shadow:true},C:{fill:"#ffffff",color:"$ink"}},
+  deco:[["tape","$sub",0.95,-1.5],["flank","📌","✏️",56]]},
+ {k:"ribbon",n:"리본 배너",d:"하얀 바탕 · 리본 소제목 · 둥근 테두리",fam:"pink",mode:"white",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"$on",bshape:"ribbon",radius:0},B:{stroke:"$sub",sw:3,radius:20},G:{stroke:"$sub",sw:3,radius:20},FB:{stroke:"$sub",sw:3,radius:20},C:{fill:"$accent",color:"#ffffff"}},
+  deco:[["stars","$accent"],["ring",1,0,0.16,"$main",7,0.35],["ring",0,1,0.14,"$accent",7,0.35]]},
+ {k:"bubble",n:"말풍선 대화형",d:"글 상자가 말풍선 · 알약 테두리 소제목",fam:"mint",mode:"light",f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},
+  s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999},B:{fill:"#ffffff",stroke:"$ink",sw:2,radius:24,bshape:"bubble"},G:{stroke:"$ink",sw:2,radius:22},FB:{stroke:"$ink",sw:2,radius:22},C:{fill:"$main",color:"$on"}},
+  deco:[["flank","💬","😊",58],["dots","tr","$main",0.35]]},
+ {k:"colorbg",n:"컬러 바탕 카드",d:"진한 색 바탕 · 하얀 카드 · 테두리 제목",fam:"blue",mode:"color",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"#ffffff",tline:6,tlc:"$deep",tshadow:true},ST:{color:"$bgink"},L:{fill:"$bgink"},TM:{fill:"#ffffff",stroke:"",sw:0,color:"$main"},NL:{color:"$ink"},H:{fill:"$accent",color:"#ffffff",radius:999},B:{stroke:"",sw:0,radius:22,shadow:true},G:{stroke:"",sw:0,radius:22,shadow:true},FB:{stroke:"",sw:0,radius:22},C:{fill:"$sub",color:"$main"}},
+  deco:[["blob",1,0,0.24,"#ffffff",0.12],["blob",0,1,0.26,"#ffffff",0.1],["flank","📊","✨",62]]},
+ {k:"neon",n:"다크 네온",d:"어두운 바탕 · 빛나는 테두리 상자",fam:"purple",mode:"dark",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"#ffffff",tshadow:true},ST:{color:"#ffffff"},L:{fill:"$accent"},TM:{fill:"",stroke:"$accent",sw:2,color:"$accent"},H:{fill:"",color:"$accent",stroke:"$accent",sw:2,radius:999},B:{fill:"$panel",color:"#f3f5ff",stroke:"$main",sw:2,radius:14},G:{fill:"#ffffff",stroke:"$main",sw:2,radius:14},FB:{fill:"$panel",stroke:"$main",sw:2,radius:14},FT:{color:"#f3f5ff"},C:{fill:"$main",color:"$on"},N:{color:"$accent"},NL:{color:"#f3f5ff"}},
+  deco:[["stars","$accent"],["dots","tr","$main",0.5],["dots","bl","$accent",0.35]]},
+ {k:"glass",n:"그라데이션 유리",d:"부드러운 그라데이션 · 반투명 카드",fam:"mint",mode:"light",bgx:{type:"grad",c1:"$sub",c2:"$light",dir:"b"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"$ink"},H:{fill:"$main",color:"$on",radius:999},B:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22,shadow:true},G:{fill:"#ffffffdd",stroke:"#ffffff",sw:2,radius:22,shadow:true},FB:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22},C:{fill:"$main",color:"$on"}},
+  deco:[["blob",0.86,0.05,0.2,"#ffffff",0.65],["blob",0.08,0.92,0.22,"$main",0.12],["flank","📢",null,62]]},
+ {k:"note",n:"모눈 노트",d:"모눈종이 · 손글씨 · 형광펜 제목",fam:"blue",mode:"white",bgx:{type:"pat",pat:"grid",color:"$main",a:0.18,size:28},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+  s:{H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}},
+  deco:[["mark","#fff3b0",1],["flank",null,"✏️",56]]},
+ {k:"pixel",n:"픽셀 게임",d:"네모 반듯한 칸 · 굵은 선 · 픽셀 장식",fam:"green",mode:"light",f:{T:"Black Han Sans",H:"Gugi",B:"Noto Sans KR"},
+  s:{T:{color:"$main",tline:5,tlc:"#1f1f1f"},H:{fill:"$main",color:"$on",stroke:"#1f1f1f",sw:3,radius:0},B:{stroke:"#1f1f1f",sw:3,radius:0},G:{stroke:"#1f1f1f",sw:3,radius:0},FB:{stroke:"#1f1f1f",sw:3,radius:0},C:{fill:"$accent",color:"#ffffff",radius:0},TM:{radius:0,stroke:"#1f1f1f"}},
+  deco:[["pix","tl","$main",1],["pix","tr","$accent",1],["pix","br","$main",0.8],["flank","🎮","⭐",56]]},
+ {k:"board",n:"칠판",d:"초록 칠판 · 분필 글씨 · 나무 틀",fam:"green",mode:"board",frame:16,frameC:"#8a5a3b",f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+  s:{T:{color:"#ffffff"},ST:{color:"#ffffff"},L:{fill:"#fff3b0"},TM:{fill:"",stroke:"#ffffff",sw:2,color:"#ffffff"},H:{fill:"",color:"#fff3b0",stroke:"#fff3b0",sw:2,radius:8,bold:true},B:{fill:"$panel",color:"#f7f7f0",stroke:"#ffffffaa",sw:2,radius:10},G:{fill:"#fdfdf8",stroke:"",sw:0,radius:10},FB:{fill:"$panel",stroke:"#ffffffaa",sw:2,radius:10},FT:{color:"#f7f7f0"},C:{fill:"#fff3b0",color:"#1f3b2d"},N:{color:"#fff3b0"},NL:{color:"#f7f7f0"}},
+  deco:[["flank","✏️","📐",56]]},
+ {k:"kraft",n:"크라프트 종이",d:"갈색 종이 · 마스킹테이프 · 클립",fam:"coral",mode:"kraft",f:{T:"Yeon Sung",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{T:{color:"#3b2a1d"},L:{fill:"#8a5a3b"},ST:{color:"#3b2a1d"},TM:{fill:"#fffaf0",stroke:"#8a5a3b",color:"#3b2a1d"},H:{fill:"$main",color:"$on",radius:4},B:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4,shadow:true},G:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4,shadow:true},FB:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4},C:{fill:"$sub",color:"#3b2a1d"}},
+  deco:[["tape","$sub",0.9,-2],["flank","📎",null,56]]},
+ {k:"blob",n:"파스텔 블롭",d:"몽글몽글 큰 동그라미 · 아주 둥근 상자",fam:"purple",mode:"light",f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},
+  s:{H:{fill:"$main",color:"$on",radius:999},B:{stroke:"$sub",sw:3,radius:28},G:{stroke:"$sub",sw:3,radius:28},FB:{stroke:"$sub",sw:3,radius:28},C:{fill:"$sub",color:"$main"}},
+  deco:[["blob",0.02,0.03,0.2,"$sub",1],["blob",0.98,0.5,0.14,"$soft",1],["blob",0.06,0.98,0.18,"$soft",1],["flank","🌸","✨",52]]},
+ {k:"minimal",n:"미니멀 라인",d:"하얀 바탕 · 얇은 선 · 군더더기 없이",fam:"navy",mode:"white",f:{T:"Do Hyeon",H:"Noto Sans KR",B:"Noto Sans KR"},
+  s:{T:{color:"$ink"},H:{fill:"",color:"$main",stroke:"",radius:0,bold:true},B:{fill:"",stroke:"#d5d9e0",sw:1,radius:0},G:{fill:"#ffffff",stroke:"#d5d9e0",sw:1,radius:0},FB:{fill:"",stroke:"#d5d9e0",sw:1,radius:0},C:{fill:"",color:"$main",bold:true},TM:{fill:"",stroke:"$ink",sw:1,radius:0,color:"$ink"}},
+  deco:[["band","top",8,"$main"]]},
+ {k:"tag",n:"알약 태그",d:"연한 색 상자 · 테두리 알약 소제목",fam:"coral",mode:"white",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999},B:{fill:"$light",stroke:"",sw:0,radius:18},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:18},FB:{fill:"$light",stroke:"",sw:0,radius:18},C:{fill:"$main",color:"$on"}},
+  deco:[["dots","tr","$main",0.35],["flank",null,"📌",54]]},
+ {k:"block",n:"인포그래픽 블록",d:"까만 막대 소제목 · 색 블록 칸 · 큰 숫자",fam:"yellow",mode:"white",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
+  s:{T:{color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:0,bold:true},B:{fill:"$light",stroke:"",sw:0,radius:0},G:{fill:"$light",stroke:"",sw:0,radius:0},FB:{fill:"$light",stroke:"",sw:0,radius:0},C:{fill:"$main",color:"$on",radius:0},N:{color:"$main"}},
+  deco:[["mark","$main",0.5],["pix","tr","$ink",0.9]]},
+ {k:"dots",n:"땡땡이 팝",d:"땡땡이 바탕 · 굵은 색 테두리 · 테두리 제목",fam:"yellow",mode:"tint",bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.6,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"$main",tline:6,tlc:"#ffffff",tshadow:true},H:{fill:"$main",color:"$on",radius:10},B:{stroke:"$main",sw:3,radius:16},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"$on"}},
+  deco:[["ring",1,0,0.17,"#ffffff",10,0.8],["flank","⭐","⭐",58]]},
+ {k:"sale",n:"줄무늬 팝",d:"사선 줄무늬 · 강렬한 색 · 까만 테두리",fam:"coral",mode:"color",bgx:{type:"pat",pat:"stripes",color:"#ffffff",a:0.16,size:44},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{T:{color:"#ffffff",tline:6,tlc:"#1f1f1f",tshadow:true},ST:{color:"$bgink"},L:{fill:"$bgink"},TM:{fill:"#ffffff",stroke:"#1f1f1f",color:"#1f1f1f"},NL:{color:"$ink"},H:{fill:"$accent",color:"#ffffff",stroke:"#1f1f1f",sw:2,radius:999},B:{stroke:"#1f1f1f",sw:3,radius:14},G:{stroke:"#1f1f1f",sw:3,radius:14},FB:{stroke:"#1f1f1f",sw:3,radius:14},C:{fill:"$sub",color:"#1f1f1f"}},
+  deco:[["stars","#ffffff"],["flank","🔥","🎉",60]]},
+ {k:"classic",n:"액자 클래식",d:"두꺼운 액자 틀 · 명조 제목 · 단정한 칸",fam:"navy",mode:"cream",frame:18,frameC:"$main",f:{T:"Song Myung",H:"Noto Serif KR",B:"Gowun Dodum"},
+  s:{T:{color:"$main"},L:{fill:"$accent"},H:{fill:"",color:"$main",stroke:"$main",sw:2,radius:2,bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:2},G:{fill:"#ffffff",stroke:"$main",sw:1,radius:2},FB:{fill:"#ffffff",stroke:"$main",sw:1,radius:2},C:{fill:"$sub",color:"$main"},TM:{radius:2}},
+  deco:[["ring",0.5,0.0,0.06,"$accent",4,0.6]]}
 ];
+const rRole=(o,P)=>o==null?o:JSON.parse(JSON.stringify(o),(k,v)=>typeof v==="string"&&v[0]==="$"&&P[v.slice(1)]!=null?P[v.slice(1)]:v);
 /* ---------- 디자인 장식 (미리캔버스·캔바처럼 배경 도형·형광펜·스티커) ----------
    ZD 표시가 붙은 요소는 디자인을 바꿀 때 지우고 새로 깔아요. 학생이 지워도 돼요. */
 let _mc=null; const measureCtx=()=>_mc||(_mc=document.createElement("canvas").getContext("2d"));
@@ -344,8 +382,8 @@ function putDeco(page,rec,P){ page.items=page.items.filter(it=>it.tag!=="ZD"); i
   const d=decoItems(rec,page.items,P); let at=0; if(SL()) while(at<page.items.length&&page.items[at].tag==="DEC"&&page.items[at].type==="shape") at++;
   page.items.splice(at,0,...d.back); page.items.push(...d.front); }
 const DZ_BASE={T:{fill:"",tline:0,tshadow:false,color:"$main"},ST:{color:"$ink"},L:{fill:"$main"},TM:{color:"$main",fill:"#ffffff",stroke:"$main",sw:2,radius:999},
-  H:{color:"#ffffff",fill:"$main",stroke:"",sw:0,radius:8,shadow:false,bold:false},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,color:"$ink",shadow:false},
-  C:{fill:"$sub",color:"$main",stroke:"",sw:0,bold:true},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},
+  H:{color:"#ffffff",fill:"$main",stroke:"",sw:0,radius:8,shadow:false,bold:false,bshape:""},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,color:"$ink",shadow:false,bshape:""},
+  C:{fill:"$sub",color:"$main",stroke:"",sw:0,bold:true,radius:8},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},
   FC:{},FN:{color:"#ffffff"},FT:{color:"$ink"},FA:{fill:"$sub"},N:{color:"$accent"},NL:{color:"$ink"},BAND:{fill:"$main"},TB:{color:"#ffffff"},STB:{color:"#ffffff"},I:{}};
 function tagOf(it){ if(it.tag) return it.tag;
   if(it.type==="chart") return "G"; if(it.type==="image") return "I";
@@ -354,8 +392,8 @@ function tagOf(it){ if(it.tag) return it.tag;
   return ""; }
 function applyDesign(i,quiet){
   const z=DZ[i]; if(!z) return; if(!quiet) snap();
-  D.pal=Object.assign({name:z.n},z.pal); D.dz=i; const P=z.pal, rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v;
-  S.bg=z.pal.bg; if(z.bgx) S.bgx=JSON.parse(JSON.stringify(z.bgx)); else delete S.bgx; if(!SL()){ S.frame=z.frame||0; S.frameC=z.frameC||P.main; }
+  const P=makePal(z,D.fam); D.pal=P; D.dz=i; const rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v;
+  S.bg=P.bg; if(z.bgx) S.bgx=rRole(z.bgx,P); else delete S.bgx; if(!SL()){ S.frame=z.frame||0; S.frameC=rv(z.frameC)||P.main; }
   S.items.forEach(it=>{ const tg=tagOf(it); if(!tg) return; const st=Object.assign({},DZ_BASE[tg]||{},z.s[tg]||{});
     if(tg==="FC") st.fill=it.alt?P.accent:P.main;
     for(const [k,v] of Object.entries(st)){ if(k==="size"){ continue; } it[k]=rv(v); }
@@ -364,8 +402,9 @@ function applyDesign(i,quiet){
   putDeco(S,z.deco,P);
   if(!quiet){ render(); save(); if(O.status) O.status("추천 디자인 ‘"+z.n+"’을 입혔어요. 배치와 쓴 내용은 그대로예요. (↶ 되돌리기로 돌아갈 수 있어요)"); }
 }
+function famRow(){ return '<span class="pfam"><span>색 고르기</span><button type="button" data-fam=""'+(!D.fam?' class="on"':'')+'>추천색</button>'+FAMK.map(k=>'<button type="button" data-fam="'+k+'" title="'+FAM[k].n+'"'+(D.fam===k?' class="on"':'')+' style="--c:'+FAM[k].main+';--c2:'+FAM[k].accent+'"><i></i>'+FAM[k].n+'</button>').join("")+'</span>'; }
 function dzPop(){
-  return '<span class="pdd"><button type="button" data-pop="dz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz ptplp" data-popbox="dz" hidden><b>배치·쓴 내용은 그대로, 색·배경·글꼴·꾸미기 장식이 바뀌어요</b><span class="pdzg">'+
+  return '<span class="pdd"><button type="button" data-pop="dz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz ptplp" data-popbox="dz" hidden><b>디자인 20가지 · 배치와 쓴 내용은 그대로예요</b>'+famRow()+'<span class="pdzg">'+
     DZ.map((z,i)=>'<button type="button" data-dz="'+i+'"'+(D.dz===i?' class="on"':'')+'><canvas data-dzpv="'+i+'"></canvas><b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>').join("")+'</span></span></span>'; }
 function drawDzPreviews(){ const keepS=S, keepPal=D.pal, keepDz=D.dz;
   bar.querySelectorAll("[data-dzpv]").forEach(cv=>{ S=JSON.parse(JSON.stringify(keepS)); delete S.slides; applyDesign(+cv.dataset.dzpv,true); pvCanvas(cv,S,120); });
@@ -589,7 +628,15 @@ function textPresets(){ const t=th(), base={fill:"",stroke:"",sw:0,pad:8,bold:fa
    ["tape","테이프 제목",{text:"오늘의 발견",font:"Nanum Pen Script",size:42,fill:t.sub,bshape:"tape",w:300,h:66}],
    ["num","숫자 강조",{text:"87%",font:"Black Han Sans",size:96,color:t.accent,w:280,h:130,pad:0}],
    ["quote","인용 카드",{text:"“설문 결과, 3명 중 2명이 ~라고 답했어요.”",font:"Gowun Dodum",size:24,fill:"#ffffff",radius:16,shadow:true,w:440,h:140,pad:22,align:"left"}],
-   ["hand","손글씨",{text:"손글씨처럼 써요",font:"Nanum Pen Script",size:46,w:400,h:80}]].map(([k,l,o])=>[k,l,Object.assign({},base,o)]); }
+   ["hand","손글씨",{text:"손글씨처럼 써요",font:"Nanum Pen Script",size:46,w:400,h:80}],
+   ["q","Q 질문 배지",{text:"Q.",font:"Black Han Sans",size:40,color:"#ffffff",fill:t.main,bshape:"ellipse",w:96,h:96,pad:0}],
+   ["tip","TIP 라벨",{text:"💡 TIP",font:"Do Hyeon",size:26,color:t.ink,fill:"#fff3b0",radius:10,w:170,h:52}],
+   ["check","체크 라벨",{text:"✔ Check!",font:"Do Hyeon",size:26,color:"#ffffff",fill:"#2e9e57",radius:999,w:200,h:52}],
+   ["rank","1위 배지",{text:"1위",font:"Black Han Sans",size:36,color:"#ffffff",fill:"#f5a524",bshape:"star",w:150,h:150,pad:30}],
+   ["imp","중요 도장",{text:"중요!",font:"Black Han Sans",size:34,color:"#e8574b",stroke:"#e8574b",sw:4,radius:999,rot:-12,w:150,h:70}],
+   ["heart","하트 라벨",{text:"좋아요",font:"Jua",size:26,color:"#ffffff",fill:"#e8609a",bshape:"heart",w:150,h:140,pad:26}],
+   ["result","결과 리본",{text:"조사 결과",font:"Do Hyeon",size:30,color:"#ffffff",fill:t.main,bshape:"ribbon",w:300,h:70,pad:14}],
+   ["think","생각 말풍선",{text:"왜 그럴까?",font:"Gaegu",size:28,bold:true,fill:"#ffffff",stroke:t.main,sw:3,bshape:"bubble",radius:40,w:260,h:130,pad:16}]].map(([k,l,o])=>[k,l,Object.assign({},base,o)]); }
 function presetCss(o){ return 'font-family:\''+o.font+'\',sans-serif;color:'+o.color+';'+(o.fill&&!o.bshape?'background:'+o.fill+';':'')+(o.bshape?'background:'+o.fill+';':'')+(o.radius>=999?'border-radius:999px;':'border-radius:6px;')+(o.stroke&&o.sw?'border:2px solid '+o.stroke+';':'')+'text-shadow:'+(tShadowCss(Object.assign({},o,{tline:o.tline?1.5:0}))||'none')+';'+(o.bold?'font-weight:700;':'')+(o.rot?'transform:rotate('+o.rot+'deg);':''); }
 const SW=()=>{ const t=th(); return [t.main,t.sub,t.accent,t.ink,t.bg,"#ffffff","#000000","#555f61","#9aa5a7","#e5e9ea","#e4572e","#f28c28","#f9d56e","#fff3b0","#8fd6b0","#2f9e7e","#3a86ff","#a9c8ff","#1f3a68","#8f5bd6","#f78fb3","#fde3ef","#8a5a3b","#fdf3e7"]; };
 function swatchPop(k,label,cur,noneLabel){ const id="c_"+k;
@@ -772,8 +819,11 @@ function onBar(e){
   const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); if(pop==="tpl") drawTplPreviews(); if(pop==="dz") drawDzPreviews(); if(pop==="sdz") drawSdzPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
   bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true);
   const it=sel&&find(sel);
-  if(b.dataset.dz!=null){ applyDesign(+b.dataset.dz); return; }
-  if(b.dataset.sdz!=null){ applySlideDesign(+b.dataset.sdz); return; }
+  if(b.dataset.fam!=null){ D.fam=b.dataset.fam||null; if(!D.fam) delete D.fam; const box=b.closest(".pfam"); box.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
+    if(SL()){ if(D.sdz!=null) applySlideDesign(D.sdz); drawSdzPreviews(); } else { if(D.dz!=null) applyDesign(D.dz); else save(); drawDzPreviews(); }
+    if(O.status) O.status("색 묶음을 ‘"+(D.fam?FAM[D.fam].n:"추천색")+"’(으)로 바꿨어요."+((SL()?D.sdz:D.dz)==null?" 이제 아래에서 디자인을 골라요.":"")); return; }
+  if(b.dataset.dz!=null){ applyDesign(+b.dataset.dz); bar.querySelectorAll("[data-dz]").forEach(x=>x.classList.toggle("on",x===b)); return; }
+  if(b.dataset.sdz!=null){ applySlideDesign(+b.dataset.sdz); bar.querySelectorAll("[data-sdz]").forEach(x=>x.classList.toggle("on",x===b)); return; }
   if(b.dataset.tsty){ const pr=textPresets().find(x=>x[0]===b.dataset.tsty); if(pr) addItem(mk("text",JSON.parse(JSON.stringify(pr[2])))); return; }
   if(b.dataset.bgs!=null){ snap(); S.bg=b.dataset.bgs; delete S.bgx; render(); save(); return; }
   if(b.dataset.bgg!=null){ const g=bgPresets().grad[+b.dataset.bgg]; snap(); S.bg=g[0]; S.bgx={type:"grad",c1:g[0],c2:g[1],dir:g[2]}; render(); save(); return; }
@@ -882,8 +932,8 @@ function drawItem(ctx,it){
     ctx.restore();
 }
 /* ---------- 발표자료 (16:9 슬라이드 여러 장) ---------- */
-const FRAMES={band:"띠 제목",side:"사이드 바",card:"카드",line:"밑줄 제목",win:"창문 틀",tag:"가운데 제목"};
-const AOF={band:{x:56,y:144,w:1168,h:528},side:{x:72,y:156,w:1152,h:516},card:{x:72,y:156,w:1136,h:496},line:{x:64,y:150,w:1152,h:522},win:{x:76,y:152,w:1128,h:500},tag:{x:72,y:160,w:1136,h:506}};
+const FRAMES={band:"띠 제목",side:"사이드 바",card:"카드",line:"밑줄 제목",win:"창문 틀",tag:"가운데 제목",ribbon:"리본 제목",tab:"폴더 탭",note:"스프링 노트",split:"왼쪽 기둥"};
+const AOF={band:{x:56,y:144,w:1168,h:528},side:{x:72,y:156,w:1152,h:516},card:{x:72,y:156,w:1136,h:496},line:{x:64,y:150,w:1152,h:522},win:{x:76,y:152,w:1128,h:500},tag:{x:72,y:160,w:1136,h:506},ribbon:{x:72,y:150,w:1136,h:516},tab:{x:76,y:128,w:1128,h:540},note:{x:164,y:146,w:1056,h:520},split:{x:430,y:64,w:810,h:592}};
 const LAYOUTS=[["text","제목 + 글"],["two","글 두 칸"],["chart","그래프 + 해석"],["photo","사진 + 글"],["big","사진 크게"],["flow","순서도"],["cover","표지"],["end","끝 인사"],["blank","빈 슬라이드"]];
 function slideFrame(style,title){
   const t=th(), dark=dk(), items=[], push=o=>items.push(Object.assign(o,{tag:o.tag||"DEC"})); let bg=t.bg;
@@ -902,6 +952,21 @@ function slideFrame(style,title){
     push(mk("shape",{shape:"line",x:36,y:122,w:W-72,h:4,fill:t.ink}));
     [0,1,2].forEach(k=>push(mk("shape",{shape:"ellipse",x:66+k*30,y:66,w:18,h:18,fill:[t.main,t.accent,t.sub][k],stroke:t.ink,sw:2,radius:0})));
     push(mk("title",{tag:"STT",x:170,y:40,w:W-340,h:72,text:title,size:40,color:t.ink,fill:"",radius:0,align:"center",pad:0}));
+  } else if(style==="ribbon"){ bg=t.bg;
+    push(mk("title",{tag:"STT",x:W/2-360,y:24,w:720,h:96,text:title,size:36,color:t.on||"#ffffff",fill:t.main,bshape:"ribbon",radius:0,align:"center",pad:22}));
+  } else if(style==="tab"){ bg=t.bg;
+    push(mk("shape",{shape:"round",x:36,y:28,w:540,h:84,fill:t.main,radius:18}));
+    push(mk("shape",{shape:"round",x:36,y:92,w:W-72,h:H-120,fill:dark?t.sub:"#ffffff",stroke:t.main,sw:4,radius:18}));
+    push(mk("title",{tag:"STT",x:60,y:30,w:500,h:60,text:title,size:32,color:t.on||"#ffffff",fill:"",radius:0,align:"left",pad:0}));
+  } else if(style==="note"){ bg=t.bg;
+    push(mk("shape",{shape:"round",x:76,y:24,w:W-104,h:H-48,fill:dark?t.sub:"#ffffff",stroke:t.sub,sw:3,radius:16,shadow:true}));
+    push(mk("shape",{shape:"rect",x:140,y:24,w:3,h:H-48,fill:"#f3a5a5",radius:0}));
+    for(let k=0;k<10;k++){ push(mk("shape",{shape:"ellipse",x:92,y:52+k*64,w:18,h:18,fill:t.bg,stroke:t.sub,sw:2,radius:0})); push(mk("shape",{shape:"round",x:52,y:56+k*64,w:58,h:10,fill:t.ink,radius:999,op:0.75})); }
+    push(mk("title",{tag:"STT",x:164,y:42,w:1040,h:76,text:title,size:44,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+  } else if(style==="split"){ bg=dark?t.bg:"#ffffff";
+    push(mk("shape",{shape:"rect",x:0,y:0,w:384,h:H,fill:t.main,radius:0}));
+    push(mk("title",{tag:"STT",x:40,y:72,w:310,h:420,text:title,size:46,color:t.on||"#ffffff",fill:"",radius:0,align:"left",valign:"top",pad:0}));
+    push(mk("shape",{shape:"round",x:40,y:H-96,w:96,h:10,fill:t.accent,radius:999}));
   } else if(style==="tag"){ bg=t.bg;
     push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:12,fill:t.main,radius:0}));
     push(mk("title",{tag:"STT",x:110,y:40,w:W-220,h:74,text:title,size:46,color:t.ink,fill:"",radius:0,align:"center",pad:0}));
@@ -940,6 +1005,30 @@ function slide(style,kind,o){
       push(mk("title",{tag:"CT",x:110,y:170,w:W-220,h:220,text:big,size:big1?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
       push(mk("text",{tag:"CS",x:110,y:400,w:W-220,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
       push(mk("text",{tag:"CM",x:340,y:490,w:600,h:60,text:team,size:24,bold:true,color:"#ffffff",fill:t.main,stroke:t.ink,sw:3,radius:999,align:"center",valign:"middle",pad:8}));
+    } else if(style==="ribbon"){ bg=t.bg;
+      push(mk("title",{tag:"CT",x:110,y:130,w:W-220,h:240,text:big,size:big1?68:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
+      push(mk("text",{tag:"CS",x:W/2-380,y:392,w:760,h:96,text:sub,size:26,bold:true,color:t.on||"#ffffff",fill:t.main,stroke:"",sw:0,bshape:"ribbon",align:"center",valign:"middle",pad:22}));
+      push(mk("text",{tag:"CM",x:240,y:520,w:W-480,h:56,text:team,size:24,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+    } else if(style==="tab"){ bg=t.bg;
+      push(mk("shape",{shape:"round",x:36,y:28,w:420,h:84,fill:t.main,radius:18}));
+      push(mk("shape",{shape:"round",x:36,y:92,w:W-72,h:H-120,fill:dark?t.sub:"#ffffff",stroke:t.main,sw:4,radius:18}));
+      push(mk("title",{tag:"CT",x:110,y:170,w:W-220,h:230,text:big,size:big1?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
+      push(mk("text",{tag:"CS",x:110,y:410,w:W-220,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:340,y:500,w:600,h:60,text:team,size:24,bold:true,color:t.on||"#ffffff",fill:t.main,stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+    } else if(style==="note"){ bg=t.bg;
+      push(mk("shape",{shape:"round",x:76,y:24,w:W-104,h:H-48,fill:dark?t.sub:"#ffffff",stroke:t.sub,sw:3,radius:16,shadow:true}));
+      push(mk("shape",{shape:"rect",x:140,y:24,w:3,h:H-48,fill:"#f3a5a5",radius:0}));
+      for(let k=0;k<10;k++){ push(mk("shape",{shape:"ellipse",x:92,y:52+k*64,w:18,h:18,fill:t.bg,stroke:t.sub,sw:2,radius:0})); push(mk("shape",{shape:"round",x:52,y:56+k*64,w:58,h:10,fill:t.ink,radius:999,op:0.75})); }
+      push(mk("title",{tag:"CT",x:190,y:150,w:1000,h:240,text:big,size:big1?70:90,color:t.main,fill:"",radius:0,align:"left",pad:0}));
+      push(mk("shape",{shape:"line",x:190,y:404,w:300,h:6,fill:t.accent}));
+      push(mk("text",{tag:"CS",x:190,y:428,w:1000,h:60,text:sub,size:28,bold:true,color:t.ink,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:190,y:500,w:1000,h:56,text:team,size:24,bold:true,color:t.main,fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+    } else if(style==="split"){ bg=dark?t.bg:"#ffffff";
+      push(mk("shape",{shape:"rect",x:0,y:0,w:640,h:H,fill:t.main,radius:0}));
+      push(mk("title",{tag:"CT",x:56,y:120,w:540,h:320,text:big,size:big1?64:84,color:t.on||"#ffffff",fill:"",radius:0,align:"left",pad:0}));
+      push(mk("text",{tag:"CS",x:56,y:450,w:540,h:60,text:sub,size:24,bold:true,color:t.on||"#ffffff",fill:"",stroke:"",sw:0,valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:56,y:540,w:540,h:56,text:team,size:24,bold:true,color:t.ink,fill:"#ffffff",stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+      push(mk("sticker",{emoji:big1?(O.deck==="dream"?"🌟":"📊"):"🙌",x:840,y:240,w:240,h:240}));
     } else if(style==="tag"){ bg=t.bg;
       push(mk("shape",{shape:"ellipse",x:-120,y:-120,w:360,h:360,fill:t.sub,radius:0}));
       push(mk("shape",{shape:"ellipse",x:W-200,y:H-220,w:320,h:320,fill:t.sub,radius:0}));
@@ -991,52 +1080,53 @@ function slide(style,kind,o){
     body(A.x,A.y+fh+24,A.w,A.h-fh-24,o.body||"대상: ○○중 ○학년 ○○명\n기간: ○월 ○일 ~ ○월 ○일 · 질문 수: ○개",{valign:"middle"}); }
   return {id:uid(),bg:F.bg,items,kind,st:style};
 }
-/* 발표자료 추천 디자인 20가지: 틀(띠·사이드·카드·밑줄·창문·가운데) + 색 + 배경 + 글꼴 + 상자 모양 */
+/* 발표자료 추천 디자인 20가지: 틀 10가지(띠·사이드·카드·밑줄·창문·가운데·리본·폴더 탭·스프링 노트·왼쪽 기둥) × 상자 모양 · 글꼴 · 장식.
+   색은 8가지 색 묶음 중에 따로 골라요 (쓴 내용은 그대로). */
 const SDZ=[
- {n:"깔끔 블루",deco:[["blob", 1.0, 1.0, 0.13, "$sub", 1], ["dots", "tr", "#ffffff", 0.45]],d:"파란 띠 제목, 하얀 바탕",fr:"band",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#dbe7fb",accent:"#f28c28",ink:"#1d2a3a"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{}},
- {n:"민트 사이드",deco:[["ring", 1.0, 0.0, 0.12, "$main", 6, 0.5], ["ring", 1.0, 1.0, 0.1, "$accent", 6, 0.5]],d:"왼쪽 민트 막대, 둥근 테두리 상자",fr:"side",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
- {n:"파스텔 카드",deco:[["flank", "🌸", "🌸", 46]],d:"분홍 땡땡이 배경 위 하얀 카드",fr:"card",pal:{bg:"#fff8fb",main:"#e889b5",sub:"#fde3ef",accent:"#7cc6c0",ink:"#3a2a33"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.7,size:40},f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},s:{B:{stroke:"$sub",sw:3,radius:20}}},
- {n:"레트로 굵은 선",deco:[["mark", "$sub", 1], ["pix", "tr", "$ink", 1]],d:"크림 바탕, 까만 굵은 테두리",fr:"line",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:10,pad:10},B:{stroke:"$ink",sw:3,radius:12},B2:{fill:"#8fd6b0",stroke:"$ink",sw:3},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:12},FB:{stroke:"$ink",sw:3,radius:12}}},
- {n:"네이비 비즈니스",deco:[["pix", "tr", "$accent", 0.9]],d:"남색 띠, 금색 포인트, 그림자 카드",fr:"band",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},bg:"#f5f7fb",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
-  s:{H:{bold:true},B:{stroke:"",sw:0,radius:6,shadow:true},B2:{fill:"#fff4d0"},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"",sw:0,radius:6,shadow:true},FB:{stroke:"",sw:0,radius:6,shadow:true}}},
- {n:"선셋 그라데이션",deco:[["blob", 0.96, 0.06, 0.12, "#ffffff", 0.4], ["blob", 0.04, 0.94, 0.14, "#ffffff", 0.35], ["flank", "☀️", null, 46]],d:"주황→노랑 그라데이션 위 하얀 카드",fr:"card",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"",sw:0,shadow:true,radius:18},G:{shadow:true}}},
- {n:"라벤더 땡땡이",deco:[["blob", 1.0, 1.0, 0.16, "$sub", 1], ["flank", null, "💜", 44]],d:"연보라 땡땡이, 보라 사이드 막대",fr:"side",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bg:"#f3efff",bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.12,size:40},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18}}},
- {n:"신문 기사형",deco:[["band", "top", 8, "$ink"], ["flank", null, "📰", 44]],d:"누런 신문지, 검은 줄, 명조체",fr:"line",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
-  s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:10,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},B2:{fill:"$sub"},C:{fill:"",color:"$accent"},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0}}},
- {n:"옐로 블루 팝",deco:[["ring", 0.0, 1.0, 0.1, "#ffffff", 8, 0.8], ["flank", "⭐", "⭐", 46]],d:"노란 땡땡이 배경, 파란 카드 제목",fr:"card",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#ffe45c",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.5,size:36},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{B:{stroke:"$main",sw:3,radius:16},B2:{fill:"#fff7c2",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
- {n:"모눈 노트",deco:[["mark", "#fff3b0", 1], ["flank", null, "✏️", 46]],d:"모눈종이 배경, 손글씨 제목, 파란 펜",fr:"line",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:32},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
-  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0"},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
- /* 11~20: 미리캔버스 진로·설문·과학 발표 템플릿 스타일 참고 */
- {n:"마이 드림 블루",deco:[["flank", "⭐", "⭐", 44]],d:"창문 틀, 파랑·노랑 알약 소제목",fr:"win",pal:{bg:"#e6ecf9",main:"#1f4fbf",sub:"#ffd23f",accent:"#ffd23f",ink:"#1a2a5e"},bgx:{type:"pat",pat:"dots",color:"#1f4fbf",a:0.14,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:3,radius:14},B2:{fill:"#fff6cf",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffd23f"},G:{stroke:"$main",sw:3,radius:14},FB:{stroke:"$main",sw:3,radius:14}}},
- {n:"설문 결과 블루",deco:[["dots", "tl", "$main", 0.3], ["flank", null, "📊", 46]],d:"가운데 제목, 그림자 하얀 카드",fr:"tag",pal:{bg:"#f2f5fa",main:"#2f7de1",sub:"#dde9fb",accent:"#ffc93c",ink:"#1e2a3b"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{H:{fill:"$main",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"",sw:0,radius:18,shadow:true},B2:{fill:"#ffffff",stroke:"$main",sw:3},C:{fill:"$accent",color:"$ink"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18,shadow:true}}},
- {n:"과학 교실 창문",deco:[["flank", "🔬", "🧪", 44]],d:"하늘색 바탕 창문 틀, 노란 소제목",fr:"win",pal:{bg:"#9cc0f5",main:"#ff7a3d",sub:"#fff1c9",accent:"#ffd23f",ink:"#2b2b2b"},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
-  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$accent",color:"$ink",radius:8,pad:8},B:{fill:"#fffdf5",stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
- {n:"퍼플 크림",deco:[["flank", "✨", "✨", 44], ["blob", 0.0, 1.0, 0.1, "$sub", 1]],d:"크림 바탕, 보라 테두리 알약 제목",fr:"tag",pal:{bg:"#f7f2e8",main:"#8e5bb8",sub:"#e9dcf5",accent:"#f2b33d",ink:"#2e2438"},f:{T:"Sunflower",H:"Do Hyeon",B:"Gowun Dodum"},
-  s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:2,radius:20},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:20},FB:{stroke:"$main",sw:2,radius:20}}},
- {n:"설문 보고 핑크",deco:[["mark", "$sub", 1], ["pix", "tr", "$main", 1]],d:"하얀 바탕, 분홍 밑줄 제목, 얇은 테두리",fr:"line",pal:{bg:"#ffffff",main:"#e8577a",sub:"#fde4ea",accent:"#222222",ink:"#222222"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$main",stroke:"$main",sw:2,radius:999,pad:8},B:{stroke:"$main",sw:2,radius:8},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$main",sw:2,radius:8},FB:{stroke:"$main",sw:2,radius:8}}},
- {n:"실험 보고서 옐로",deco:[["pix", "tr", "$sub", 0.9], ["flank", null, "🧪", 44]],d:"노란 바탕, 남색 띠, 네모난 표 칸",fr:"band",pal:{bg:"#fff8d6",main:"#1f4fa8",sub:"#ffe066",accent:"#4fb3ff",ink:"#12305f"},bg:"#fff8d6",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
-  s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:8,bold:true},B:{stroke:"$main",sw:2,radius:0},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:0},FB:{stroke:"$main",sw:2,radius:0}}},
- {n:"우주 네이비",deco:[["stars", "$accent"], ["flank", "🚀", "🪐", 46]],d:"짙은 남색 별 바탕, 주황 카드 제목",fr:"card",pal:{bg:"#1b2350",main:"#ff7a45",sub:"#2c3670",accent:"#ffd23f",ink:"#f5f7ff"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.22,size:46},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
-  s:{H:{color:"$accent"},B:{fill:"$sub",stroke:"$accent",sw:2,radius:18,color:"$ink"},B2:{fill:"#3a4590",color:"$ink"},C:{fill:"$accent",color:"#1b2350"},G:{fill:"#ffffff",stroke:"",sw:0,radius:18},FB:{fill:"$sub",stroke:"$accent",sw:2,radius:18},FA:{fill:"$accent"}}},
- {n:"블루 옐로 깔끔",deco:[["dots", "tr", "$main", 0.3], ["mark", "$accent", 0.55]],d:"가운데 제목, 연파랑 상자, 노란 강조",fr:"tag",pal:{bg:"#ffffff",main:"#2f80ed",sub:"#eaf2ff",accent:"#ffc52b",ink:"#1f2a3d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{H:{fill:"$main",color:"#ffffff",radius:6,pad:8,align:"center"},B:{fill:"$sub",stroke:"",sw:0,radius:14},B2:{fill:"#fff5d1",stroke:"",sw:0},C:{fill:"$accent",color:"$ink"},G:{fill:"$sub",stroke:"",sw:0,radius:14},FB:{fill:"$sub",stroke:"",sw:0,radius:14}}},
- {n:"옐로 프로필",deco:[["flank", null, "💡", 44], ["dots", "tr", "$ink", 0.2]],d:"노란 사이드 막대, 까만 알약 소제목",fr:"side",pal:{bg:"#fbf6ea",main:"#f2b632",sub:"#fdebb9",accent:"#2b2b2b",ink:"#2b2b2b"},bg:"#fbf6ea",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"$ink"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
- {n:"차분한 그레이 블루",deco:[["band", "top", 8, "$main"], ["dots", "tr", "$main", 0.18]],d:"연회색 바탕, 남색 밑줄 제목, 그림자 카드",fr:"line",pal:{bg:"#f5f6f8",main:"#2c4f8f",sub:"#e2e8f2",accent:"#f5c242",ink:"#1f2633"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},
-  s:{B:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},FB:{stroke:"#d4dae5",sw:1,radius:10,shadow:true}}}
+ {n:"깔끔 띠 제목",d:"색 띠 제목 · 하얀 바탕",fr:"band",fam:"blue",mode:"white",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{},deco:[["blob",1,1,0.13,"$sub",1],["dots","tr","#ffffff",0.45]]},
+ {n:"사이드 바",d:"왼쪽 색 막대 · 둥근 테두리 상자",fr:"side",fam:"mint",mode:"white",f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}},deco:[["ring",1,0,0.12,"$main",6,0.5],["ring",1,1,0.1,"$accent",6,0.5]]},
+ {n:"파스텔 카드",d:"땡땡이 바탕 위 하얀 카드",fr:"card",fam:"pink",mode:"light",bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.7,size:40},f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},s:{B:{stroke:"$sub",sw:3,radius:20}},deco:[["blob",0,1,0.1,"$sub",1]]},
+ {n:"레트로 밑줄",d:"크림 바탕 · 까만 굵은 테두리 · 형광펜",fr:"line",fam:"coral",mode:"cream",pbg:true,f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{STT:{color:"#1f1f1f"},CT:{color:"#1f1f1f"},H:{fill:"$main",color:"$on",stroke:"#1f1f1f",sw:3,radius:10,pad:10},B:{stroke:"#1f1f1f",sw:3,radius:12},B2:{fill:"$sub",stroke:"#1f1f1f",sw:3},C:{fill:"$accent",color:"#ffffff",stroke:"#1f1f1f",sw:2},G:{stroke:"#1f1f1f",sw:3,radius:12},FB:{stroke:"#1f1f1f",sw:3,radius:12}},deco:[["mark","$sub",1],["pix","tr","#1f1f1f",1]]},
+ {n:"창문 틀",d:"점 세 개 창문 · 알약 소제목",fr:"win",fam:"blue",mode:"tint",bgx:{type:"pat",pat:"dots",color:"$main",a:0.14,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$accent",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:3,radius:14},B2:{fill:"$light",stroke:"$main",sw:3},C:{fill:"$main",color:"$on"},G:{stroke:"$main",sw:3,radius:14},FB:{stroke:"$main",sw:3,radius:14}},deco:[["flank","⭐","⭐",44]]},
+ {n:"가운데 제목",d:"가운데 큰 제목 · 그림자 카드",fr:"tag",fam:"blue",mode:"light",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"$on",radius:999,pad:8,align:"center"},B:{stroke:"",sw:0,radius:18,shadow:true},B2:{fill:"#ffffff",stroke:"$main",sw:3},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18,shadow:true}},deco:[["dots","tl","$main",0.3],["flank",null,"📊",46]]},
+ {n:"리본 배너",d:"리본 모양 제목 · 둥근 테두리",fr:"ribbon",fam:"pink",mode:"white",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{color:"$main",bold:true},B:{stroke:"$sub",sw:3,radius:20},B2:{fill:"$light",stroke:"$sub",sw:3},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"$sub",sw:3,radius:20},FB:{stroke:"$sub",sw:3,radius:20}},deco:[["stars","$accent"]]},
+ {n:"폴더 탭",d:"폴더처럼 탭에 제목 · 테두리 판",fr:"tab",fam:"green",mode:"light",f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$sub",color:"$ink",radius:8,pad:8},B:{stroke:"$main",sw:2,radius:12},B2:{fill:"$light",stroke:"$main",sw:2},C:{fill:"$main",color:"$on"},G:{stroke:"$main",sw:2,radius:12},FB:{stroke:"$main",sw:2,radius:12}},deco:[["flank",null,"📁",44]]},
+ {n:"스프링 노트",d:"스프링 공책 · 손글씨 · 형광펜",fr:"note",fam:"blue",mode:"white",f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0",stroke:"",sw:0},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}},deco:[["mark","#fff3b0",1],["flank",null,"✏️",46]]},
+ {n:"왼쪽 기둥",d:"왼쪽 색 기둥에 큰 제목 · 오른쪽 내용",fr:"split",fam:"purple",mode:"white",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{B:{fill:"$light",stroke:"",sw:0,radius:14},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"$accent",color:"#ffffff"},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:14},FB:{fill:"$light",stroke:"",sw:0,radius:14}},deco:[]},
+ {n:"다크 네온",d:"어두운 바탕 · 빛나는 테두리",fr:"card",fam:"purple",mode:"dark",bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.2,size:46},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{color:"$accent"},B:{fill:"$panel",stroke:"$accent",sw:2,radius:18,color:"#f3f5ff"},B2:{fill:"$panel",stroke:"$main",sw:2,color:"#f3f5ff"},C:{fill:"$accent",color:"#1b1b2b"},G:{fill:"#ffffff",stroke:"",sw:0,radius:18},FB:{fill:"$panel",stroke:"$accent",sw:2,radius:18},FT:{color:"#f3f5ff"},FA:{fill:"$accent"},CAP:{color:"#f3f5ff"}},deco:[["stars","$accent"]]},
+ {n:"칠판",d:"초록 칠판 · 분필 손글씨",fr:"line",fam:"green",mode:"board",pbg:true,f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+  s:{STT:{color:"#ffffff"},CT:{color:"#ffffff"},CS:{color:"#fff3b0"},CM:{color:"#ffffff"},H:{color:"#fff3b0",bold:true},B:{fill:"$panel",stroke:"#ffffffaa",sw:2,radius:10,color:"#f7f7f0"},B2:{fill:"$panel",stroke:"#fff3b0",sw:2,color:"#f7f7f0"},C:{fill:"#fff3b0",color:"#1f3b2d"},G:{fill:"#fdfdf8",stroke:"",sw:0,radius:10},FB:{fill:"$panel",stroke:"#ffffffaa",sw:2,radius:10},FT:{color:"#f7f7f0"},CAP:{color:"#f7f7f0"}},deco:[["flank",null,"✏️",46]]},
+ {n:"신문 기사형",d:"누런 신문지 · 검은 줄 · 명조체",fr:"line",fam:"navy",mode:"cream",pbg:true,f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
+  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:0,pad:10,bold:true},B:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0},B2:{fill:"$sub",stroke:"$ink",sw:1},C:{fill:"",color:"$main"},G:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0},FB:{fill:"#fffdf7",stroke:"$ink",sw:1,radius:0}},deco:[["band","top",8,"$ink"],["flank",null,"📰",44]]},
+ {n:"그라데이션 카드",d:"부드러운 그라데이션 위 하얀 카드",fr:"card",fam:"coral",mode:"light",bgx:{type:"grad",c1:"$main",c2:"$sub",dir:"d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"",sw:0,shadow:true,radius:18},G:{shadow:true}},deco:[["blob",0.96,0.06,0.12,"#ffffff",0.4],["blob",0.04,0.94,0.14,"#ffffff",0.35]]},
+ {n:"메모지 보드",d:"폴더 탭 · 접힌 메모지 상자",fr:"tab",fam:"yellow",mode:"light",bgx:{type:"pat",pat:"grid",color:"$main",a:0.16,size:34},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{H:{fill:"$main",color:"$on",bshape:"tape",radius:0},B:{fill:"$sub",stroke:"",sw:0,radius:0,bshape:"note",shadow:true},B2:{fill:"#ffffff",stroke:"",sw:0,bshape:"note",shadow:true},C:{fill:"#ffffff",color:"$ink"},G:{fill:"#ffffff",stroke:"",sw:0,radius:4,shadow:true},FB:{fill:"#ffffff",stroke:"",sw:0,radius:4,shadow:true}},deco:[["flank",null,"📌",44]]},
+ {n:"말풍선 대화",d:"가운데 제목 · 말풍선 글 상자",fr:"tag",fam:"mint",mode:"light",f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},
+  s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999,pad:8,align:"center"},B:{fill:"#ffffff",stroke:"$ink",sw:2,radius:24,bshape:"bubble"},B2:{fill:"$sub",stroke:"$ink",sw:2,bshape:"bubble"},C:{fill:"$main",color:"$on"},G:{stroke:"$ink",sw:2,radius:22},FB:{stroke:"$ink",sw:2,radius:22}},deco:[["flank","💬","😊",46]]},
+ {n:"픽셀 게임",d:"창문 틀 · 네모 반듯 · 굵은 선",fr:"win",fam:"green",mode:"light",f:{T:"Black Han Sans",H:"Gugi",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"$on",stroke:"#1f1f1f",sw:3,radius:0,pad:8},B:{stroke:"#1f1f1f",sw:3,radius:0},B2:{fill:"$sub",stroke:"#1f1f1f",sw:3},C:{fill:"$accent",color:"#ffffff",radius:0},G:{stroke:"#1f1f1f",sw:3,radius:0},FB:{stroke:"#1f1f1f",sw:3,radius:0}},deco:[["flank","🎮","⭐",44]]},
+ {n:"컬러 바탕",d:"진한 색 바탕 · 하얀 제목 · 하얀 카드",fr:"tag",fam:"blue",mode:"color",pbg:true,f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{STT:{color:"$bgink"},CT:{color:"$bgink"},CS:{color:"$bgink"},CM:{fill:"#ffffff",color:"$main"},H:{fill:"#ffffff",color:"$main",radius:999,pad:8,align:"center"},B:{stroke:"",sw:0,radius:18,shadow:true},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18},FT:{color:"$ink"},CAP:{color:"$bgink"}},deco:[["blob",1,0,0.14,"#ffffff",0.12],["blob",0,1,0.16,"#ffffff",0.1]]},
+ {n:"미니멀 라인",d:"하얀 바탕 · 얇은 선 · 단정하게",fr:"line",fam:"navy",mode:"white",pbg:true,f:{T:"Do Hyeon",H:"Noto Sans KR",B:"Noto Sans KR"},
+  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"#d4dae5",sw:1,radius:4},B2:{fill:"$light",stroke:"",sw:0},C:{fill:"",color:"$main"},G:{stroke:"#d4dae5",sw:1,radius:4},FB:{stroke:"#d4dae5",sw:1,radius:4}},deco:[["band","top",8,"$main"]]},
+ {n:"크라프트 리본",d:"갈색 종이 · 리본 제목 · 클립",fr:"ribbon",fam:"coral",mode:"kraft",pbg:true,f:{T:"Yeon Sung",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{H:{color:"#3b2a1d",bold:true},CS:{color:"#3b2a1d"},B:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4,shadow:true},B2:{fill:"$sub",stroke:"#c9ae86",sw:2},C:{fill:"$sub",color:"#3b2a1d"},G:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4},FB:{fill:"#fffaf0",stroke:"#c9ae86",sw:2,radius:4},FT:{color:"#3b2a1d"},CAP:{color:"#3b2a1d"}},deco:[["flank",null,"📎",44]]}
 ];
-const SDZ_BASE={H:{color:"$main",fill:"",stroke:"",sw:0},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,color:"$ink",shadow:false},B2:{fill:"$sub",stroke:"",sw:0,color:"$ink"},
-  C:{fill:"$sub",color:"$main",stroke:"",sw:0},G:{fill:"#ffffff",stroke:"",sw:0,radius:16,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,shadow:false},
+const SDZ_BASE={H:{color:"$main",fill:"",stroke:"",sw:0,bshape:"",pad:0,align:"left",radius:0,bold:false},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,color:"$ink",shadow:false,bshape:""},B2:{fill:"$sub",stroke:"",sw:0,color:"$ink",bshape:"",shadow:false},
+  C:{fill:"$sub",color:"$main",stroke:"",sw:0,radius:12},G:{fill:"#ffffff",stroke:"",sw:0,radius:16,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,shadow:false},
   FC:{},FN:{color:"#ffffff"},FT:{color:"$ink"},FA:{fill:"$sub"},CAP:{color:"$ink"},CS:{},CM:{},CT:{},STT:{},I:{}};
 const CONTENT_TAGS=["B","B2","H","C","G","I","FB","FC","FN","FT","FA","CAP"];
 function styleSlide(P,z){ // 색·글꼴·상자 모양만 (위치는 그대로)
-  const pal=z.pal, rv=v=>typeof v==="string"&&v[0]==="$"?pal[v.slice(1)]:v;
-  if(z.bg) P.bg=z.bg; if(z.bgx) P.bgx=JSON.parse(JSON.stringify(z.bgx)); else delete P.bgx;
+  const pal=th(), rv=v=>typeof v==="string"&&v[0]==="$"?pal[v.slice(1)]:v;
+  if(z.pbg) P.bg=pal.bg; if(z.bgx) P.bgx=rRole(z.bgx,pal); else delete P.bgx;
   P.items.forEach(it=>{ const tg=it.tag; if(!tg||tg==="DEC") return; const st=Object.assign({},SDZ_BASE[tg]||{},z.s[tg]||{}); if(tg==="FC") st.fill=it.alt?pal.accent:pal.main;
     for(const [k,v] of Object.entries(st)) it[k]=rv(v);
     if(it.type==="text"){ const f=tg==="STT"||tg==="CT"?z.f.T:tg==="H"?z.f.H:["B","B2","C","CS","CM","FT","CAP"].includes(tg)?z.f.B:null; if(f) it.font=f; }
@@ -1054,7 +1144,7 @@ function restyleSlide(P,z){ // 틀을 새로 깔고 내용은 새 틀 안으로 
   const N={id:P.id,bg:F.bg,items:F.items.concat(content,extra),kind:P.kind,st:z.fr}; styleSlide(N,z); return N;
 }
 function applySlideDesign(i){
-  const z=SDZ[i]; if(!z) return; snap(); D.pal=Object.assign({name:z.n},z.pal); D.sdz=i; D.style=z.fr;
+  const z=SDZ[i]; if(!z) return; snap(); D.pal=makePal(z,D.fam); D.sdz=i; D.style=z.fr;
   D.slides=D.slides.map(P=>restyleSlide(P,z)); setCur(D.cur); sel=null; render(); strip(); save();
   if(O.status) O.status("추천 디자인 ‘"+z.n+"’을 모든 슬라이드에 입혔어요. 쓴 내용은 그대로예요. (↶ 되돌리기로 돌아갈 수 있어요)");
 }
@@ -1091,10 +1181,10 @@ function deckNote(el){ const z=D.sdz!=null?SDZ[D.sdz]:null;
   el.innerHTML='누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요.<br>'+(z?'지금 디자인: <b>'+esc(z.n)+'</b>':'디자인은 옆의 ‘🎨 추천 디자인’에서 20가지 중에 골라요 (쓴 내용은 그대로).'); }
 /* 미리보기: 디자인·배치를 작은 그림으로 */
 function pvCanvas(cv,page,w){ const s=w/W; cv.width=Math.round(w*2); cv.height=Math.round(H*s*2); const c=cv.getContext("2d"); c.setTransform(2*s,0,0,2*s,0,0); drawPage(c,page); }
-function sdzPop(){ return '<span class="pdd"><button type="button" data-pop="sdz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz psdz" data-popbox="sdz" hidden><b>쓴 내용은 그대로, 틀·색·배경·글꼴이 바뀌어요</b><span class="pdzg">'+
+function sdzPop(){ return '<span class="pdd"><button type="button" data-pop="sdz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz psdz" data-popbox="sdz" hidden><b>디자인 20가지 · 쓴 내용은 그대로예요</b>'+famRow()+'<span class="pdzg">'+
   SDZ.map((z,i)=>'<button type="button" data-sdz="'+i+'"'+(D.sdz===i?' class="on"':'')+'><canvas data-sdzpv="'+i+'"></canvas><b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>').join("")+'</span></span></span>'; }
 function drawSdzPreviews(){
-  const keep=D.pal; bar.querySelectorAll("[data-sdzpv]").forEach(cv=>{ const z=SDZ[+cv.dataset.sdzpv]; D.pal=z.pal;
+  const keep=D.pal; bar.querySelectorAll("[data-sdzpv]").forEach(cv=>{ const z=SDZ[+cv.dataset.sdzpv]; D.pal=makePal(z,D.fam);
     const P=slide(z.fr,"two",{title:O.deck==="dream"?"4. 이 직업은 어떤 일을 할까?":"2. 탐구 질문과 가설",h1:O.deck==="dream"?"하는 일":"탐구 질문",b1:"• 내용을 써요\n• 내용을 써요",h2:O.deck==="dream"?"필요한 능력":"가설",b2:"~할수록 ~할 것이다.",fill2:true}); styleSlide(P,z); pvCanvas(cv,P,176); });
   if(keep) D.pal=keep; else delete D.pal;
 }

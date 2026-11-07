@@ -159,6 +159,10 @@ img{max-width:100%}[hidden]{display:none!important}
 .pdzg canvas{width:100%;height:auto;border-radius:6px;border:1px solid #ddd;display:block}
 .pdzg>button>b{font-size:13px}.pdzg small{font-size:11px;color:#5f6b6d;line-height:1.35}
 .ptplp .pdzg{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.pfam{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0 8px;padding:6px 8px;background:#f6f8f9;border-radius:10px}.pfam>span{font-size:12px;font-weight:700;color:var(--muted);margin-right:2px}
+.pfam button{display:inline-flex;align-items:center;gap:4px;font-size:12px!important;padding:3px 8px!important;border:1.5px solid var(--line)!important;border-radius:999px!important;background:#fff!important;color:#1f2a2c!important}
+.pfam button i{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--c) 55%,var(--c2) 55%);display:inline-block}
+.pfam button.on{border-color:#2f8792!important;box-shadow:0 0 0 2px #2f8792}
 .dzpv{display:flex;flex-direction:column;gap:5px;padding:8px;height:104px;border-radius:6px;overflow:hidden;box-sizing:border-box}
 .dzpv i{font-style:normal;font-size:17px;line-height:1.1;text-align:center}.dzpv u{text-decoration:none;font-size:11px;padding:2px 6px;align-self:flex-start}
 .dzpv s{display:block;flex:1;text-decoration:none}
@@ -290,7 +294,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-07e";
+window.APP_VER="2026-11-07f";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -353,7 +357,7 @@ window.APP_VER="2026-11-07e";
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="hints.js?v=8"></script>
-<script src="poster.js?v=15"></script>
+<script src="poster.js?v=16"></script>
 <script src="video.js?v=3"></script>
 <script>
 (function(){
@@ -680,8 +684,8 @@ function itemEdit(it,subs){
   switch(it.t){
     case "V": return '<div class="q"><span class="qt">'+esc(it.label)+'</span><p class="guide">'+esc(it.guide)+'</p><div data-fxbox="'+it.id+'">'+fxBox(it)+'</div></div>';
     case "N": return '<p class="guide" style="color:var(--ink)">'+it.html+'</p>';
-    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누르면 수상작을 참고한 배치 10가지를 그림으로 보고 고를 수 있고(6번부터는 내용을 많이 넣는 수상작형), ‘🎨 추천 디자인’으로 배치는 그대로 두고 배경·글꼴·색만 수상작·미리캔버스 스타일 디자인 20가지로 바꿀 수 있어요. 마음대로 옮기고 지우고 바꿀 수 있어요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 미리캔버스처럼 꾸미고, 고른 것마다 그림자·투명도·회전도 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
-    case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성 만들기’를 누르면 발표 순서('+(K().deck==="dream"?'표지 → 나는 어떤 사람 → 흥미 검사 결과 → 고른 직업 → 하는 일 → 학과·자격증 → 진로 로드맵 → 학습 계획 → 느낀 점)대로 10장이':'표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이')+' 한 번에 생기고, ‘🎨 추천 디자인’에서 디자인 20가지 중에 고를 수 있어요 (쓴 내용은 그대로). 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 꾸밀 수 있어요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-deck="'+(K().deck||"")+'" data-key="slides_'+id+'"></div>';
+    case "PO": return '<p class="guide">B4 크기(257×364mm) 포스터 판이에요. 디자인·배치·해석 모두 자유! ‘✨ 추천 배치’를 누르면 수상작을 참고한 배치 10가지를 그림으로 보고 고를 수 있고(6번부터는 내용을 많이 넣는 수상작형), ‘🎨 추천 디자인’에서 모양이 다른 디자인 20가지(신문·메모지·칠판·말풍선·픽셀·네온 등)를 고르고, 색 묶음 8가지로 색만 따로 바꿀 수 있어요 (배치와 쓴 내용은 그대로). 마음대로 옮기고 지우고 바꿀 수 있어요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 미리캔버스처럼 꾸미고, 고른 것마다 그림자·투명도·회전도 바꿀 수 있어요. 미리캔버스·캔바로 만든 포스터가 있으면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 파일로 올려도 돼요.</p>'+tip("po")+'<div id="posterMount" data-key="poster_'+id+'"></div>';
+    case "SL": return '<p class="guide">16:9 발표 슬라이드예요. ‘✨ 추천 구성 만들기’를 누르면 발표 순서('+(K().deck==="dream"?'표지 → 나는 어떤 사람 → 흥미 검사 결과 → 고른 직업 → 하는 일 → 학과·자격증 → 진로 로드맵 → 학습 계획 → 느낀 점)대로 10장이':'표지 → 동기 → 질문 → 방법 → 결과 → 결론 → 느낀 점)대로 11장이')+' 한 번에 생기고, ‘🎨 추천 디자인’에서 틀 모양이 다른 디자인 20가지 중에 고르고 색 묶음 8가지로 색을 바꿀 수 있어요 (쓴 내용은 그대로). 사진 자리를 두 번 누르거나 ‘🖼 사진’을 눌러 사진을 넣고, 그래프는 구글 설문지 응답을 붙여 넣으면 만들어져요. ‘✨ 글자 스타일’·‘⬛ 도형’·‘😀 아이콘’·‘🎨 배경’으로 꾸밀 수 있어요. 다 만들면 ‘▶ 발표하기’로 이 화면에서 바로 발표할 수 있어요. 미리캔버스·캔바·파워포인트로 만들었다면 위에서 ‘다른 양식으로 쓴 보고서’를 골라 PDF로 올려도 돼요.</p>'+tip("sl")+'<div id="posterMount" data-mode="slides" data-deck="'+(K().deck||"")+'" data-key="slides_'+id+'"></div>';
     case "VE": return '<p class="guide">① 휴대폰으로 찍은 발표 영상을 골라요 (끊어서 찍었으면 여러 개를 골라 순서대로 이어 붙여요).\n② 실수한 곳에서 ‘📍 여기부터’ → 끝나는 곳에서 ‘✂ 지우기’를 눌러요 (빨갛게 표시돼요). 목소리가 작은 부분은 ‘🔊 소리 크게’, 큰 부분은 ‘🔉 소리 작게’를 눌러요 (파랗게 표시돼요).\n③ ‘🔈 소리 조절’에서 영상 전체 소리를 키우거나, ‘목소리 고르게 맞추기’를 켜면 여러 친구 목소리 크기가 비슷해져요.\n④ 크기를 고르고 ‘🎬 다듬은 영상 만들기’를 누르면, 남길 영상 길이만큼 시간이 걸려요. 그동안 화면을 끄거나 다른 앱으로 가지 마세요.\n⑤ 다 만들면 ‘영상 제출’로 선생님께 올리고, ‘📤 카톡으로 보내기’로 카카오톡에도 보낼 수 있어요.</p><div id="videoMount" data-key="video_'+id+'"></div>';
     case "G": return '<div class="gridw"><table class="grid"><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
       it.rows.map((r,ri)=>'<tr><td class="rh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+ln(id+"_"+ri+"_"+ci,"",it.title+" "+r+" "+c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
