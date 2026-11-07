@@ -287,7 +287,28 @@ const DZ=[
  {k:"yb",n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 소제목, 테두리 제목",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#fff7c2",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.45,size:34},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:5,tlc:"#ffffff"},H:{radius:10},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
  {k:"note",n:"모눈 노트",d:"모눈종이, 손글씨 제목, 파란 펜 느낌",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:28},frame:0,
-  f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}}
+  f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
+ /* 11~20: 미리캔버스 설문·통계·과학 포스터 스타일 참고 */
+ {k:"qblue",n:"설문 블루 인포",d:"파란 바탕, 하얀 둥근 카드, 분홍 알약 소제목",pal:{bg:"#2563d9",main:"#2563d9",sub:"#ffe1e8",accent:"#f0587d",ink:"#1d2a4a"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#0f2f7a",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"#ffffff",stroke:"",sw:0,color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"",sw:0,radius:24,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:24,shadow:true},FB:{stroke:"",sw:0,radius:24},NL:{color:"#ffffff"}}},
+ {k:"calendar",n:"오렌지 네이비 달력",d:"노란 바탕, 남색 굵은 글씨, 주황 소제목",pal:{bg:"#ffc531",main:"#1f2f63",sub:"#fff3d6",accent:"#f26b1d",ink:"#1f2f63"},bgx:{type:"pat",pat:"waves",color:"#f26b1d",a:0.16,size:56},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffc531"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
+ {k:"infomap",n:"인포그래픽 지도형",d:"하얀 바탕, 검은 테두리 카드, 파랑·노랑 라벨",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#f7d046",accent:"#f7d046",ink:"#222222"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:6},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
+ {k:"bluegrid",n:"블루 모눈 팝",d:"파란 모눈 바탕, 까만 테두리 하얀 카드",pal:{bg:"#2f6ef0",main:"#2f6ef0",sub:"#ffe14d",accent:"#ffe14d",ink:"#141414"},bgx:{type:"pat",pat:"grid",color:"#ffffff",a:0.18,size:32},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#141414",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$sub",stroke:"$ink",color:"$ink"},H:{fill:"#ffffff",color:"$main",stroke:"$ink",sw:3,radius:999},B:{stroke:"$ink",sw:3,radius:14},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:14},FB:{stroke:"$ink",sw:3,radius:14},NL:{color:"#ffffff"}}},
+ {k:"report",n:"탐구 보고서 표형",d:"하얀 바탕, 검은 칸막이 표, 노란 칸",pal:{bg:"#ffffff",main:"#1f1f1f",sub:"#ffe9a8",accent:"#f5a524",ink:"#1f1f1f"},frame:6,frameC:"#1f1f1f",
+  f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{stroke:"$ink",sw:2,radius:0},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:2,radius:0},FB:{stroke:"$ink",sw:2,radius:0},TM:{fill:"$sub",stroke:"$ink",radius:0,color:"$ink"},L:{fill:"$accent"}}},
+ {k:"yellowline",n:"흑백 라인 옐로",d:"크림 바탕, 노란 제목, 까만 선 카드",pal:{bg:"#fbfaf3",main:"#1f1f1f",sub:"#ffd65a",accent:"#ffd65a",ink:"#1f1f1f"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$sub",tline:5,tlc:"#1f1f1f",tshadow:true},H:{fill:"$sub",color:"$ink",radius:999},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$ink",color:"$sub"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{fill:"$ink",stroke:"",color:"#ffffff"},L:{fill:"$ink"}}},
+ {k:"glass",n:"민트 유리 카드",d:"민트→하늘 그라데이션, 반투명 하얀 카드",pal:{bg:"#d4f5e4",main:"#2b7fff",sub:"#eaf3ff",accent:"#22b45e",ink:"#16233b"},bgx:{type:"grad",c1:"#c4f3d9",c2:"#d9e8ff",dir:"b"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$accent",radius:999},B:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22,shadow:true},C:{fill:"$main",color:"#ffffff"},G:{fill:"#ffffffdd",stroke:"#ffffff",sw:2,radius:22,shadow:true},FB:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22},TM:{fill:"$accent",stroke:"",color:"#ffffff"}}},
+ {k:"sky",n:"하늘 말풍선",d:"하늘색 그라데이션, 노란 테두리 제목",pal:{bg:"#9ad4ff",main:"#1f6fd1",sub:"#dff0ff",accent:"#ffd84d",ink:"#1d2a5c"},bgx:{type:"grad",c1:"#86cbff",c2:"#eef8ff",dir:"b"},frame:0,
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$accent",tline:7,tlc:"#1d2a5c",tshadow:true},H:{radius:6},B:{stroke:"$ink",sw:3,radius:20},C:{fill:"$accent",color:"$ink"},G:{stroke:"$ink",sw:3,radius:20},FB:{stroke:"$ink",sw:3,radius:20},TM:{fill:"#ffffff",stroke:"$ink",color:"$ink"}}},
+ {k:"earth",n:"지구 아치 민트",d:"연민트 모눈, 갈색 굵은 틀, 둥근 카드",pal:{bg:"#dff3f1",main:"#4a3b33",sub:"#ffffff",accent:"#4fb86b",ink:"#3b2f2a"},bgx:{type:"pat",pat:"grid",color:"#8fc7bf",a:0.3,size:40},frame:10,frameC:"#4a3b33",
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"$main",color:"#dff3f1",radius:0},B:{stroke:"$main",sw:3,radius:24},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"$main",sw:3,radius:24},FB:{stroke:"$main",sw:3,radius:24},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
+ {k:"green",n:"그린 굵은 팝",d:"초록 테두리, 까만 그림자 제목, 분홍 포인트",pal:{bg:"#eaf6ee",main:"#22b04f",sub:"#ffc2cd",accent:"#ff7a93",ink:"#141414"},frame:16,frameC:"#22b04f",
+  f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#141414",tshadow:true},H:{fill:"$main",stroke:"$ink",sw:2,radius:999},B:{stroke:"$ink",sw:3,radius:18},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:3,radius:18},FB:{stroke:"$ink",sw:3,radius:18},TM:{fill:"$main",stroke:"$ink",color:"#ffffff"},L:{fill:"$ink"}}}
 ];
 const DZ_BASE={T:{fill:"",tline:0,tshadow:false,color:"$main"},ST:{color:"$ink"},L:{fill:"$main"},TM:{color:"$main",fill:"#ffffff",stroke:"$main",sw:2,radius:999},
   H:{color:"#ffffff",fill:"$main",stroke:"",sw:0,radius:8,shadow:false,bold:false},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,color:"$ink",shadow:false},
@@ -593,7 +614,7 @@ function drawTplPreviews(){ const keepS=S;
 function applyTpl(n){ const T=TPLS[n]; snap(); S.bg=th().bg; S.items=template(T[0]); S.frame=T[0]==="c"?0:8; S.frameC=th().main; D.tplIdx=n; if(D.dz!=null) applyDesign(D.dz,true); sel=null; render(); save(false,true); D.fresh=true;
   if(O.status) O.status("추천 배치 ‘"+(n+1)+". "+T[1]+"’을 깔았어요. 다른 배치는 ‘✨ 추천 배치’에서 다시 골라요."); }
 function tplNote(){ const el=bar&&bar.querySelector(".ptplnote"); if(!el) return; if(SL()) return deckNote(el); const i=D.tplIdx;
-  el.innerHTML=i==null?'‘✨ 추천 배치’에서 10가지 중 골라요. ‘🎨 추천 디자인’은 배치는 그대로 두고 색·배경·글꼴만 바꿔요.':'지금 배치: <b>'+(i+1)+'. '+esc(TPLS[i][1])+'</b>'+(D.dz!=null?' · 디자인: <b>'+esc(DZ[D.dz].n)+'</b>':''); return;
+  el.innerHTML=i==null?'‘✨ 추천 배치’에서 10가지 중 골라요. ‘🎨 추천 디자인’(20가지)은 배치는 그대로 두고 색·배경·글꼴만 바꿔요.':'지금 배치: <b>'+(i+1)+'. '+esc(TPLS[i][1])+'</b>'+(D.dz!=null?' · 디자인: <b>'+esc(DZ[D.dz].n)+'</b>':''); return;
   el.innerHTML=i==null?'누를 때마다 수상작을 참고한 배치 <b>'+TPLS.length+'가지</b>가 차례로 바뀌어요. 6번부터는 내용을 많이 넣는 수상작형이에요.':'<b>지금 '+(i+1)+'/'+TPLS.length+' · '+esc(TPLS[i][1])+'</b> – '+esc(TPLS[i][2])+'<br>다시 누르면 다음 배치 → ‘'+esc(TPLS[(i+1)%TPLS.length][1])+'’'; }
 function toolbarState(){ tplNote(); const fr=bar.querySelector("[data-frame]"); if(fr) fr.value=String(S.frame||0); const ts=bar.querySelector("[data-theme]"); if(ts) ts.value=D.theme; const bg=bar.querySelector("[data-bg]"); if(bg) bg.value=/^#[0-9a-f]{6}$/i.test(S.bg)?S.bg:"#ffffff"; }
 function panel(){
@@ -830,8 +851,8 @@ function drawItem(ctx,it){
     ctx.restore();
 }
 /* ---------- 발표자료 (16:9 슬라이드 여러 장) ---------- */
-const FRAMES={band:"띠 제목",side:"사이드 바",card:"카드",line:"밑줄 제목"};
-const AOF={band:{x:56,y:144,w:1168,h:528},side:{x:72,y:156,w:1152,h:516},card:{x:72,y:156,w:1136,h:496},line:{x:64,y:150,w:1152,h:522}};
+const FRAMES={band:"띠 제목",side:"사이드 바",card:"카드",line:"밑줄 제목",win:"창문 틀",tag:"가운데 제목"};
+const AOF={band:{x:56,y:144,w:1168,h:528},side:{x:72,y:156,w:1152,h:516},card:{x:72,y:156,w:1136,h:496},line:{x:64,y:150,w:1152,h:522},win:{x:76,y:152,w:1128,h:500},tag:{x:72,y:160,w:1136,h:506}};
 const LAYOUTS=[["text","제목 + 글"],["two","글 두 칸"],["chart","그래프 + 해석"],["photo","사진 + 글"],["big","사진 크게"],["flow","순서도"],["cover","표지"],["end","끝 인사"],["blank","빈 슬라이드"]];
 function slideFrame(style,title){
   const t=th(), dark=dk(), items=[], push=o=>items.push(Object.assign(o,{tag:o.tag||"DEC"})); let bg=t.bg;
@@ -845,6 +866,16 @@ function slideFrame(style,title){
   } else if(style==="line"){ bg=t.bg;
     push(mk("title",{tag:"STT",x:64,y:38,w:1152,h:78,text:title,size:46,color:t.main,fill:"",radius:0,align:"left",pad:0}));
     push(mk("shape",{shape:"line",x:64,y:122,w:1152,h:4,fill:t.ink}));
+  } else if(style==="win"){ bg=t.bg;
+    push(mk("shape",{shape:"round",x:36,y:28,w:W-72,h:H-56,fill:dark?t.sub:"#ffffff",stroke:t.ink,sw:4,radius:24}));
+    push(mk("shape",{shape:"line",x:36,y:122,w:W-72,h:4,fill:t.ink}));
+    [0,1,2].forEach(k=>push(mk("shape",{shape:"ellipse",x:66+k*30,y:66,w:18,h:18,fill:[t.main,t.accent,t.sub][k],stroke:t.ink,sw:2,radius:0})));
+    push(mk("title",{tag:"STT",x:170,y:40,w:W-340,h:72,text:title,size:40,color:t.ink,fill:"",radius:0,align:"center",pad:0}));
+  } else if(style==="tag"){ bg=t.bg;
+    push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:12,fill:t.main,radius:0}));
+    push(mk("title",{tag:"STT",x:110,y:40,w:W-220,h:74,text:title,size:46,color:t.ink,fill:"",radius:0,align:"center",pad:0}));
+    push(mk("shape",{shape:"round",x:W/2-50,y:120,w:100,h:10,fill:t.main,radius:999}));
+    push(mk("shape",{shape:"ellipse",x:W-150,y:H-150,w:220,h:220,fill:t.sub,radius:0}));
   } else { bg=dark?t.bg:"#ffffff";
     push(mk("shape",{shape:"rect",x:0,y:0,w:W,h:112,fill:t.main,radius:0}));
     push(mk("title",{tag:"STT",x:56,y:20,w:W-112,h:72,text:title,size:44,fill:"",radius:0,align:"left",pad:0}));
@@ -871,6 +902,20 @@ function slide(style,kind,o){
       push(mk("title",{tag:"CT",x:100,y:150,w:W-200,h:220,text:big,size:big1?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
       push(mk("text",{tag:"CS",x:100,y:384,w:W-200,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
       push(mk("text",{tag:"CM",x:340,y:476,w:600,h:60,text:team,size:24,bold:true,color:"#ffffff",fill:t.main,stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+    } else if(style==="win"){ bg=t.bg;
+      push(mk("shape",{shape:"round",x:36,y:28,w:W-72,h:H-56,fill:dark?t.sub:"#ffffff",stroke:t.ink,sw:4,radius:24}));
+      push(mk("shape",{shape:"line",x:36,y:110,w:W-72,h:4,fill:t.ink}));
+      [0,1,2].forEach(k=>push(mk("shape",{shape:"ellipse",x:66+k*30,y:60,w:18,h:18,fill:[t.main,t.accent,t.sub][k],stroke:t.ink,sw:2,radius:0})));
+      push(mk("title",{tag:"CT",x:110,y:170,w:W-220,h:220,text:big,size:big1?66:88,color:t.main,fill:"",radius:0,align:"center",pad:0}));
+      push(mk("text",{tag:"CS",x:110,y:400,w:W-220,h:60,text:sub,size:26,bold:true,color:t.ink,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
+      push(mk("text",{tag:"CM",x:340,y:490,w:600,h:60,text:team,size:24,bold:true,color:"#ffffff",fill:t.main,stroke:t.ink,sw:3,radius:999,align:"center",valign:"middle",pad:8}));
+    } else if(style==="tag"){ bg=t.bg;
+      push(mk("shape",{shape:"ellipse",x:-120,y:-120,w:360,h:360,fill:t.sub,radius:0}));
+      push(mk("shape",{shape:"ellipse",x:W-200,y:H-220,w:320,h:320,fill:t.sub,radius:0}));
+      push(mk("text",{tag:"CM",x:390,y:120,w:500,h:56,text:team,size:22,bold:true,color:"#ffffff",fill:t.main,stroke:"",sw:0,radius:999,align:"center",valign:"middle",pad:8}));
+      push(mk("title",{tag:"CT",x:110,y:200,w:W-220,h:230,text:big,size:big1?70:90,color:t.ink,fill:"",radius:0,align:"center",pad:0}));
+      push(mk("shape",{shape:"round",x:W/2-60,y:446,w:120,h:10,fill:t.accent,radius:999}));
+      push(mk("text",{tag:"CS",x:110,y:476,w:W-220,h:60,text:sub,size:26,bold:true,color:t.main,fill:"",stroke:"",sw:0,align:"center",valign:"middle",pad:0}));
     } else if(style==="line"){ bg=t.bg;
       push(mk("shape",{shape:"line",x:80,y:150,w:1120,h:6,fill:t.ink}));
       push(mk("title",{tag:"CT",x:80,y:176,w:1120,h:230,text:big,size:big1?70:90,color:t.main,fill:"",radius:0,align:"left",pad:0}));
@@ -915,7 +960,7 @@ function slide(style,kind,o){
     body(A.x,A.y+fh+24,A.w,A.h-fh-24,o.body||"대상: ○○중 ○학년 ○○명\n기간: ○월 ○일 ~ ○월 ○일 · 질문 수: ○개",{valign:"middle"}); }
   return {id:uid(),bg:F.bg,items,kind,st:style};
 }
-/* 발표자료 추천 디자인 10가지: 틀(띠·사이드·카드·밑줄) + 색 + 배경 + 글꼴 + 상자 모양 */
+/* 발표자료 추천 디자인 20가지: 틀(띠·사이드·카드·밑줄·창문·가운데) + 색 + 배경 + 글꼴 + 상자 모양 */
 const SDZ=[
  {n:"깔끔 블루",d:"파란 띠 제목, 하얀 바탕",fr:"band",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#dbe7fb",accent:"#f28c28",ink:"#1d2a3a"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{}},
  {n:"민트 사이드",d:"왼쪽 민트 막대, 둥근 테두리 상자",fr:"side",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
@@ -931,7 +976,28 @@ const SDZ=[
  {n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 카드 제목",fr:"card",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#ffe45c",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.5,size:36},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{B:{stroke:"$main",sw:3,radius:16},B2:{fill:"#fff7c2",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
  {n:"모눈 노트",d:"모눈종이 배경, 손글씨 제목, 파란 펜",fr:"line",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:32},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
-  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0"},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}}
+  s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0"},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
+ /* 11~20: 미리캔버스 진로·설문·과학 발표 템플릿 스타일 참고 */
+ {n:"마이 드림 블루",d:"창문 틀, 파랑·노랑 알약 소제목",fr:"win",pal:{bg:"#e6ecf9",main:"#1f4fbf",sub:"#ffd23f",accent:"#ffd23f",ink:"#1a2a5e"},bgx:{type:"pat",pat:"dots",color:"#1f4fbf",a:0.14,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:3,radius:14},B2:{fill:"#fff6cf",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffd23f"},G:{stroke:"$main",sw:3,radius:14},FB:{stroke:"$main",sw:3,radius:14}}},
+ {n:"설문 결과 블루",d:"가운데 제목, 그림자 하얀 카드",fr:"tag",pal:{bg:"#f2f5fa",main:"#2f7de1",sub:"#dde9fb",accent:"#ffc93c",ink:"#1e2a3b"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"",sw:0,radius:18,shadow:true},B2:{fill:"#ffffff",stroke:"$main",sw:3},C:{fill:"$accent",color:"$ink"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18,shadow:true}}},
+ {n:"과학 교실 창문",d:"하늘색 바탕 창문 틀, 노란 소제목",fr:"win",pal:{bg:"#9cc0f5",main:"#ff7a3d",sub:"#fff1c9",accent:"#ffd23f",ink:"#2b2b2b"},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$accent",color:"$ink",radius:8,pad:8},B:{fill:"#fffdf5",stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
+ {n:"퍼플 크림",d:"크림 바탕, 보라 테두리 알약 제목",fr:"tag",pal:{bg:"#f7f2e8",main:"#8e5bb8",sub:"#e9dcf5",accent:"#f2b33d",ink:"#2e2438"},f:{T:"Sunflower",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:2,radius:20},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:20},FB:{stroke:"$main",sw:2,radius:20}}},
+ {n:"설문 보고 핑크",d:"하얀 바탕, 분홍 밑줄 제목, 얇은 테두리",fr:"line",pal:{bg:"#ffffff",main:"#e8577a",sub:"#fde4ea",accent:"#222222",ink:"#222222"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$main",stroke:"$main",sw:2,radius:999,pad:8},B:{stroke:"$main",sw:2,radius:8},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$main",sw:2,radius:8},FB:{stroke:"$main",sw:2,radius:8}}},
+ {n:"실험 보고서 옐로",d:"노란 바탕, 남색 띠, 네모난 표 칸",fr:"band",pal:{bg:"#fff8d6",main:"#1f4fa8",sub:"#ffe066",accent:"#4fb3ff",ink:"#12305f"},bg:"#fff8d6",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:8,bold:true},B:{stroke:"$main",sw:2,radius:0},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:0},FB:{stroke:"$main",sw:2,radius:0}}},
+ {n:"우주 네이비",d:"짙은 남색 별 바탕, 주황 카드 제목",fr:"card",pal:{bg:"#1b2350",main:"#ff7a45",sub:"#2c3670",accent:"#ffd23f",ink:"#f5f7ff"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.22,size:46},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+  s:{H:{color:"$accent"},B:{fill:"$sub",stroke:"$accent",sw:2,radius:18,color:"$ink"},B2:{fill:"#3a4590",color:"$ink"},C:{fill:"$accent",color:"#1b2350"},G:{fill:"#ffffff",stroke:"",sw:0,radius:18},FB:{fill:"$sub",stroke:"$accent",sw:2,radius:18},FA:{fill:"$accent"}}},
+ {n:"블루 옐로 깔끔",d:"가운데 제목, 연파랑 상자, 노란 강조",fr:"tag",pal:{bg:"#ffffff",main:"#2f80ed",sub:"#eaf2ff",accent:"#ffc52b",ink:"#1f2a3d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{H:{fill:"$main",color:"#ffffff",radius:6,pad:8,align:"center"},B:{fill:"$sub",stroke:"",sw:0,radius:14},B2:{fill:"#fff5d1",stroke:"",sw:0},C:{fill:"$accent",color:"$ink"},G:{fill:"$sub",stroke:"",sw:0,radius:14},FB:{fill:"$sub",stroke:"",sw:0,radius:14}}},
+ {n:"옐로 프로필",d:"노란 사이드 막대, 까만 알약 소제목",fr:"side",pal:{bg:"#fbf6ea",main:"#f2b632",sub:"#fdebb9",accent:"#2b2b2b",ink:"#2b2b2b"},bg:"#fbf6ea",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"$ink"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
+ {n:"차분한 그레이 블루",d:"연회색 바탕, 남색 밑줄 제목, 그림자 카드",fr:"line",pal:{bg:"#f5f6f8",main:"#2c4f8f",sub:"#e2e8f2",accent:"#f5c242",ink:"#1f2633"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},
+  s:{B:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},FB:{stroke:"#d4dae5",sw:1,radius:10,shadow:true}}}
 ];
 const SDZ_BASE={H:{color:"$main",fill:"",stroke:"",sw:0},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,color:"$ink",shadow:false},B2:{fill:"$sub",stroke:"",sw:0,color:"$ink"},
   C:{fill:"$sub",color:"$main",stroke:"",sw:0},G:{fill:"#ffffff",stroke:"",sw:0,radius:16,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,shadow:false},
@@ -990,7 +1056,7 @@ function applyDeck(){
   if(O.status) O.status("발표 순서대로 슬라이드 "+D.slides.length+"장을 만들었어요."+(z?" (디자인: "+z.n+")":" ‘🎨 추천 디자인’에서 디자인을 골라 보세요."));
 }
 function deckNote(el){ const z=D.sdz!=null?SDZ[D.sdz]:null;
-  el.innerHTML='누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요.<br>'+(z?'지금 디자인: <b>'+esc(z.n)+'</b>':'디자인은 옆의 ‘🎨 추천 디자인’에서 10가지 중에 골라요 (쓴 내용은 그대로).'); }
+  el.innerHTML='누르면 발표 순서대로 슬라이드 <b>'+(O.deck==="dream"?10:11)+'장</b>이 한 번에 생겨요.<br>'+(z?'지금 디자인: <b>'+esc(z.n)+'</b>':'디자인은 옆의 ‘🎨 추천 디자인’에서 20가지 중에 골라요 (쓴 내용은 그대로).'); }
 /* 미리보기: 디자인·배치를 작은 그림으로 */
 function pvCanvas(cv,page,w){ const s=w/W; cv.width=Math.round(w*2); cv.height=Math.round(H*s*2); const c=cv.getContext("2d"); c.setTransform(2*s,0,0,2*s,0,0); drawPage(c,page); }
 function sdzPop(){ return '<span class="pdd"><button type="button" data-pop="sdz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz psdz" data-popbox="sdz" hidden><b>쓴 내용은 그대로, 틀·색·배경·글꼴이 바뀌어요</b><span class="pdzg">'+
