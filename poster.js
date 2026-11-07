@@ -268,48 +268,81 @@ function template(kind){
 /* ---------- 추천 디자인 (전국학생통계활용대회 수상작 디자인 참고) ----------
    배치는 그대로 두고 배경·제목·소제목·글 상자·그래프 상자의 색과 글꼴만 바꿔요. */
 const DZ=[
- {k:"news",n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},frame:4,
+ {k:"news",deco:[["band", "top", 10, "$ink"], ["flank", "📰", null, 54]],n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},frame:4,
   f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},C:{fill:"",color:"$accent",bold:true},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},TM:{fill:"",stroke:"$main",sw:1,radius:0,color:"$ink"},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},L:{fill:"$ink"}}},
- {k:"pop",n:"패스트푸드 팝",d:"노란 배경, 빨간 알약 소제목, 테두리 제목",pal:{bg:"#ffd23f",main:"#e63946",sub:"#fff1c1",accent:"#2a9d8f",ink:"#2b2118"},bgx:{type:"pat",pat:"stripes",color:"#ffffff",a:0.22,size:40},frame:10,
+ {k:"pop",deco:[["blob", 0.02, 0.0, 0.2, "#ffffff", 0.35], ["blob", 1.0, 1.0, 0.24, "$main", 0.14], ["flank", "⭐", "⭐", 58]],n:"패스트푸드 팝",d:"노란 배경, 빨간 알약 소제목, 테두리 제목",pal:{bg:"#ffd23f",main:"#e63946",sub:"#fff1c1",accent:"#2a9d8f",ink:"#2b2118"},bgx:{type:"pat",pat:"stripes",color:"#ffffff",a:0.22,size:40},frame:10,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#ffffff",tshadow:true},H:{radius:999},B:{stroke:"$ink",sw:2,radius:14},C:{fill:"$sub",color:"$main"},G:{stroke:"$ink",sw:2,radius:14},FB:{stroke:"$ink",sw:2,radius:14}}},
- {k:"lav",n:"라벤더 카드",d:"연보라 땡땡이, 보라 테두리 카드",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.13,size:36},frame:0,
+ {k:"lav",deco:[["blob", 0.04, 0.02, 0.18, "$sub", 1], ["blob", 0.97, 0.98, 0.24, "$sub", 1], ["dots", "tr", "$main", 0.35], ["flank", "💜", "💜", 48]],n:"라벤더 카드",d:"연보라 땡땡이, 보라 테두리 카드",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.13,size:36},frame:0,
   f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{H:{radius:12},B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18},FB:{stroke:"$main",sw:2,radius:18}}},
- {k:"mint",n:"민트 라인",d:"하얀 바탕, 민트색 둥근 테두리",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},frame:6,
+ {k:"mint",deco:[["ring", 1.0, 0.0, 0.2, "$main", 7, 0.5], ["ring", 0.0, 1.0, 0.18, "$accent", 7, 0.5], ["mark", "$sub", 1]],n:"민트 라인",d:"하얀 바탕, 민트색 둥근 테두리",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},frame:6,
   f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{H:{radius:999},B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
- {k:"navy",n:"네이비 클래식",d:"남색 굵은 테두리, 그림자 카드",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},frame:14,
+ {k:"navy",deco:[["band", "top", 14, "$accent"], ["pix", "tr", "$accent", 0.9], ["pix", "bl", "$sub", 1]],n:"네이비 클래식",d:"남색 굵은 테두리, 그림자 카드",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},frame:14,
   f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{H:{radius:0,bold:true},B:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true},FB:{stroke:"#c5d0e3",sw:1,radius:4,shadow:true}}},
- {k:"sale",n:"레드 세일",d:"빨간 바탕, 노란 테두리 제목, 하얀 카드",pal:{bg:"#c62828",main:"#c62828",sub:"#ffe0b2",accent:"#ffca28",ink:"#2b1a12"},frame:0,
+ {k:"sale",deco:[["half", "tl", "#ffffff", 0.24, 0.12], ["half", "br", "#7f0000", 0.3, 0.25], ["flank", "🔥", "🔥", 58]],n:"레드 세일",d:"빨간 바탕, 노란 테두리 제목, 하얀 카드",pal:{bg:"#c62828",main:"#c62828",sub:"#ffe0b2",accent:"#ffca28",ink:"#2b1a12"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$accent",tline:6,tlc:"#7f0000",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$accent",stroke:"",sw:0,color:"$ink"},H:{fill:"$accent",color:"$ink",radius:6},B:{stroke:"",sw:0,radius:10,shadow:true},C:{fill:"#fff7ec",color:"$main"},G:{stroke:"",sw:0,radius:10,shadow:true},FB:{stroke:"",sw:0,radius:10},NL:{color:"$ink"}}},
- {k:"sunset",n:"선셋 그라데이션",d:"주황→노랑 그라데이션, 둥근 그림자 카드",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"b"},frame:0,
+ {k:"sunset",deco:[["blob", 0.92, 0.05, 0.17, "#ffffff", 0.35], ["blob", 0.08, 0.96, 0.22, "#ffffff", 0.3], ["flank", "☀️", "✨", 56]],n:"선셋 그라데이션",d:"주황→노랑 그라데이션, 둥근 그림자 카드",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"b"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:5,tlc:"#c2410c"},ST:{color:"#ffffff"},L:{fill:"#ffffff"},H:{radius:999,shadow:true},B:{stroke:"",sw:0,radius:18,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18}}},
- {k:"retro",n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리, 노란 소제목",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},frame:8,frameC:"#1f1f1f",
+ {k:"retro",deco:[["mark", "$sub", 1], ["pix", "tl", "$ink", 1], ["pix", "br", "$main", 1]],n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리, 노란 소제목",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},frame:8,frameC:"#1f1f1f",
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:8},B:{stroke:"$ink",sw:3,radius:10},C:{fill:"#8fd6b0",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:10},FB:{stroke:"$ink",sw:3,radius:10},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
- {k:"yb",n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 소제목, 테두리 제목",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#fff7c2",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.45,size:34},frame:0,
+ {k:"yb",deco:[["ring", 1.0, 0.0, 0.17, "#ffffff", 10, 0.8], ["ring", 0.0, 1.0, 0.15, "$main", 8, 0.35], ["flank", "⭐", "⭐", 56]],n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 소제목, 테두리 제목",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#fff7c2",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.45,size:34},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:5,tlc:"#ffffff"},H:{radius:10},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
- {k:"note",n:"모눈 노트",d:"모눈종이, 손글씨 제목, 파란 펜 느낌",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:28},frame:0,
+ {k:"note",deco:[["tape", "#fff3b0", 0.9, -1.2], ["flank", null, "✏️", 56]],n:"모눈 노트",d:"모눈종이, 손글씨 제목, 파란 펜 느낌",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:28},frame:0,
   f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"",color:"$main",bold:true,stroke:"",radius:0},B:{fill:"#ffffffcc",stroke:"$main",sw:1,radius:6},C:{fill:"#fff3b0",color:"$accent",bold:true},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
  /* 11~20: 미리캔버스 설문·통계·과학 포스터 스타일 참고 */
- {k:"qblue",n:"설문 블루 인포",d:"파란 바탕, 하얀 둥근 카드, 분홍 알약 소제목",pal:{bg:"#2563d9",main:"#2563d9",sub:"#ffe1e8",accent:"#f0587d",ink:"#1d2a4a"},frame:0,
+ {k:"qblue",deco:[["blob", 1.0, 0.0, 0.24, "#ffffff", 0.12], ["blob", 0.0, 1.0, 0.26, "#ffffff", 0.1], ["flank", "📊", "✨", 62]],n:"설문 블루 인포",d:"파란 바탕, 하얀 둥근 카드, 분홍 알약 소제목",pal:{bg:"#2563d9",main:"#2563d9",sub:"#ffe1e8",accent:"#f0587d",ink:"#1d2a4a"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#0f2f7a",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"#ffffff",stroke:"",sw:0,color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"",sw:0,radius:24,shadow:true},C:{fill:"$sub",color:"$accent"},G:{stroke:"",sw:0,radius:24,shadow:true},FB:{stroke:"",sw:0,radius:24},NL:{color:"#ffffff"}}},
- {k:"calendar",n:"오렌지 네이비 달력",d:"노란 바탕, 남색 굵은 글씨, 주황 소제목",pal:{bg:"#ffc531",main:"#1f2f63",sub:"#fff3d6",accent:"#f26b1d",ink:"#1f2f63"},bgx:{type:"pat",pat:"waves",color:"#f26b1d",a:0.16,size:56},frame:0,
+ {k:"calendar",deco:[["pix", "tl", "$accent", 1], ["pix", "br", "$main", 0.9], ["flank", "📅", "✨", 58]],n:"오렌지 네이비 달력",d:"노란 바탕, 남색 굵은 글씨, 주황 소제목",pal:{bg:"#ffc531",main:"#1f2f63",sub:"#fff3d6",accent:"#f26b1d",ink:"#1f2f63"},bgx:{type:"pat",pat:"waves",color:"#f26b1d",a:0.16,size:56},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$accent",radius:999},B:{stroke:"$main",sw:3,radius:16},C:{fill:"$main",color:"#ffc531"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
- {k:"infomap",n:"인포그래픽 지도형",d:"하얀 바탕, 검은 테두리 카드, 파랑·노랑 라벨",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#f7d046",accent:"#f7d046",ink:"#222222"},frame:0,
+ {k:"infomap",deco:[["mark", "$sub", 0.95], ["dots", "tr", "$main", 0.45], ["dots", "bl", "$main", 0.3], ["flank", "📍", null, 56]],n:"인포그래픽 지도형",d:"하얀 바탕, 검은 테두리 카드, 파랑·노랑 라벨",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#f7d046",accent:"#f7d046",ink:"#222222"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:6},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{stroke:"$ink",color:"$ink"},L:{fill:"$ink"}}},
- {k:"bluegrid",n:"블루 모눈 팝",d:"파란 모눈 바탕, 까만 테두리 하얀 카드",pal:{bg:"#2f6ef0",main:"#2f6ef0",sub:"#ffe14d",accent:"#ffe14d",ink:"#141414"},bgx:{type:"pat",pat:"grid",color:"#ffffff",a:0.18,size:32},frame:0,
+ {k:"bluegrid",deco:[["ring", 0.0, 0.0, 0.16, "#ffffff", 9, 0.7], ["blob", 1.0, 1.0, 0.2, "$sub", 0.25], ["flank", "👍", "⭐", 62]],n:"블루 모눈 팝",d:"파란 모눈 바탕, 까만 테두리 하얀 카드",pal:{bg:"#2f6ef0",main:"#2f6ef0",sub:"#ffe14d",accent:"#ffe14d",ink:"#141414"},bgx:{type:"pat",pat:"grid",color:"#ffffff",a:0.18,size:32},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"#ffffff",tline:6,tlc:"#141414",tshadow:true},ST:{color:"#ffffff"},L:{fill:"#ffffff"},TM:{fill:"$sub",stroke:"$ink",color:"$ink"},H:{fill:"#ffffff",color:"$main",stroke:"$ink",sw:3,radius:999},B:{stroke:"$ink",sw:3,radius:14},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:14},FB:{stroke:"$ink",sw:3,radius:14},NL:{color:"#ffffff"}}},
- {k:"report",n:"탐구 보고서 표형",d:"하얀 바탕, 검은 칸막이 표, 노란 칸",pal:{bg:"#ffffff",main:"#1f1f1f",sub:"#ffe9a8",accent:"#f5a524",ink:"#1f1f1f"},frame:6,frameC:"#1f1f1f",
+ {k:"report",deco:[["band", "top", 10, "$accent"], ["flank", "🔬", "🧪", 54]],n:"탐구 보고서 표형",d:"하얀 바탕, 검은 칸막이 표, 노란 칸",pal:{bg:"#ffffff",main:"#1f1f1f",sub:"#ffe9a8",accent:"#f5a524",ink:"#1f1f1f"},frame:6,frameC:"#1f1f1f",
   f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$main",color:"#ffffff",radius:0,bold:true},B:{stroke:"$ink",sw:2,radius:0},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:2,radius:0},FB:{stroke:"$ink",sw:2,radius:0},TM:{fill:"$sub",stroke:"$ink",radius:0,color:"$ink"},L:{fill:"$accent"}}},
- {k:"yellowline",n:"흑백 라인 옐로",d:"크림 바탕, 노란 제목, 까만 선 카드",pal:{bg:"#fbfaf3",main:"#1f1f1f",sub:"#ffd65a",accent:"#ffd65a",ink:"#1f1f1f"},frame:0,
+ {k:"yellowline",deco:[["dots", "tl", "$ink", 0.22], ["dots", "br", "$ink", 0.22], ["stars", "$ink"]],n:"흑백 라인 옐로",d:"크림 바탕, 노란 제목, 까만 선 카드",pal:{bg:"#fbfaf3",main:"#1f1f1f",sub:"#ffd65a",accent:"#ffd65a",ink:"#1f1f1f"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$sub",tline:5,tlc:"#1f1f1f",tshadow:true},H:{fill:"$sub",color:"$ink",radius:999},B:{stroke:"$ink",sw:2,radius:18},C:{fill:"$ink",color:"$sub"},G:{stroke:"$ink",sw:2,radius:18},FB:{stroke:"$ink",sw:2,radius:18},TM:{fill:"$ink",stroke:"",color:"#ffffff"},L:{fill:"$ink"}}},
- {k:"glass",n:"민트 유리 카드",d:"민트→하늘 그라데이션, 반투명 하얀 카드",pal:{bg:"#d4f5e4",main:"#2b7fff",sub:"#eaf3ff",accent:"#22b45e",ink:"#16233b"},bgx:{type:"grad",c1:"#c4f3d9",c2:"#d9e8ff",dir:"b"},frame:0,
+ {k:"glass",deco:[["blob", 0.86, 0.05, 0.2, "#ffffff", 0.65], ["blob", 0.08, 0.92, 0.22, "$main", 0.12], ["flank", "📢", null, 62]],n:"민트 유리 카드",d:"민트→하늘 그라데이션, 반투명 하얀 카드",pal:{bg:"#d4f5e4",main:"#2b7fff",sub:"#eaf3ff",accent:"#22b45e",ink:"#16233b"},bgx:{type:"grad",c1:"#c4f3d9",c2:"#d9e8ff",dir:"b"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$ink"},H:{fill:"$accent",radius:999},B:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22,shadow:true},C:{fill:"$main",color:"#ffffff"},G:{fill:"#ffffffdd",stroke:"#ffffff",sw:2,radius:22,shadow:true},FB:{fill:"#ffffffcc",stroke:"#ffffff",sw:2,radius:22},TM:{fill:"$accent",stroke:"",color:"#ffffff"}}},
- {k:"sky",n:"하늘 말풍선",d:"하늘색 그라데이션, 노란 테두리 제목",pal:{bg:"#9ad4ff",main:"#1f6fd1",sub:"#dff0ff",accent:"#ffd84d",ink:"#1d2a5c"},bgx:{type:"grad",c1:"#86cbff",c2:"#eef8ff",dir:"b"},frame:0,
+ {k:"sky",deco:[["blob", 0.07, 0.04, 0.12, "#ffffff", 0.75], ["blob", 0.94, 0.09, 0.09, "#ffffff", 0.75], ["flank", "💬", "😊", 58]],n:"하늘 말풍선",d:"하늘색 그라데이션, 노란 테두리 제목",pal:{bg:"#9ad4ff",main:"#1f6fd1",sub:"#dff0ff",accent:"#ffd84d",ink:"#1d2a5c"},bgx:{type:"grad",c1:"#86cbff",c2:"#eef8ff",dir:"b"},frame:0,
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$accent",tline:7,tlc:"#1d2a5c",tshadow:true},H:{radius:6},B:{stroke:"$ink",sw:3,radius:20},C:{fill:"$accent",color:"$ink"},G:{stroke:"$ink",sw:3,radius:20},FB:{stroke:"$ink",sw:3,radius:20},TM:{fill:"#ffffff",stroke:"$ink",color:"$ink"}}},
- {k:"earth",n:"지구 아치 민트",d:"연민트 모눈, 갈색 굵은 틀, 둥근 카드",pal:{bg:"#dff3f1",main:"#4a3b33",sub:"#ffffff",accent:"#4fb86b",ink:"#3b2f2a"},bgx:{type:"pat",pat:"grid",color:"#8fc7bf",a:0.3,size:40},frame:10,frameC:"#4a3b33",
+ {k:"earth",deco:[["stars", "$main"], ["flank", null, "🌏", 58]],n:"지구 아치 민트",d:"연민트 모눈, 갈색 굵은 틀, 둥근 카드",pal:{bg:"#dff3f1",main:"#4a3b33",sub:"#ffffff",accent:"#4fb86b",ink:"#3b2f2a"},bgx:{type:"pat",pat:"grid",color:"#8fc7bf",a:0.3,size:40},frame:10,frameC:"#4a3b33",
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Gowun Dodum"},s:{T:{color:"$main"},H:{fill:"$main",color:"#dff3f1",radius:0},B:{stroke:"$main",sw:3,radius:24},C:{fill:"$accent",color:"#ffffff"},G:{stroke:"$main",sw:3,radius:24},FB:{stroke:"$main",sw:3,radius:24},TM:{fill:"$main",stroke:"",color:"#ffffff"}}},
- {k:"green",n:"그린 굵은 팝",d:"초록 테두리, 까만 그림자 제목, 분홍 포인트",pal:{bg:"#eaf6ee",main:"#22b04f",sub:"#ffc2cd",accent:"#ff7a93",ink:"#141414"},frame:16,frameC:"#22b04f",
+ {k:"green",deco:[["blob", 1.0, 0.32, 0.11, "$sub", 0.6], ["blob", 0.0, 0.7, 0.09, "$sub", 0.5], ["flank", "❗", "⭐", 58]],n:"그린 굵은 팝",d:"초록 테두리, 까만 그림자 제목, 분홍 포인트",pal:{bg:"#eaf6ee",main:"#22b04f",sub:"#ffc2cd",accent:"#ff7a93",ink:"#141414"},frame:16,frameC:"#22b04f",
   f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{T:{color:"$main",tline:6,tlc:"#141414",tshadow:true},H:{fill:"$main",stroke:"$ink",sw:2,radius:999},B:{stroke:"$ink",sw:3,radius:18},C:{fill:"$sub",color:"$ink"},G:{stroke:"$ink",sw:3,radius:18},FB:{stroke:"$ink",sw:3,radius:18},TM:{fill:"$main",stroke:"$ink",color:"#ffffff"},L:{fill:"$ink"}}}
 ];
+/* ---------- 디자인 장식 (미리캔버스·캔바처럼 배경 도형·형광펜·스티커) ----------
+   ZD 표시가 붙은 요소는 디자인을 바꿀 때 지우고 새로 깔아요. 학생이 지워도 돼요. */
+let _mc=null; const measureCtx=()=>_mc||(_mc=document.createElement("canvas").getContext("2d"));
+function titleBox(items){ const T=items.find(it=>it.tag==="T"||it.tag==="TB"||it.tag==="CT")||items.find(it=>it.tag==="STT"); if(!T||!T.text) return null;
+  const c=measureCtx(); c.font=fontStr(T.bold,T.size,T.font); const p=T.pad||0, ls=wrapLines(c,T.text,T.w-2*p), tw=Math.min(T.w-2*p,Math.max(...ls.map(l=>c.measureText(l).width),10)), th0=ls.length*T.size*1.25;
+  const x0=T.align==="center"?T.x+(T.w-tw)/2:T.align==="right"?T.x+T.w-p-tw:T.x+p, y0=T.valign==="top"?T.y+p:T.y+(T.h-th0)/2;
+  return {T,x0,y0,tw,th:th0,cy:y0+th0/2}; }
+function decoItems(rec,items,P){
+  const back=[], front=[], rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v, tb=titleBox(items), U=Math.min(W,H)/1000, M=Math.round(24*U+8);
+  const sh=(o,b)=>(b===false?front:back).push(mk("shape",Object.assign({tag:"ZD",radius:0,stroke:"",sw:0},o)));
+  const corner=(c,w,h)=>({x:c[1]==="l"?M:W-M-w,y:c[0]==="t"?M:H-M-h});
+  (rec||[]).forEach(r=>{ const k=r[0];
+    if(k==="blob"){ const R=r[3]*W; sh({shape:"ellipse",x:r4(r[1]*W-R),y:r4(r[2]*H-R),w:r4(2*R),h:r4(2*R),fill:rv(r[4]),op:r[5]==null?1:r[5]}); }
+    if(k==="ring"){ const R=r[3]*W; sh({shape:"ellipse",x:r4(r[1]*W-R),y:r4(r[2]*H-R),w:r4(2*R),h:r4(2*R),fill:"",stroke:rv(r[4]),sw:Math.round((r[5]||6)*U*1.4),op:r[6]==null?1:r[6]}); }
+    if(k==="half"){ const R=r[3]*W, cx=r[1][1]==="l"?0:W, cy=r[1][0]==="t"?0:H; sh({shape:"ellipse",x:r4(cx-R),y:r4(cy-R),w:r4(2*R),h:r4(2*R),fill:rv(r[2]),op:r[4]==null?1:r[4]}); }
+    if(k==="band"){ const h=Math.round(r[2]*U*1.2); sh({shape:"rect",x:0,y:r[1]==="top"?0:H-h,w:W,h,fill:rv(r[3]),op:r[4]==null?1:r[4]}); }
+    if(k==="dots"){ const g=Math.round(18*U+6), n=5, w=g*(n-1), o=corner(r[1],w,w); for(let i=0;i<n;i++) for(let j=0;j<n;j++){ const d=Math.round(5*U+2); sh({shape:"ellipse",x:o.x+i*g-d/2,y:o.y+j*g-d/2,w:d,h:d,fill:rv(r[2]),op:r[3]==null?0.5:r[3]}); } }
+    if(k==="pix"){ const g=Math.round(26*U+6), o=corner(r[1],g*3,g*3), pat=r[1]==="tl"||r[1]==="br"?[[0,0],[1,1],[2,0],[0,2],[2,2]]:[[2,0],[1,1],[0,0],[2,2],[0,2]];
+      pat.forEach(([a,b],i)=>i<4&&sh({shape:"rect",x:o.x+a*g,y:o.y+b*g,w:g,h:g,fill:rv(r[2]),op:r[3]==null?1:r[3]})); }
+    if(k==="wave"){ sh({shape:"wave",x:M,y:r4(r[1]*H),w:W-2*M,h:Math.round(18*U+6),fill:rv(r[2]),lw:Math.round(4*U+1),op:r[3]==null?0.6:r[3]}); }
+    if(!tb) return; const T=tb.T, room=(T.w-tb.tw)/2;
+    if(k==="mark"){ const hh=Math.round(T.size*0.42); sh({shape:"round",x:r4(tb.x0-T.size*0.18),y:r4(tb.y0+tb.th-hh-T.size*0.12),w:r4(tb.tw+T.size*0.36),h:hh,fill:rv(r[1]),radius:6,op:r[2]==null?0.9:r[2]}); }
+    if(k==="tape"){ sh({shape:"tape",x:r4(tb.x0-T.size*0.6),y:r4(tb.y0-T.size*0.18),w:r4(tb.tw+T.size*1.2),h:r4(tb.th+T.size*0.36),fill:rv(r[1]),op:r[2]==null?0.9:r[2],rot:r[3]||-1.5}); }
+    if(k==="flank"&&T.fill&&T.tag==="STT") return; // 알약 제목 안에는 스티커를 넣지 않아요
+    if(k==="flank"){ const z=Math.round((r[3]||56)*(SL()?0.85:1)); if(T.align!=="center"){ if(r[2]&&T.x+T.w-(tb.x0+tb.tw)>z+16) front.push(mk("sticker",{tag:"ZD",emoji:r[2],x:r4(tb.x0+tb.tw+12),y:r4(tb.cy-z/2-z*0.25),w:z,h:z,rot:12})); return; }
+      if(room<z+18) return; if(r[1]) front.push(mk("sticker",{tag:"ZD",emoji:r[1],x:r4(tb.x0-z-12),y:r4(tb.cy-z/2-z*0.2),w:z,h:z,rot:-12}));
+      if(r[2]) front.push(mk("sticker",{tag:"ZD",emoji:r[2],x:r4(tb.x0+tb.tw+12),y:r4(tb.cy-z/2-z*0.2),w:z,h:z,rot:12})); }
+    if(k==="stars"){ if(room<70) return; const c=rv(r[1]), z=Math.round(22*U+10); [[-1,-0.7,1],[-1.6,0.5,0.7],[1,-0.6,0.8],[1.5,0.6,1]].forEach(([sx,sy,f])=>sh({shape:"star",x:r4((sx<0?tb.x0-z*1.2:tb.x0+tb.tw+z*0.2)+(Math.abs(sx)-1)*z*(sx<0?-1:1)),y:r4(tb.cy+sy*z-z*f/2),w:r4(z*f),h:r4(z*f),fill:c},false)); }
+  });
+  return {back,front}; }
+function putDeco(page,rec,P){ page.items=page.items.filter(it=>it.tag!=="ZD"); if(!rec||!rec.length) return;
+  const d=decoItems(rec,page.items,P); let at=0; if(SL()) while(at<page.items.length&&page.items[at].tag==="DEC"&&page.items[at].type==="shape") at++;
+  page.items.splice(at,0,...d.back); page.items.push(...d.front); }
 const DZ_BASE={T:{fill:"",tline:0,tshadow:false,color:"$main"},ST:{color:"$ink"},L:{fill:"$main"},TM:{color:"$main",fill:"#ffffff",stroke:"$main",sw:2,radius:999},
   H:{color:"#ffffff",fill:"$main",stroke:"",sw:0,radius:8,shadow:false,bold:false},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,color:"$ink",shadow:false},
   C:{fill:"$sub",color:"$main",stroke:"",sw:0,bold:true},G:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},FB:{fill:"#ffffff",stroke:"$sub",sw:2,radius:10,shadow:false},
@@ -328,17 +361,15 @@ function applyDesign(i,quiet){
     for(const [k,v] of Object.entries(st)){ if(k==="size"){ continue; } it[k]=rv(v); }
     if(it.type==="text"){ const f=tg==="T"||tg==="TB"||tg==="N"?z.f.T:tg==="H"?z.f.H:["B","C","ST","STB","TM","FT","NL"].includes(tg)?z.f.B:null; if(f) it.font=f; }
     if(it.type==="chart"&&it.chart){ it.chart.color=P.main; } });
+  putDeco(S,z.deco,P);
   if(!quiet){ render(); save(); if(O.status) O.status("추천 디자인 ‘"+z.n+"’을 입혔어요. 배치와 쓴 내용은 그대로예요. (↶ 되돌리기로 돌아갈 수 있어요)"); }
 }
 function dzPop(){
-  return '<span class="pdd"><button type="button" data-pop="dz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz" data-popbox="dz" hidden><b>배치는 그대로, 색·배경·글꼴만 바뀌어요</b><span class="pdzg">'+
-    DZ.map((z,i)=>{ const P=z.pal, bgc=z.bgx&&z.bgx.type==="grad"?"linear-gradient(180deg,"+z.bgx.c1+","+z.bgx.c2+")":P.bg, H=Object.assign({},DZ_BASE.H,z.s.H||{}), B=Object.assign({},DZ_BASE.B,z.s.B||{}), rv=v=>typeof v==="string"&&v[0]==="$"?P[v.slice(1)]:v;
-      const T=Object.assign({},DZ_BASE.T,z.s.T||{});
-      return '<button type="button" data-dz="'+i+'"><span class="dzpv" style="background:'+bgc+';border:'+(z.frame?Math.min(4,z.frame/3)+'px solid '+(z.frameC||P.main):'1px solid #ddd')+'">'+
-        '<i style="font-family:\''+z.f.T+'\';color:'+rv(T.color)+';text-shadow:'+(T.tline?'0 0 2px '+rv(T.tlc)+',0 0 2px '+rv(T.tlc):'none')+'">통계 포스터</i>'+
-        '<u style="background:'+(rv(H.fill)||'transparent')+';color:'+rv(H.color)+';border-radius:'+Math.min(8,H.radius)+'px;border:'+(H.sw?'1px solid '+rv(H.stroke):'0')+';font-family:\''+z.f.H+'\'">1. 탐구 동기</u>'+
-        '<s style="background:'+rv(B.fill)+';border:'+(B.sw?Math.max(1,Math.round(B.sw/2))+'px solid '+rv(B.stroke):'0')+';border-radius:'+Math.min(6,B.radius/2)+'px;'+(B.shadow?'box-shadow:0 2px 4px rgba(0,0,0,.25);':'')+'"></s></span>'+
-        '<b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>'; }).join("")+'</span></span></span>'; }
+  return '<span class="pdd"><button type="button" data-pop="dz" class="pfancy">🎨 추천 디자인 ▾</button><span class="ppop pdz ptplp" data-popbox="dz" hidden><b>배치·쓴 내용은 그대로, 색·배경·글꼴·꾸미기 장식이 바뀌어요</b><span class="pdzg">'+
+    DZ.map((z,i)=>'<button type="button" data-dz="'+i+'"'+(D.dz===i?' class="on"':'')+'><canvas data-dzpv="'+i+'"></canvas><b>'+(i+1)+'. '+esc(z.n)+'</b><small>'+esc(z.d)+'</small></button>').join("")+'</span></span></span>'; }
+function drawDzPreviews(){ const keepS=S, keepPal=D.pal, keepDz=D.dz;
+  bar.querySelectorAll("[data-dzpv]").forEach(cv=>{ S=JSON.parse(JSON.stringify(keepS)); delete S.slides; applyDesign(+cv.dataset.dzpv,true); pvCanvas(cv,S,120); });
+  S=keepS; if(keepPal) D.pal=keepPal; else delete D.pal; if(keepDz!=null) D.dz=keepDz; else delete D.dz; }
 
 /* ---------- 그래프 데이터 ---------- */
 function parseData(txt,opt){
@@ -738,7 +769,7 @@ function onBar(e){
     if(S.items.length&&!D.fresh&&!b.classList.contains("sure")){ bar.querySelectorAll("[data-tplk].sure").forEach(x=>{ x.classList.remove("sure"); x.querySelector("small").textContent=TPLS[+x.dataset.tplk][2]; });
       b.classList.add("sure"); b.querySelector("small").textContent="한 번 더 누르면 바뀌어요 (지금 포스터 내용은 지워져요 · ↶ 되돌리기 가능)"; return; }
     bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true); applyTpl(n); return; }
-  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); if(pop==="tpl") drawTplPreviews(); if(pop==="sdz") drawSdzPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
+  const pop=b.dataset.pop; if(pop){ bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=p.dataset.popbox!==pop||!p.hidden); if(pop==="shape"||pop==="bg") drawPreviews(); if(pop==="tpl") drawTplPreviews(); if(pop==="dz") drawDzPreviews(); if(pop==="sdz") drawSdzPreviews(); keepIn(bar.querySelector('[data-popbox="'+pop+'"]')); return; }
   bar.querySelectorAll("[data-popbox]").forEach(p=>p.hidden=true);
   const it=sel&&find(sel);
   if(b.dataset.dz!=null){ applyDesign(+b.dataset.dz); return; }
@@ -962,41 +993,41 @@ function slide(style,kind,o){
 }
 /* 발표자료 추천 디자인 20가지: 틀(띠·사이드·카드·밑줄·창문·가운데) + 색 + 배경 + 글꼴 + 상자 모양 */
 const SDZ=[
- {n:"깔끔 블루",d:"파란 띠 제목, 하얀 바탕",fr:"band",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#dbe7fb",accent:"#f28c28",ink:"#1d2a3a"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{}},
- {n:"민트 사이드",d:"왼쪽 민트 막대, 둥근 테두리 상자",fr:"side",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
- {n:"파스텔 카드",d:"분홍 땡땡이 배경 위 하얀 카드",fr:"card",pal:{bg:"#fff8fb",main:"#e889b5",sub:"#fde3ef",accent:"#7cc6c0",ink:"#3a2a33"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.7,size:40},f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},s:{B:{stroke:"$sub",sw:3,radius:20}}},
- {n:"레트로 굵은 선",d:"크림 바탕, 까만 굵은 테두리",fr:"line",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"깔끔 블루",deco:[["blob", 1.0, 1.0, 0.13, "$sub", 1], ["dots", "tr", "#ffffff", 0.45]],d:"파란 띠 제목, 하얀 바탕",fr:"band",pal:{bg:"#ffffff",main:"#2f6fd6",sub:"#dbe7fb",accent:"#f28c28",ink:"#1d2a3a"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{}},
+ {n:"민트 사이드",deco:[["ring", 1.0, 0.0, 0.12, "$main", 6, 0.5], ["ring", 1.0, 1.0, 0.1, "$accent", 6, 0.5]],d:"왼쪽 민트 막대, 둥근 테두리 상자",fr:"side",pal:{bg:"#ffffff",main:"#1aa3a3",sub:"#dff4f4",accent:"#ff7a59",ink:"#17323a"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"$main",sw:3,radius:22},G:{stroke:"$main",sw:3,radius:22},FB:{stroke:"$main",sw:3,radius:22}}},
+ {n:"파스텔 카드",deco:[["flank", "🌸", "🌸", 46]],d:"분홍 땡땡이 배경 위 하얀 카드",fr:"card",pal:{bg:"#fff8fb",main:"#e889b5",sub:"#fde3ef",accent:"#7cc6c0",ink:"#3a2a33"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.7,size:40},f:{T:"Jua",H:"Jua",B:"Gowun Dodum"},s:{B:{stroke:"$sub",sw:3,radius:20}}},
+ {n:"레트로 굵은 선",deco:[["mark", "$sub", 1], ["pix", "tr", "$ink", 1]],d:"크림 바탕, 까만 굵은 테두리",fr:"line",pal:{bg:"#fdf3e7",main:"#e4572e",sub:"#f9d56e",accent:"#3a86ff",ink:"#1f1f1f"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:3,radius:10,pad:10},B:{stroke:"$ink",sw:3,radius:12},B2:{fill:"#8fd6b0",stroke:"$ink",sw:3},C:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2},G:{stroke:"$ink",sw:3,radius:12},FB:{stroke:"$ink",sw:3,radius:12}}},
- {n:"네이비 비즈니스",d:"남색 띠, 금색 포인트, 그림자 카드",fr:"band",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},bg:"#f5f7fb",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
+ {n:"네이비 비즈니스",deco:[["pix", "tr", "$accent", 0.9]],d:"남색 띠, 금색 포인트, 그림자 카드",fr:"band",pal:{bg:"#f5f7fb",main:"#1f3a68",sub:"#dfe6f2",accent:"#f4b400",ink:"#1b2230"},bg:"#f5f7fb",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
   s:{H:{bold:true},B:{stroke:"",sw:0,radius:6,shadow:true},B2:{fill:"#fff4d0"},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"",sw:0,radius:6,shadow:true},FB:{stroke:"",sw:0,radius:6,shadow:true}}},
- {n:"선셋 그라데이션",d:"주황→노랑 그라데이션 위 하얀 카드",fr:"card",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"",sw:0,shadow:true,radius:18},G:{shadow:true}}},
- {n:"라벤더 땡땡이",d:"연보라 땡땡이, 보라 사이드 막대",fr:"side",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bg:"#f3efff",bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.12,size:40},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18}}},
- {n:"신문 기사형",d:"누런 신문지, 검은 줄, 명조체",fr:"line",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
+ {n:"선셋 그라데이션",deco:[["blob", 0.96, 0.06, 0.12, "#ffffff", 0.4], ["blob", 0.04, 0.94, 0.14, "#ffffff", 0.35], ["flank", "☀️", null, 46]],d:"주황→노랑 그라데이션 위 하얀 카드",fr:"card",pal:{bg:"#ffb25b",main:"#e8590c",sub:"#fff1dc",accent:"#c2255c",ink:"#3a1f10"},bgx:{type:"grad",c1:"#ff8a3d",c2:"#ffe08a",dir:"d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},s:{B:{stroke:"",sw:0,shadow:true,radius:18},G:{shadow:true}}},
+ {n:"라벤더 땡땡이",deco:[["blob", 1.0, 1.0, 0.16, "$sub", 1], ["flank", null, "💜", 44]],d:"연보라 땡땡이, 보라 사이드 막대",fr:"side",pal:{bg:"#f3efff",main:"#7b5cc9",sub:"#e4dbfa",accent:"#f2a33a",ink:"#2c2440"},bg:"#f3efff",bgx:{type:"pat",pat:"dots",color:"#7b5cc9",a:0.12,size:40},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},s:{B:{stroke:"$main",sw:2,radius:18},G:{stroke:"$main",sw:2,radius:18}}},
+ {n:"신문 기사형",deco:[["band", "top", 8, "$ink"], ["flank", null, "📰", 44]],d:"누런 신문지, 검은 줄, 명조체",fr:"line",pal:{bg:"#f4f1ea",main:"#1a1a1a",sub:"#e2dccd",accent:"#b3261e",ink:"#1a1a1a"},f:{T:"Song Myung",H:"Noto Serif KR",B:"Noto Serif KR"},
   s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:10,bold:true},B:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},B2:{fill:"$sub"},C:{fill:"",color:"$accent"},G:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0},FB:{fill:"#fffdf7",stroke:"$main",sw:1,radius:0}}},
- {n:"옐로 블루 팝",d:"노란 땡땡이 배경, 파란 카드 제목",fr:"card",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#ffe45c",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.5,size:36},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"옐로 블루 팝",deco:[["ring", 0.0, 1.0, 0.1, "#ffffff", 8, 0.8], ["flank", "⭐", "⭐", 46]],d:"노란 땡땡이 배경, 파란 카드 제목",fr:"card",pal:{bg:"#ffe45c",main:"#2f5bd3",sub:"#ffe45c",accent:"#ff5d8f",ink:"#1d2a5c"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.5,size:36},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{B:{stroke:"$main",sw:3,radius:16},B2:{fill:"#fff7c2",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffe45c"},G:{stroke:"$main",sw:3,radius:16},FB:{stroke:"$main",sw:3,radius:16}}},
- {n:"모눈 노트",d:"모눈종이 배경, 손글씨 제목, 파란 펜",fr:"line",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:32},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
+ {n:"모눈 노트",deco:[["mark", "#fff3b0", 1], ["flank", null, "✏️", 46]],d:"모눈종이 배경, 손글씨 제목, 파란 펜",fr:"line",pal:{bg:"#fffef8",main:"#2b6cb0",sub:"#e8f1fb",accent:"#e53e3e",ink:"#1f2933"},bgx:{type:"pat",pat:"grid",color:"#7fb2e5",a:0.35,size:32},f:{T:"Nanum Pen Script",H:"Gaegu",B:"Gowun Dodum"},
   s:{H:{bold:true},B:{fill:"#ffffff",stroke:"$main",sw:1,radius:6},B2:{fill:"#fff3b0"},C:{fill:"#fff3b0",color:"$accent"},G:{stroke:"$main",sw:1,radius:6},FB:{stroke:"$main",sw:1,radius:6}}},
  /* 11~20: 미리캔버스 진로·설문·과학 발표 템플릿 스타일 참고 */
- {n:"마이 드림 블루",d:"창문 틀, 파랑·노랑 알약 소제목",fr:"win",pal:{bg:"#e6ecf9",main:"#1f4fbf",sub:"#ffd23f",accent:"#ffd23f",ink:"#1a2a5e"},bgx:{type:"pat",pat:"dots",color:"#1f4fbf",a:0.14,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"마이 드림 블루",deco:[["flank", "⭐", "⭐", 44]],d:"창문 틀, 파랑·노랑 알약 소제목",fr:"win",pal:{bg:"#e6ecf9",main:"#1f4fbf",sub:"#ffd23f",accent:"#ffd23f",ink:"#1a2a5e"},bgx:{type:"pat",pat:"dots",color:"#1f4fbf",a:0.14,size:34},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{H:{fill:"$sub",color:"$ink",stroke:"$ink",sw:2,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:3,radius:14},B2:{fill:"#fff6cf",stroke:"$main",sw:3},C:{fill:"$main",color:"#ffd23f"},G:{stroke:"$main",sw:3,radius:14},FB:{stroke:"$main",sw:3,radius:14}}},
- {n:"설문 결과 블루",d:"가운데 제목, 그림자 하얀 카드",fr:"tag",pal:{bg:"#f2f5fa",main:"#2f7de1",sub:"#dde9fb",accent:"#ffc93c",ink:"#1e2a3b"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"설문 결과 블루",deco:[["dots", "tl", "$main", 0.3], ["flank", null, "📊", 46]],d:"가운데 제목, 그림자 하얀 카드",fr:"tag",pal:{bg:"#f2f5fa",main:"#2f7de1",sub:"#dde9fb",accent:"#ffc93c",ink:"#1e2a3b"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{H:{fill:"$main",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"",sw:0,radius:18,shadow:true},B2:{fill:"#ffffff",stroke:"$main",sw:3},C:{fill:"$accent",color:"$ink"},G:{stroke:"",sw:0,radius:18,shadow:true},FB:{stroke:"",sw:0,radius:18,shadow:true}}},
- {n:"과학 교실 창문",d:"하늘색 바탕 창문 틀, 노란 소제목",fr:"win",pal:{bg:"#9cc0f5",main:"#ff7a3d",sub:"#fff1c9",accent:"#ffd23f",ink:"#2b2b2b"},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+ {n:"과학 교실 창문",deco:[["flank", "🔬", "🧪", 44]],d:"하늘색 바탕 창문 틀, 노란 소제목",fr:"win",pal:{bg:"#9cc0f5",main:"#ff7a3d",sub:"#fff1c9",accent:"#ffd23f",ink:"#2b2b2b"},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
   s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$accent",color:"$ink",radius:8,pad:8},B:{fill:"#fffdf5",stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
- {n:"퍼플 크림",d:"크림 바탕, 보라 테두리 알약 제목",fr:"tag",pal:{bg:"#f7f2e8",main:"#8e5bb8",sub:"#e9dcf5",accent:"#f2b33d",ink:"#2e2438"},f:{T:"Sunflower",H:"Do Hyeon",B:"Gowun Dodum"},
+ {n:"퍼플 크림",deco:[["flank", "✨", "✨", 44], ["blob", 0.0, 1.0, 0.1, "$sub", 1]],d:"크림 바탕, 보라 테두리 알약 제목",fr:"tag",pal:{bg:"#f7f2e8",main:"#8e5bb8",sub:"#e9dcf5",accent:"#f2b33d",ink:"#2e2438"},f:{T:"Sunflower",H:"Do Hyeon",B:"Gowun Dodum"},
   s:{H:{fill:"#ffffff",color:"$main",stroke:"$main",sw:3,radius:999,pad:8,align:"center"},B:{stroke:"$main",sw:2,radius:20},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:20},FB:{stroke:"$main",sw:2,radius:20}}},
- {n:"설문 보고 핑크",d:"하얀 바탕, 분홍 밑줄 제목, 얇은 테두리",fr:"line",pal:{bg:"#ffffff",main:"#e8577a",sub:"#fde4ea",accent:"#222222",ink:"#222222"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"설문 보고 핑크",deco:[["mark", "$sub", 1], ["pix", "tr", "$main", 1]],d:"하얀 바탕, 분홍 밑줄 제목, 얇은 테두리",fr:"line",pal:{bg:"#ffffff",main:"#e8577a",sub:"#fde4ea",accent:"#222222",ink:"#222222"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$sub",color:"$main",stroke:"$main",sw:2,radius:999,pad:8},B:{stroke:"$main",sw:2,radius:8},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$main",color:"#ffffff"},G:{stroke:"$main",sw:2,radius:8},FB:{stroke:"$main",sw:2,radius:8}}},
- {n:"실험 보고서 옐로",d:"노란 바탕, 남색 띠, 네모난 표 칸",fr:"band",pal:{bg:"#fff8d6",main:"#1f4fa8",sub:"#ffe066",accent:"#4fb3ff",ink:"#12305f"},bg:"#fff8d6",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
+ {n:"실험 보고서 옐로",deco:[["pix", "tr", "$sub", 0.9], ["flank", null, "🧪", 44]],d:"노란 바탕, 남색 띠, 네모난 표 칸",fr:"band",pal:{bg:"#fff8d6",main:"#1f4fa8",sub:"#ffe066",accent:"#4fb3ff",ink:"#12305f"},bg:"#fff8d6",f:{T:"Black Han Sans",H:"Noto Sans KR",B:"Noto Sans KR"},
   s:{H:{fill:"$main",color:"#ffffff",radius:0,pad:8,bold:true},B:{stroke:"$main",sw:2,radius:0},B2:{fill:"$sub",stroke:"$main",sw:2},C:{fill:"$sub",color:"$main"},G:{stroke:"$main",sw:2,radius:0},FB:{stroke:"$main",sw:2,radius:0}}},
- {n:"우주 네이비",d:"짙은 남색 별 바탕, 주황 카드 제목",fr:"card",pal:{bg:"#1b2350",main:"#ff7a45",sub:"#2c3670",accent:"#ffd23f",ink:"#f5f7ff"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.22,size:46},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
+ {n:"우주 네이비",deco:[["stars", "$accent"], ["flank", "🚀", "🪐", 46]],d:"짙은 남색 별 바탕, 주황 카드 제목",fr:"card",pal:{bg:"#1b2350",main:"#ff7a45",sub:"#2c3670",accent:"#ffd23f",ink:"#f5f7ff"},bgx:{type:"pat",pat:"dots",color:"#ffffff",a:0.22,size:46},f:{T:"Jua",H:"Do Hyeon",B:"Gowun Dodum"},
   s:{H:{color:"$accent"},B:{fill:"$sub",stroke:"$accent",sw:2,radius:18,color:"$ink"},B2:{fill:"#3a4590",color:"$ink"},C:{fill:"$accent",color:"#1b2350"},G:{fill:"#ffffff",stroke:"",sw:0,radius:18},FB:{fill:"$sub",stroke:"$accent",sw:2,radius:18},FA:{fill:"$accent"}}},
- {n:"블루 옐로 깔끔",d:"가운데 제목, 연파랑 상자, 노란 강조",fr:"tag",pal:{bg:"#ffffff",main:"#2f80ed",sub:"#eaf2ff",accent:"#ffc52b",ink:"#1f2a3d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"블루 옐로 깔끔",deco:[["dots", "tr", "$main", 0.3], ["mark", "$accent", 0.55]],d:"가운데 제목, 연파랑 상자, 노란 강조",fr:"tag",pal:{bg:"#ffffff",main:"#2f80ed",sub:"#eaf2ff",accent:"#ffc52b",ink:"#1f2a3d"},f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{H:{fill:"$main",color:"#ffffff",radius:6,pad:8,align:"center"},B:{fill:"$sub",stroke:"",sw:0,radius:14},B2:{fill:"#fff5d1",stroke:"",sw:0},C:{fill:"$accent",color:"$ink"},G:{fill:"$sub",stroke:"",sw:0,radius:14},FB:{fill:"$sub",stroke:"",sw:0,radius:14}}},
- {n:"옐로 프로필",d:"노란 사이드 막대, 까만 알약 소제목",fr:"side",pal:{bg:"#fbf6ea",main:"#f2b632",sub:"#fdebb9",accent:"#2b2b2b",ink:"#2b2b2b"},bg:"#fbf6ea",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"옐로 프로필",deco:[["flank", null, "💡", 44], ["dots", "tr", "$ink", 0.2]],d:"노란 사이드 막대, 까만 알약 소제목",fr:"side",pal:{bg:"#fbf6ea",main:"#f2b632",sub:"#fdebb9",accent:"#2b2b2b",ink:"#2b2b2b"},bg:"#fbf6ea",f:{T:"Black Han Sans",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{STT:{color:"$ink"},CT:{color:"$ink"},H:{fill:"$ink",color:"#ffffff",radius:999,pad:8,align:"center"},B:{stroke:"$ink",sw:2,radius:12},B2:{fill:"$sub",stroke:"$ink",sw:2},C:{fill:"$main",color:"$ink"},G:{stroke:"$ink",sw:2,radius:12},FB:{stroke:"$ink",sw:2,radius:12}}},
- {n:"차분한 그레이 블루",d:"연회색 바탕, 남색 밑줄 제목, 그림자 카드",fr:"line",pal:{bg:"#f5f6f8",main:"#2c4f8f",sub:"#e2e8f2",accent:"#f5c242",ink:"#1f2633"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},
+ {n:"차분한 그레이 블루",deco:[["band", "top", 8, "$main"], ["dots", "tr", "$main", 0.18]],d:"연회색 바탕, 남색 밑줄 제목, 그림자 카드",fr:"line",pal:{bg:"#f5f6f8",main:"#2c4f8f",sub:"#e2e8f2",accent:"#f5c242",ink:"#1f2633"},f:{T:"Do Hyeon",H:"Do Hyeon",B:"Noto Sans KR"},
   s:{B:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},B2:{fill:"$sub",stroke:"",sw:0},C:{fill:"#fff4d0",color:"$main"},G:{stroke:"#d4dae5",sw:1,radius:10,shadow:true},FB:{stroke:"#d4dae5",sw:1,radius:10,shadow:true}}}
 ];
 const SDZ_BASE={H:{color:"$main",fill:"",stroke:"",sw:0},B:{fill:"#ffffff",stroke:"$sub",sw:2,radius:16,color:"$ink",shadow:false},B2:{fill:"$sub",stroke:"",sw:0,color:"$ink"},
@@ -1010,6 +1041,7 @@ function styleSlide(P,z){ // 색·글꼴·상자 모양만 (위치는 그대로)
     for(const [k,v] of Object.entries(st)) it[k]=rv(v);
     if(it.type==="text"){ const f=tg==="STT"||tg==="CT"?z.f.T:tg==="H"?z.f.H:["B","B2","C","CS","CM","FT","CAP"].includes(tg)?z.f.B:null; if(f) it.font=f; }
     if(it.type==="chart"&&it.chart) it.chart.color=pal.main; });
+  putDeco(P,z.deco,pal);
 }
 function restyleSlide(P,z){ // 틀을 새로 깔고 내용은 새 틀 안으로 옮겨요
   if(!P.kind||!P.st){ styleSlide(P,z); return P; }
