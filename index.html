@@ -300,12 +300,36 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 .ptoc .tl .pg{font-variant-numeric:tabular-nums;min-width:24px;text-align:right}
 .ptoc.small .tl{font-size:14px;line-height:1.75}.ptoc.small .tl.l1{margin-top:6px}.ptoc.small h2{margin-bottom:30px}
 .ptoc.tiny{padding-top:80px}.ptoc.tiny .tl{font-size:12.5px;line-height:1.55}.ptoc.tiny .tl.l2{font-size:12px}.ptoc.tiny .tl.l1{margin-top:4px}.ptoc.tiny h2{margin-bottom:22px}
+
+/* 꿈조사 보고서 PDF = 진로탐구 보고서 양식 */
+.kp{width:794px;box-sizing:border-box;background:#fff;color:#1f2a2c;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px;line-height:1.65;padding-bottom:36px;text-align:left}
+.kp *{box-sizing:border-box}
+.kcover{height:1123px;display:flex;flex-direction:column;justify-content:center;gap:40px;padding-bottom:0}
+.kband{background:#58a8b4;color:#fff;font-family:"Do Hyeon","Noto Sans KR",sans-serif;font-size:52px;padding:30px 70px;display:flex;justify-content:space-between;align-items:center}
+.kwho{text-align:center;font-size:20px;font-weight:700;color:#1f2a2c}
+.kbrand{color:#5f6d70;padding:28px 48px 0;font-size:14px} .kbrand b{color:#e32626}
+.krib{font-family:"Do Hyeon","Noto Sans KR",sans-serif;color:#fff;font-size:26px;padding:10px 20px 12px;border-radius:0 0 60px 0;width:fit-content;max-width:100%;display:flex;align-items:baseline;gap:10px}
+.krib .knum{font-size:34px} .krib .ktag{font-family:"Noto Sans KR",sans-serif;font-size:12px;opacity:.9}
+.k-coral{background:#f2827f} .k-green{background:#3fa88f} .k-yellow{background:#e9b93a} .k-dark{background:#4a4f52} .k-teal{background:#3e9ca7}
+.kbody{padding:22px 48px;display:flex;flex-direction:column;gap:14px}
+.kinfo{display:flex;gap:40px;font-weight:700;font-size:14px} .kinfo span{font-weight:400}
+.ktbl{border-top:1.5px solid #1f2a2c;border-bottom:1.5px solid #1f2a2c}
+.krow{display:grid;grid-template-columns:150px minmax(0,1fr);border-bottom:1px solid #c9d3d4} .krow:last-child{border-bottom:0}
+.klab{font-weight:700;font-size:14px;padding:12px 10px;border-right:1px solid #c9d3d4;display:flex;align-items:center}
+.kval{padding:8px 10px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.ktxt{white-space:pre-wrap;word-break:break-word;min-height:22px}
+.kq{display:flex;flex-direction:column;gap:6px} .kqt{font-weight:700;font-size:14.5px} .kqs{font-weight:400;color:#5f6d70;font-size:13px}
+.kbox{border:1px solid #9aa6a8;border-radius:14px;padding:10px 14px;min-height:56px;white-space:pre-wrap;word-break:break-word}
+.kimgs{display:flex;flex-direction:column;gap:8px} .kimgs img{max-width:100%;max-height:900px;object-fit:contain;align-self:flex-start;border:1px solid #c9d3d4}
+.kgrid table{width:100%;border-collapse:collapse} .kgrid th{background:#1f5c2b;color:#fff;font-weight:500;font-size:13px;padding:7px} .kgrid td{border:1px solid #9aa6a8;padding:5px;font-size:13.5px;vertical-align:middle} .kgrid td.krh{font-weight:700;text-align:center;white-space:nowrap}
+.ksub{font-weight:700;font-size:15px;border-top:1.5px solid #1f2a2c;border-bottom:1px solid #c9d3d4;padding:8px 2px;margin-top:4px}
+.knote{font-size:13px;color:#5f6d70;margin:0} .knote a{color:#2f5fcf;word-break:break-all}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-11b";
+window.APP_VER="2026-11-11c";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -481,21 +505,21 @@ const NS=(id,title,rows,o={})=>S(id,title,rows,"",{num:false,...o});
 const QS=(id,title,rows,o={})=>S(id,title,rows,"",{photo:false,...o});
 const CAREER='<a href="https://www.career.go.kr" target="_blank" rel="noopener">www.career.go.kr</a>';
 const NY=new Date().getFullYear();
-KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",color:"c-green",major:"num",sub:"num",solo:true,tocMajor:true,skipEmpty:true,autoTitle:"나의 꿈 조사 보고서",
-  desc:"진로 컨설팅(Section 1) · 교과·학교 탐색(Section 2) · 직업탐구 보고서(Section 3)를 쓰고, 커리어넷 결과지도 함께 붙여요. 발표 PPT와 발표 영상은 위에서 ‘꿈조사 발표 PPT’, ‘꿈조사 발표 영상’을 골라 따로 만들어 내요.",
+KINDS.dream={name:"꿈조사보고서",career:true,short:"꿈조사 보고서",pre:"d_",color:"c-green",major:"num",sub:"num",solo:true,tocMajor:true,skipEmpty:true,autoTitle:"나의 꿈 조사 보고서",
+  desc:"진로탐구 보고서와 같은 양식이에요. 진로 컨설팅(1~5단계) · 직업탐구 보고서(01~04)를 쓰고, 커리어넷 결과지도 함께 붙여요. 발표 PPT와 발표 영상은 위에서 ‘꿈조사 발표 PPT’, ‘꿈조사 발표 영상’을 골라 따로 만들어 내요.",
   subLabel:null,
   secs:[
-   {h:"SECTION 1-1",nonum:true,items:[
+   {h:"1단계 진로 컨설팅 (SECTION 1-1)",nonum:true,items:[
      QS("s11_1","본인이 가장 좋아하는 일 3가지를 써 주세요.",3),
-     QS("s11_2","본인이 가장 많이 하는 일 3가지를 써 주세요. (위의 문항 답과 동일해도 상관없습니다.)",3),
-     QS("s11_3","본인이 가장 잘하는 일 3가지를 써 주세요. (위의 문항 답과 동일해도 상관없습니다.)",3),
-     QS("s11_4","본인이 앞으로도 계속 하고 싶은 일 3가지를 써 주세요. (위의 문항 답과 동일해도 상관없습니다.)",3)]},
-   {h:"SECTION 1-2",nonum:true,items:[
+     QS("s11_2","본인이 가장 많이 하는 일 3가지를 써 주세요. (위의 문항 답과 같아도 괜찮아요.)",3),
+     QS("s11_3","본인이 가장 잘하는 일 3가지를 써 주세요. (위의 문항 답과 같아도 괜찮아요.)",3),
+     QS("s11_4","본인이 앞으로도 계속 하고 싶은 일 3가지를 써 주세요. (위의 문항 답과 같아도 괜찮아요.)",3)]},
+   {h:"2단계 진로 컨설팅 (SECTION 1-2)",nonum:true,items:[
      QS("s12_1","본인이 가장 싫어하는 일 3가지를 써 주세요.",3),
      QS("s12_2","본인이 가장 싫어하는 환경 3가지를 써 주세요.",3),
-     QS("s12_3","본인이 가장 만나기 싫은 사람 3명을 써 주세요.",3),
-     QS("s12_4","3번 문항 답의 이유가 있으면 적어 주세요.",3)]},
-   {h:"SECTION 1-3",nonum:true,items:[
+     QS("s12_3","본인이 가장 만나기 싫은 사람(유형) 3가지를 써 주세요.",3),
+     QS("s12_4","3번 문항 답에 이유가 있으면 적어 주세요.",3)]},
+   {h:"3단계 진로 컨설팅 (SECTION 1-3)",nonum:true,items:[
      N('<a href="http://www.career.go.kr" target="_blank" rel="noopener">http://www.career.go.kr (커리어넷)</a>을 활용해서 진로 흥미탐색 프로그램을 진행하세요.'),
      G("s13_res","결과표 상위유형 및 직업",["흥미 유형","해당 직업"],["1순위","2순위"]),
      G("s13_want","희망 직업",["직업명","직업 선택 이유"],["1순위","2순위"]),
@@ -503,38 +527,27 @@ KINDS.dream={name:"꿈조사보고서",short:"꿈조사 보고서",pre:"d_",colo
      N('본인이 좋아하는 직업 중 한 가지를 선택하여 그 직업에 관한 다음의 내용을 주니어직업정보('+CAREER+')나 한국직업정보시스템(<a href="https://know.work.go.kr" target="_blank" rel="noopener">know.work.go.kr</a>)에서 찾아보세요.'),
      L("s13_job","고른 직업","예: 데이터 분석가"),
      NS("s13_work","하는 일",3),NS("s13_major","관련 학과 및 자격증",3),NS("s13_skill","업무 수행 능력 및 필요 지식",3),
-     NS("s13_val","직업, 성격, 흥미, 가치관",3),NS("s13_cons","직업의 단점",3)]},
-   {h:"SECTION 1-4",nonum:true,items:[
-     QS("s14_1","본인이 탐색한 직업이 본인이 가장 좋아하고, 많이 하고, 잘하고, 계속하고 싶은 일 중에서 어디에 해당하는지 확인하고 본인 직업으로 적당한지 판단하자. (SECTION 1-1 참고)",6),
-     QS("s14_2","본인이 탐색한 직업이 본인이 가장 싫어하는 일이나 싫어하는 환경, 만나기 싫은 사람과 연관되어 있는지 확인하고, 만약 이중에 하나라도 연관되어 있다면 이를 극복할 수 있는 방법을 생각해 보자. (SECTION 1-2 참고)",6)]},
-   {h:"SECTION 1-5",nonum:true,items:[
+     NS("s13_val","직업 성격, 흥미, 가치관",3),NS("s13_cons","직업의 단점",3)]},
+   {h:"4단계 진로 컨설팅 (SECTION 1-4)",nonum:true,items:[
+     QS("s14_1","탐색한 직업이 내가 가장 좋아하고, 많이 하고, 잘하고, 계속하고 싶은 일 중 어디에 해당하는지 확인하고, 내 직업으로 적당한지 판단해 보세요. (1단계(SECTION 1-1)를 참고하세요.)",7),
+     QS("s14_2","탐색한 직업이 내가 싫어하는 일, 싫어하는 환경, 만나기 싫은 사람과 관련이 있는지 확인하고, 하나라도 관련이 있다면 극복할 방법을 생각해 보세요. (2단계(SECTION 1-2)를 참고하세요.)",7)]},
+   {h:"5단계 진로 컨설팅 (SECTION 1-5)",nonum:true,items:[
      QS("s15_path","학생 진로",2),
-     QS("s15_reason","진로 희망 사유(200자)",8,{limit:200})]},
-   {h:"SECTION 2-1",nonum:true,items:[
-     QS("s21_1","지금 배우고 있는 교과목 중에 본인의 진로에 가장 관련이 있는 과목은 무엇이며 그 이유는 무엇이라고 생각하는지 써 주세요.",5),
-     QS("s21_2","본인의 진로와 관련 있는 과목 중에 가장 잘한다고 생각하는 과목은 무엇이고 그 과목은 어떻게 공부하고 있는지 써 주세요.",5),
-     QS("s21_3","본인의 진로와 관련 있는 과목 중에 가장 약하다고 생각하는 과목은 무엇이고 그 약점은 어떻게 극복할 것인지 써 주세요.",5)]},
-   {h:"SECTION 2-2",nonum:true,items:[
-     QS("s22_1","학교알리미에 접속하세요. 중학교 1학년은 자유학기제가 시행됩니다. 학교에서 발표한 자유학년제 운영계획을 확인하고 수학, 과학 수업내용과 수업방법 및 평가는 어떻게 이루어지는지 알아보고 어떻게 준비해야 할지 써 주세요.",8,{photo:true}),
-     N('학교알리미: <a href="https://www.schoolinfo.go.kr/" target="_blank" rel="noopener">https://www.schoolinfo.go.kr/</a>'),
-     QS("s22_2","중학교에 자신이 선택한 진로와 관련된 동아리가 있는지 쓰고 그 동아리에서 어떤 활동들을 하는지 써 주세요. (2가지 이상의 동아리를 써도 됩니다.)",7)]},
-   {h:"SECTION 2-3",nonum:true,items:[
-     QS("s23_1","자유학년제 운영계획서의 내용 중 자신의 중학교에서 전 학년을 대상으로 하는 주제선택활동이나 진로체험활동을 알아보고 가장 기대되는 활동과 그 이유를 써 주세요.",6),
-     QS("s23_2","자신의 진로희망을 부모님과 이야기해보고 부모님은 그 진로를 어떻게 생각하시는지 써 주세요.",6)]},
+     QS("s15_reason","진로 희망 사유 (200자)",8,{limit:200})]},
    {h:"01. 직업탐구",nonum:true,items:[
      L("job","직업"),L("core","핵심능력"),L("similar","유사직업명"),L("major_cert","관련학과/관련자격"),
      NS("work","하는 일",5),NS("apt","적성 및 흥미",5),NS("prep","준비방법",5),NS("employ","취업현황",5)]},
    {h:"02. 학과탐구",nonum:true,items:[
      L("dept","희망학과"),NS("dept_over","학과개요",4),NS("dept_feat","학과특성",4),NS("dept_apt","흥미와 적성",4),
-     NS("hs_subj","관련 고교 교과목",4),NS("explore","진로 탐색 활동",5),L("video","관련동영상","영상 제목이나 주소")]},
+     NS("hs_subj","관련 고교 교과목",5),NS("explore","진로 탐색 활동",6),L("video","관련동영상","영상 제목이나 주소")]},
    {h:"03. 학교탐구",nonum:true,items:[
      L("school","학교","예: ○○대학교 ○○학과"),
      N('대학·학과 정보는 어디가에서 찾아보세요: <a href="https://www.adiga.kr/" target="_blank" rel="noopener">https://www.adiga.kr/</a>'),
-     NS("school_info","학교·학과 정보",6),
-     NS("school_result","학생부교과전형 교과 영역 평가방법 및 "+NY+"학년도 전형결과",6)]},
+     NS("school_info","학교·학과 정보",6,{kfree:true}),
+     NS("school_result","학생부교과전형 교과 영역 평가방법 및 "+NY+"학년도 전형결과",6,{kfree:true,ksub:true})]},
    {h:"04. 학습계획",nonum:true,items:[
      N("과목별 진로계획 "+(NY+1)+"년"),
-     NS("plan_math","수학",4),NS("plan_sci","과학",4),NS("plan_eng","영어",4),NS("plan_soc","사회",4),NS("plan_act","진로탐색활동",5)]},
+     NS("plan_math","수학",4),NS("plan_sci","과학",4),NS("plan_eng","영어",4),NS("plan_soc","사회",4),NS("plan_act","진로탐색활동",6)]},
    {h:"추가로 쓰고 싶은 내용",nonum:true,optional:true,extra:true,items:[R("extra","추가 내용","예: 더 알아본 내용","더 쓰고 싶은 내용이 있으면 아래 버튼을 눌러 제목을 붙이고 자유롭게 써요. 사진도 넣을 수 있어요. (안 쓰면 PDF에 안 들어가요)",0)]},
    {h:"추가 자료 추가",nonum:true,optional:true,items:[
      {...C("cn","커리어넷 검사 결과","커리어넷 검사 결과지 PDF(또는 캡처 사진)를 올려요. SECTION 1-3에서 올린 것과 같은 목록이에요. 보고서 맨 뒤에 붙어서 하나의 PDF가 돼요."),dup:true}]}
@@ -1157,6 +1170,69 @@ function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
 saveBtn.addEventListener("click",()=>{ if(!lastPdf) return; if(lastPdf.pptx){ download(lastPdf.pptx.blob,lastPdf.pptx.name); statusEl.textContent="PPT 파일을 저장했어요. 파워포인트나 구글 슬라이드에서 열어 고칠 수 있어요."; } else download(lastPdf.blob,lastPdf.name); });
 function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
 
+
+/* ---------- 꿈조사 보고서: 진로탐구 보고서(career-report)와 같은 양식으로 PDF ---------- */
+const KA4H=1123,KA4TOP=40,KA4BOT=36;
+function careerPages(){
+  const k=K(), w=who(), full=(w.g||"")+(w.c?w.c+"반":""), whoT=[full,w.name].filter(Boolean).join(" ");
+  const V=id=>T(id), IM=id=>{const l=S_.ph[id]||[]; return l.length?'<div class="kimgs">'+l.map(x=>'<img src="'+x+'">').join("")+'</div>':"";};
+  const info='<div class="kinfo"><div>학년 : <span>'+esc(w.g||"")+'</span></div><div>반 : <span>'+esc(full)+'</span></div><div>이름 : <span>'+esc(w.name)+'</span></div></div>';
+  const out=['<div class="kp kcover"><div class="kband"><span>페르마 진로탐구 보고서</span><span style="font-size:40px">⚛</span></div><div class="kwho">'+esc(whoT)+'</div></div>'];
+  const COL={"01.":"k-coral","02.":"k-green","03.":"k-yellow","04.":"k-coral"};
+  k.secs.forEach(sec=>{
+    if(isOff(sec)) return;
+    let m, rib="", brand=false, inf=false;
+    if((m=sec.h.match(/SECTION 1-(\d)/))){ rib='<div class="krib k-dark"><span class="knum">'+m[1]+'단계</span>진로 컨설팅<span class="ktag">SECTION 1 - '+m[1]+'</span></div>'; brand=true; inf=m[1]==="1"; }
+    else if((m=sec.h.match(/^(\d\d\.)\s*(.+)$/))){ rib='<div class="krib '+(COL[m[1]]||"k-teal")+'"><span class="knum">'+m[1]+'</span>'+esc(m[2])+'</div>'; inf=m[1]==="01."; }
+    else if(sec.extra){ if(!hasContent(sec)) return; rib='<div class="krib k-teal"><span class="knum">+</span>추가로 쓴 내용</div>'; }
+    else return;
+    let h="", buf=[], qn=0;
+    const flush=()=>{ if(buf.length){ h+='<div class="ktbl">'+buf.join("")+'</div>'; buf=[]; } };
+    sec.items.forEach(it=>{
+      const id=pid(it.id);
+      if(it.t==="L"){ buf.push('<div class="krow"><div class="klab">'+esc(it.label)+'</div><div class="kval"><div class="ktxt" style="min-height:22px">'+V(id)+'</div></div></div>'); return; }
+      if(it.t==="S"&&it.photo!==false&&!it.kfree){ buf.push('<div class="krow"><div class="klab">'+esc(it.title)+'</div><div class="kval"><div class="ktxt" style="min-height:'+Math.max(44,(it.rows||3)*20)+'px">'+V(id)+'</div>'+IM(id)+'</div></div>'); return; }
+      flush();
+      if(it.t==="S"&&it.kfree){ if(it.ksub) h+='<div class="ksub">'+esc(it.title)+'</div>'; h+='<div class="kq"><div class="kbox" style="min-height:120px">'+V(id)+'</div>'+IM(id)+'</div>'; }
+      else if(it.t==="S"){ qn++; const t=it.title, cut=t.search(/ \((?=[^()]*(\([^()]*\)[^()]*)*\)$)/), ok=cut>0&&t.length-cut>12, main=ok?t.slice(0,cut):t, sub=ok?t.slice(cut+2,-1):"";
+        h+='<div class="kq"><div class="kqt">'+qn+'. '+esc(main)+(sub?' <span class="kqs">('+esc(sub)+')</span>':'')+'</div><div class="kbox" style="min-height:'+Math.max(56,(it.rows||3)*22)+'px">'+V(id)+'</div></div>'; }
+      else if(it.t==="N"){ h+=/<a /.test(it.html)?'<p class="knote">'+it.html+'</p>':'<div class="ksub" style="text-align:center">'+it.html+'</div>'; }
+      else if(it.t==="G"){ h+='<div class="kgrid"><table><thead><tr><th>'+esc(it.title)+'</th>'+it.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+it.rows.map((r,ri)=>'<tr><td class="krh">'+esc(r)+'</td>'+it.cols.map((c,ci)=>'<td>'+V(id+"_"+ri+"_"+ci)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>'; }
+      else if(it.t==="C"){ if(CN.length&&!it.dup) h+='<p class="knote">※ 커리어넷 결과지는 이 보고서 맨 뒤에 붙어 있어요.</p>'; }
+      else if(it.t==="R"){ ensureRep(it).forEach((r,ri)=>{ const b=id+"_"+r; if(!val(b+"_b").trim()&&!(S_.ph[b+"_b"]||[]).length) return;
+        h+='<div class="kq"><div class="kqt">'+esc(val(b+"_t").trim()||(it.label+" "+(ri+1)))+'</div><div class="kbox" style="min-height:56px">'+V(b+"_b")+'</div>'+IM(b+"_b")+'</div>'; }); }
+    });
+    flush();
+    if(!h) return;
+    out.push('<div class="kp">'+(brand?'<div class="kbrand"><b>Fermat</b> education</div>':'')+rib+'<div class="kbody">'+(inf?info:"")+h+'</div></div>');
+  });
+  return out;
+}
+function kBreaks(el,sc){ const top=el.getBoundingClientRect().top, set=new Set();
+  el.querySelectorAll(".kbody>*,.krow,.kq,.ksub,.kgrid,.kgrid tr,.kinfo,.knote,.kimgs img,.kbox").forEach(e=>{ const r=e.getBoundingClientRect(); /* 질문 제목·소제목만 쪽 끝에 홀로 남지 않게 */ const ps=e.previousElementSibling; if(!e.classList.contains("kbox")&&!(ps&&ps.classList.contains("ksub"))) set.add(Math.round((r.top-top)*sc)); if(!e.classList.contains("ksub")) set.add(Math.round((r.bottom-top)*sc)); });
+  return [...set].sort((a,b)=>a-b); }
+function kWhiteRow(cv,y0,y1){ const h=y1-y0; if(h<=0) return y1; const d=cv.getContext("2d").getImageData(0,y0,cv.width,h).data, W=cv.width; let best=y1, score=1e9;
+  for(let y=h-1;y>=0;y--){ let dark=0; for(let x=0;x<W;x+=3){ const q=(y*W+x)*4; if(d[q]+d[q+1]+d[q+2]<700) dark++; } if(dark===0) return y0+y; if(dark<score){score=dark;best=y0+y;} } return best; }
+function kSlices(el,cv,sc){ const H=cv.height, bps=kBreaks(el,sc), out=[]; let y=0, first=true;
+  while(y<H-2){ const cap=Math.round((KA4H-(first?0:KA4TOP)-KA4BOT)*sc);
+    if(H-y<=cap+Math.round(KA4BOT*sc)){ out.push([y,H,first]); break; }
+    const lim=y+cap; let cut=-1; for(const b of bps) if(b>y+cap*0.45&&b<=lim) cut=b;
+    if(cut<0) cut=kWhiteRow(cv,Math.round(y+cap*0.6),lim); if(cut<=y) cut=lim;
+    out.push([y,cut,first]); y=cut; first=false; }
+  return out; }
+async function careerPdf(onProg){
+  const stage=document.getElementById("pdfStage"); stage.innerHTML=careerPages().join("");
+  if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+  await Promise.all([...stage.querySelectorAll("img")].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
+  const {jsPDF}=window.jspdf, pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"}), shots=[], pages=[...stage.children]; let n=0;
+  for(let i=0;i<pages.length;i++){ if(onProg) onProg(i,pages.length);
+    const cv=await html2canvas(pages[i],{scale:SC,backgroundColor:"#ffffff",useCORS:true,logging:false});
+    for(const [y0,y1,first] of kSlices(pages[i],cv,SC)){
+      const c=document.createElement("canvas"); c.width=cv.width; c.height=y1-y0; const g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(cv,0,y0,cv.width,y1-y0,0,0,cv.width,y1-y0);
+      if(n++) pdf.addPage("a4","p"); const jp=c.toDataURL("image/jpeg",0.9); shots.push(jp);
+      const mm=210/794/SC; pdf.addImage(jp,"JPEG",0,first?0:KA4TOP*SC*mm,210,(y1-y0)*mm); } }
+  stage.innerHTML=""; return {pdf,shots};
+}
 pdfBtn.addEventListener("click",async()=>{
   if(lastPdf && pdfBtn.dataset.mode==="send"){ return lastPdf.pptx?deliver(lastPdf.pptx.blob,lastPdf.pptx.name):deliver(lastPdf.blob,lastPdf.name); }
   if((kindKey()==="svid"||kindKey()==="dvid")&&!isOwn()) return submitVideo();
@@ -1178,15 +1254,19 @@ pdfBtn.addEventListener("click",async()=>{
   pdfBtn.disabled=true;
   try{
     statusEl.textContent="PDF 만드는 중… 잠깐만 기다려 주세요.";
+    let pdf, all;
+    if(K().career){ const r=await careerPdf((i,n)=>{statusEl.textContent="PDF 만드는 중… ("+(i+1)+"/"+n+"쪽)";}); pdf=r.pdf; all=r.shots; }
+    else{
     const {pages,toc,links}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
     statusEl.textContent="표지와 차례 만드는 중…";
     const cover=await fullPage(coverHtml());
     const tocImgs=[]; for(const th of tocPages(toc)) tocImgs.push(await fullPage(th));
-    const all=[cover,...tocImgs,...pages];
-    const {jsPDF}=window.jspdf; const pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
+    all=[cover,...tocImgs,...pages];
+    const {jsPDF}=window.jspdf; pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
     all.forEach((u,i)=>{ if(i) pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
     const mm=px=>px/SC*210/794; // 영상 링크는 PDF에서 누르면 열리게
     links.forEach(l=>{ try{ pdf.setPage(l.page+1+tocImgs.length); pdf.link(mm(76*SC),mm(l.y),210-2*mm(76*SC),mm(l.h),{url:l.url}); }catch(e){} });
+    }
     let blob=pdf.output("blob"), failed=0;
     if(CN.length&&K().secs.some(s=>s.items.some(i=>i.t==="C"))){
       if(!window.PDFLib) failed=CN.length; else{
