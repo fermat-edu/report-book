@@ -282,11 +282,12 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 .pb .fig img{max-width:100%;max-height:620px;object-fit:contain;border:1px solid #d5dbdc}
 .pb .fig span{font-size:12.5px;color:#555}
 .pfull{width:794px;height:1123px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:var(--serif);position:relative;overflow:hidden}
-.pcover .ct{position:absolute;left:90px;right:90px;top:250px;text-align:center;font-size:34px;line-height:1.75;font-weight:400;letter-spacing:.04em;word-break:keep-all}
+.pcover .ct{position:absolute;left:90px;right:90px;top:250px;text-align:center;font-size:34px;line-height:1.75;font-weight:400;letter-spacing:.04em;word-break:keep-all;max-height:370px;overflow:hidden}
+.pcover .ct.long{font-size:27px}
 .pcover table{position:absolute;left:50%;transform:translateX(-50%);top:640px;width:430px;border-collapse:collapse;font-family:var(--body);font-size:17px}
 .pcover th,.pcover td{border:1px solid #555;padding:9px 10px;text-align:center}
 .pcover th{width:120px;font-weight:500}
-.pcover td{word-break:keep-all}
+.pcover td{word-break:keep-all;overflow-wrap:anywhere}
 .pcover .brand{position:absolute;left:0;right:0;bottom:70px;text-align:center;font-family:var(--body);font-size:14px;color:#666}
 .pcover .brand b{color:#e32626}
 .ptoc{padding:110px 100px 60px}
@@ -298,12 +299,13 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 .ptoc .tl .dots{flex:1;border-bottom:1.5px dotted #888;transform:translateY(-6px);min-width:20px}
 .ptoc .tl .pg{font-variant-numeric:tabular-nums;min-width:24px;text-align:right}
 .ptoc.small .tl{font-size:14px;line-height:1.75}.ptoc.small .tl.l1{margin-top:6px}.ptoc.small h2{margin-bottom:30px}
+.ptoc.tiny{padding-top:80px}.ptoc.tiny .tl{font-size:12.5px;line-height:1.55}.ptoc.tiny .tl.l2{font-size:12px}.ptoc.tiny .tl.l1{margin-top:4px}.ptoc.tiny h2{margin-bottom:22px}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-07g";
+window.APP_VER="2026-11-11a";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -1053,14 +1055,17 @@ function buildBlocks(){
 function coverHtml(){
   const w=who(), mates=val("mates").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
   const members=[w.name,...mates].join(", ");
-  const sub=(kindKey()==="dream"?val(pid("s15_path")).trim():isOwn()?val(oid("subj")).trim():kindKey()==="book"?val(pid("btitle")).trim():val(pid("subj")).trim())||topicName();
+  let sub=(kindKey()==="dream"?val(pid("s15_path")).trim():isOwn()?val(oid("subj")).trim():kindKey()==="book"?val(pid("btitle")).trim():val(pid("subj")).trim())||topicName();
+  sub=sub.split(/\n/)[0].trim(); if(sub.length>40) sub=sub.slice(0,40)+"…"; // 표지 칸이 넘치지 않게 한 줄·40자까지만
   const title=isOwn()?val(oid("title")).trim():(val(pid("title")).trim()||(K().autoTitle||""));
   const rows=[["구분",K()&&K().solo&&!isOwn()?"개인":(val("team").trim()||"개인")],["출품부문",catName()],["세부구분",sub],["구성원",members],["학년·반",w.g+"학년 "+w.c+"반"]];
-  return '<div class="pfull pcover"><div class="ct">'+esc(title)+'</div><table>'+rows.map(([a,b])=>'<tr><th>'+a+'</th><td>'+esc(b)+'</td></tr>').join("")+'</table>'+
+  return '<div class="pfull pcover"><div class="ct'+(title.length>40?' long':'')+'">'+esc(title)+'</div><table>'+rows.map(([a,b])=>'<tr><th>'+a+'</th><td>'+esc(b)+'</td></tr>').join("")+'</table>'+
     '<div class="brand"><b>Fermat</b> education · '+new Date().getFullYear()+'</div></div>';
 }
-function tocPageHtml(entries){
-  return '<div class="pfull ptoc'+(entries.length>22?' small':'')+'"><h2>차례</h2>'+entries.map(e=>'<div class="tl l'+e.lvl+'"><span class="tt">'+esc(e.text)+'</span><span class="dots"></span><span class="pg">'+e.page+'</span></div>').join("")+'</div>';
+function tocPages(entries){ // 차례가 길면 글씨를 줄이고, 그래도 넘치면 차례를 두 장 이상으로 나눠요
+  const per=44, out=[]; for(let i=0;i<entries.length||i===0;i+=per) out.push(tocPageHtml(entries.slice(i,i+per),i>0)); return out; }
+function tocPageHtml(entries,cont){
+  return '<div class="pfull ptoc'+(entries.length>32?' tiny':entries.length>22?' small':'')+'"><h2>'+(cont?'차례 (이어서)':'차례')+'</h2>'+entries.map(e=>'<div class="tl l'+e.lvl+'"><span class="tt">'+esc(e.text)+'</span><span class="dots"></span><span class="pg">'+e.page+'</span></div>').join("")+'</div>';
 }
 
 /* ---------- A4 쪽 나누기 ---------- */
@@ -1072,6 +1077,17 @@ function findCut(cv,from,maxY,minY){ // maxY 위쪽에서 비어 있는 줄을 �
   const w=cv.width, d=cv.getContext("2d").getImageData(0,minY,w,maxY-minY).data;
   for(let y=maxY-minY-1;y>=0;y--) if(whiteRow(d,w,y)) return minY+y;
   return maxY;
+}
+/* 글줄이 반으로 잘리지 않게: 블록 안 글줄·그림 위치를 재서, 줄과 줄 사이(빈틈)에서만 자를 수 있게 해요 */
+function safeCuts(el){
+  const top=el.getBoundingClientRect().top, iv=[];
+  const tw=document.createTreeWalker(el,NodeFilter.SHOW_TEXT); let n; const rg=document.createRange();
+  while((n=tw.nextNode())){ if(!n.nodeValue.trim()) continue; rg.selectNodeContents(n); for(const r of rg.getClientRects()) if(r.height>0) iv.push([r.top-top-1,r.bottom-top+1]); }
+  el.querySelectorAll("img,svg,canvas,table,hr").forEach(x=>{const r=x.getBoundingClientRect(); if(r.height>0) iv.push([r.top-top-1,r.bottom-top+1]);});
+  iv.sort((a,b)=>a[0]-b[0]); const m=[];
+  iv.forEach(v=>{ if(m.length&&v[0]<=m[m.length-1][1]) m[m.length-1][1]=Math.max(m[m.length-1][1],v[1]); else m.push(v.slice()); });
+  const cuts=[]; for(let i=1;i<m.length;i++) if(m[i][0]>m[i-1][1]) cuts.push((m[i-1][1]+m[i][0])/2);
+  return cuts.map(c=>Math.round(c*SC));
 }
 async function paginate(blocks,onStep){
   const stage=document.getElementById("pdfStage");
@@ -1086,11 +1102,18 @@ async function paginate(blocks,onStep){
   newPage();
   for(let i=0;i<els.length;i++){
     onStep&&onStep(i,els.length);
-    const b=blocks[i], cv=await cap(els[i]); let h=cv.height;
+    const b=blocks[i], cuts=safeCuts(els[i]), cv=await cap(els[i]); let h=cv.height;
     if(y>TOP) y+=b.gap*SC;
     const rem=()=>PH-BOT-y;
     if(b.type==="h1"||b.type==="h2"){
-      if(y>TOP&&rem()<h+(b.type==="h1"?150:90)*SC) newPage();
+      // 제목만 페이지 끝에 홀로 남지 않게: 뒤따르는 제목·그림·글 첫 몇 줄이 같이 들어갈 자리가 있는지 봐요
+      const nh=j=>els[j]?els[j].offsetHeight*SC+(blocks[j].gap||0)*SC:0;
+      const look=(j,d)=>{ if(!blocks[j]||d>3) return 0; const t=blocks[j].type;
+        if(t==="h1"||t==="h2") return nh(j)+look(j+1,d+1);
+        if(t==="img") return Math.min(nh(j),PH-BOT-TOP-200*SC);
+        return Math.min(nh(j),110*SC); };
+      const need=h+Math.max((b.type==="h1"?150:90)*SC-h,look(i+1,0));
+      if(y>TOP&&rem()<Math.min(need,PH-BOT-TOP-40*SC)) newPage();
       g.drawImage(cv,0,y); if(b.toc) toc.push({...b.toc,page:out.length+1}); y+=h;
     }else if(b.type==="img"){
       const avail=PH-BOT-TOP; let dw=cv.width, dh=h;
@@ -1103,7 +1126,8 @@ async function paginate(blocks,onStep){
         const left=h-off;
         if(left<=rem()){ g.drawImage(cv,0,off,cv.width,left,0,y,cv.width,left); if(b.link&&!off) links.push({page:out.length+1,y,h:left,url:b.link}); y+=left; break; }
         if(rem()<50*SC){ newPage(); continue; }
-        let cut=findCut(cv,off,off+rem(),off+rem()-260*SC);
+        const okc=cuts.filter(c=>c>off+10&&c<=off+rem());
+        let cut=okc.length?okc[okc.length-1]:findCut(cv,off,off+rem(),off+rem()-260*SC);
         if(cut<=off+10) cut=off+rem();
         g.drawImage(cv,0,off,cv.width,cut-off,0,y,cv.width,cut-off);
         off=cut; newPage();
@@ -1157,12 +1181,12 @@ pdfBtn.addEventListener("click",async()=>{
     const {pages,toc,links}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
     statusEl.textContent="표지와 차례 만드는 중…";
     const cover=await fullPage(coverHtml());
-    const tocImg=await fullPage(tocPageHtml(toc));
-    const all=[cover,tocImg,...pages];
+    const tocImgs=[]; for(const th of tocPages(toc)) tocImgs.push(await fullPage(th));
+    const all=[cover,...tocImgs,...pages];
     const {jsPDF}=window.jspdf; const pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
     all.forEach((u,i)=>{ if(i) pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
     const mm=px=>px/SC*210/794; // 영상 링크는 PDF에서 누르면 열리게
-    links.forEach(l=>{ try{ pdf.setPage(l.page+2); pdf.link(mm(76*SC),mm(l.y),210-2*mm(76*SC),mm(l.h),{url:l.url}); }catch(e){} });
+    links.forEach(l=>{ try{ pdf.setPage(l.page+1+tocImgs.length); pdf.link(mm(76*SC),mm(l.y),210-2*mm(76*SC),mm(l.h),{url:l.url}); }catch(e){} });
     let blob=pdf.output("blob"), failed=0;
     if(CN.length&&K().secs.some(s=>s.items.some(i=>i.t==="C"))){
       if(!window.PDFLib) failed=CN.length; else{
