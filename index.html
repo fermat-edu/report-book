@@ -305,7 +305,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-11a";
+window.APP_VER="2026-11-11b";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -1345,6 +1345,22 @@ async function sendFiles(label){
 }
 submitBtn.addEventListener("click",async()=>{submitBtn.disabled=true; try{await submitToTeacher();}finally{submitBtn.disabled=false;}});
 
+/* ---------- 카카오톡·인스타 등 앱 안 브라우저: 제출은 되지만 파일 저장·공유가 막힐 수 있어 바깥 브라우저로 안내 ---------- */
+const IAB=(()=>{const ua=navigator.userAgent||"";return /KAKAOTALK/i.test(ua)?"kakao":/Instagram|FBAN|FBAV|Line\/|NAVER\(inapp|everytimeApp|DaumApps|band\//i.test(ua)?"other":"";})();
+(function(){ if(!IAB) return;
+  const st=document.createElement("style");
+  st.textContent='.iab{position:sticky;top:0;z-index:9998;background:#fee500;color:#1d1d1d;padding:12px 14px;font-size:14.5px;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.15)}.iab b{display:block;font-size:15.5px}.iab a,.iab button{display:inline-block;margin:8px 6px 0 0;background:#1d1d1d;color:#fff;border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}.iab .x{background:transparent;color:#1d1d1d;border:1px solid #1d1d1d}.iab.mini{padding:6px 12px;font-size:13px}.iab.mini .iabt,.iab.mini .x,.iab.mini br{display:none}.iab.mini a,.iab.mini button{margin:0;padding:6px 12px;font-size:13px}.iab .iabm{display:none}.iab.mini .iabm{display:inline;margin-right:8px;font-weight:700}';
+  document.head.appendChild(st);
+  const url=location.href.split("#")[0];
+  const bar=document.createElement("div"); bar.className="iab"; bar.setAttribute("role","alert");
+  bar.innerHTML='<span class="iabm">카카오톡 안에서 쓰는 중</span><span class="iabt"><b>⚠️ 카카오톡 안에서 열었어요</b>보고서 쓰기와 선생님께 제출은 여기서도 되지만, PDF를 내 폰에 저장하거나 보내는 것은 안 될 수 있어요. 크롬·사파리·삼성 인터넷으로 열어서 써 주세요.<br><span style="font-size:13px">이미 쓴 내용이 있으면 먼저 표지의 <b style="display:inline;font-size:13px">중간 저장</b>을 누르고, 다른 브라우저에서 ‘중간 저장한 것 불러오기’를 누르면 이어서 쓸 수 있어요.</span></span><br>'+
+    (IAB==="kakao"?'<a href="kakaotalk://web/openExternal?url='+encodeURIComponent(url)+'">다른 브라우저로 열기</a>':'<button type="button" data-iabcopy>주소 복사하기</button>')+'<button type="button" class="x" data-iabx>여기서 계속 쓰기</button>';
+  const put=()=>{ document.body.insertBefore(bar,document.body.firstChild);
+    bar.addEventListener("click",e=>{ if(e.target.closest("[data-iabx]")){ bar.classList.add("mini"); return; }
+      const c=e.target.closest("[data-iabcopy]"); if(c){ try{ navigator.clipboard.writeText(url); c.textContent="복사했어요! ⋮ 메뉴 → 다른 브라우저로 열기"; }catch(err){ prompt("이 주소를 복사하세요",url); } } }); };
+  if(document.body) put(); else document.addEventListener("DOMContentLoaded",put);
+})();
+const IAB_TIP=()=>IAB?" ⚠️ 카카오톡 안에서는 파일 저장·보내기가 막혀 있을 수 있어요. 안 됐다면 걱정 마세요, 보고서는 이미 선생님께 제출됐어요. 파일이 꼭 필요하면 "+(IAB==="kakao"?"맨 위 노란 칸의 ‘다른 브라우저로 열기’":"오른쪽 위 메뉴의 ‘다른 브라우저로 열기’")+"를 누르고, ‘중간 저장한 것 불러오기’ 후 다시 만들어요.":"";
 async function deliver(blob,name){
   const dl=dlPromise?await dlPromise:null;
   if(dl){
@@ -1355,7 +1371,7 @@ async function deliver(blob,name){
   if(window.claude){ showShots(); return; }
   let file=null; try{ file=new File([blob],name,{type:blob.type||"application/pdf"}); }catch(e){}
   if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
-    try{ await navigator.share({files:[file],title:name}); statusEl.textContent="보냈어요! 공유 화면에 카카오톡이 안 보였다면 '파일로 저장' 후 카톡에 첨부하세요."; return; }
+    try{ await navigator.share({files:[file],title:name}); statusEl.textContent="보냈어요! 공유 화면에 카카오톡이 안 보였다면 '파일로 저장' 후 카톡에 첨부하세요."+IAB_TIP(); return; }
     catch(e){
       if(e&&e.name==="AbortError"){ statusEl.textContent="공유를 닫았어요. 카카오톡이 없으면 '파일로 저장'을 누른 뒤 카톡 채팅방에 첨부하세요."; return; }
       if(e&&e.name==="NotAllowedError"){ statusEl.textContent="'카톡으로 보내기'를 한 번 더 눌러 주세요."; return; }
@@ -1365,8 +1381,8 @@ async function deliver(blob,name){
 }
 function download(blob,name){
   try{ const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000);
-    statusEl.textContent="다운로드 폴더에 저장했어요. PC 카카오톡 채팅방에 파일을 끌어다 놓으면 보내져요."; }
-  catch(e){ statusEl.textContent="이 브라우저에서는 저장할 수 없어요. 크롬이나 사파리로 열어 주세요."; }
+    statusEl.textContent=IAB?"파일 저장을 해 봤어요."+IAB_TIP():"다운로드 폴더에 저장했어요. PC 카카오톡 채팅방에 파일을 끌어다 놓으면 보내져요."; }
+  catch(e){ statusEl.textContent="이 브라우저에서는 저장할 수 없어요. 크롬이나 사파리로 열어 주세요."+IAB_TIP(); }
 }
 function showShots(){
   document.getElementById("shotList").innerHTML=(lastPdf&&lastPdf.shots||[]).map((s,i)=>'<figure><img src="'+s+'" alt="보고서 '+(i+1)+'쪽"><figcaption>'+(i+1)+'쪽</figcaption></figure>').join("");
