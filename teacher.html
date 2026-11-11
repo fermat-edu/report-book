@@ -100,7 +100,7 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-11c";
+window.APP_VER="2026-11-12a";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -184,7 +184,7 @@ async function api(params){
   if(!j.ok) throw new Error(j.error||"fail");
   return j;
 }
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function parse(f){ // "2학년3반_홍길동_1102_2130.pdf"
   let base=f.name.replace(/\.[a-z0-9]{2,4}$/i,"").replace(/_\d{4}_\d{4}$/,""), extra="";
   const em=base.match(/_(영상|발표자료)$/); if(em){ extra=em[1]; base=base.slice(0,-em[0].length); }
@@ -246,7 +246,7 @@ function visible(){
 function byClass(v){
   const m=new Map(); v.forEach(f=>{ if(!m.has(f.cls)) m.set(f.cls,{g:f.g,c:f.c,files:[]}); m.get(f.cls).files.push(f); });
   const r=c=>{const i=CORDER.indexOf(String(c)); if(i>=0) return i; const k=NEWCLS.indexOf(String(c)); return k<0?999:100+k;};
-  return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||(DOCO[x.doc]??9)-(DOCO[y.doc]??9)||y.time-x.time)}));
+  return [...m.entries()].sort((a,b)=>a[1].g-b[1].g||r(a[1].c)-r(b[1].c)||String(a[1].c).localeCompare(String(b[1].c),"ko",{numeric:true})).map(([cls,o])=>({cls,files:o.files.sort((x,y)=>x.who.localeCompare(y.who,"ko")||((x.doc in DOCO)?DOCO[x.doc]:9)-((y.doc in DOCO)?DOCO[y.doc]:9)||y.time-x.time)}));
 }
 function itemHtml(f){
   return '<div class="item'+(f.isNew?'':' isold')+'" data-id="'+f.id+'"><div><div class="who">'+esc(f.who)+'</div>'+
@@ -263,7 +263,7 @@ function teamsHtml(files){
   const DO={"포스터":0,"발표 PPT":1,"PPT 파일":2,"발표 영상":3};
   const nameOf=fs=>{ const c={}; fs.forEach(f=>{ c[f.team]=(c[f.team]||0)+1; }); return Object.keys(c).sort((a,b)=>c[b]-c[a]||b.length-a.length)[0]; };
   return [...m.entries()].sort((a,b)=>ord(a[0])-ord(b[0])||a[0].localeCompare(b[0],"ko")).map(([k,fs])=>{
-    fs=fs.slice().sort((x,y)=>(DO[x.doc]??9)-(DO[y.doc]??9)||x.who.localeCompare(y.who,"ko")||y.time-x.time);
+    fs=fs.slice().sort((x,y)=>((x.doc in DO)?DO[x.doc]:9)-((y.doc in DO)?DO[y.doc]:9)||x.who.localeCompare(y.who,"ko")||y.time-x.time);
     const who=[...new Set(fs.map(f=>f.who))], have=new Set(fs.map(f=>f.doc));
     const chk=["포스터","발표 PPT","발표 영상"].map(d=>'<span class="pill" style="color:'+(have.has(d)?'var(--new)':'var(--old)')+'">'+(have.has(d)?'✔ ':'· ')+d+'</span>').join(" ");
     return '<div class="team"><div class="teamh"><b>👥 '+esc(nameOf(fs))+'</b><span class="tm">'+esc(who.join(", "))+' · 파일 '+fs.length+'개<br>'+chk+'</span><button class="btn small" type="button" data-zipteam="'+esc(k)+'" data-zipcls2="'+esc(fs[0].cls)+'">이 조 PDF 받기</button></div>'+fs.map(itemHtml).join("")+'</div>';

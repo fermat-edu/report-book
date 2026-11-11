@@ -755,7 +755,7 @@ function chartModal(it){
     q("[data-cinfo]").textContent=d.labels.length?(d.mode==="count"?"응답 "+d.n+"개를 세었어요 → 답 "+d.labels.length+"가지":"항목 "+d.labels.length+"개")+(d.labels.length>12?" (그래프에는 많은 순서로 12개까지만 보여요)":""):"데이터를 붙여 넣어 주세요.";
     const cv=q(".pprev"), pi=prevIt(); cv.width=920; cv.height=600; const ctx=cv.getContext("2d"); ctx.setTransform(2,0,0,2,0,0); drawBox(ctx,pi,0,0,460,300); drawChart(ctx,pi,0,0,460,300); }
   const tbl=q("[data-tbl]");
-  function drawTbl(){ tbl.innerHTML=c.labels.map((l,i)=>'<div class="ptr"><input type="text" data-rl value="'+esc(l)+'" aria-label="항목 이름"><input type="number" data-rv value="'+(c.values[i]??"")+'" aria-label="숫자" inputmode="decimal"><button type="button" data-rdel="'+i+'" aria-label="이 항목 지우기">✕</button></div>').join("")||'<p class="pnote">항목이 없어요. ＋ 항목 더하기를 눌러요.</p>'; }
+  function drawTbl(){ tbl.innerHTML=c.labels.map((l,i)=>'<div class="ptr"><input type="text" data-rl value="'+esc(l)+'" aria-label="항목 이름"><input type="number" data-rv value="'+(c.values[i]==null?"":c.values[i])+'" aria-label="숫자" inputmode="decimal"><button type="button" data-rdel="'+i+'" aria-label="이 항목 지우기">✕</button></div>').join("")||'<p class="pnote">항목이 없어요. ＋ 항목 더하기를 눌러요.</p>'; }
   function fromTbl(){ const rows=[...tbl.querySelectorAll(".ptr")].map(r=>[r.querySelector("[data-rl]").value.trim(),r.querySelector("[data-rv]").value]);
     q("[data-cd]").value=rows.filter(r=>r[0]||r[1]!=="").map(r=>(r[0]||"항목")+"\t"+(r[1]===""?0:r[1])).join("\n"); q("[data-ch]").checked=false; }
   m.addEventListener("input",e=>{ if(e.target.closest("[data-tbl]")){ fromTbl(); recompute(); return; } recompute(); if(e.target.matches("[data-cd]")) drawTbl(); });
