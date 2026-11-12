@@ -330,7 +330,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-12a";
+window.APP_VER="2026-11-12b";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -457,7 +457,7 @@ const KINDS={
    {h:"참고 자료",nonum:true,items:[
      P("ref",3,"참고한 책, 영상, 인터넷 주소를 적어요.",{photo:false})]}
   ]},
- book:{name:"독서연계탐구보고서",short:"독서연계 탐구 보고서 (독서록)",pre:"b_",color:"c-coral",major:"num",sub:"num",fixedNum:true,
+ book:{name:"독서연계탐구보고서",solo:true,short:"독서연계 탐구 보고서 (독서록)",pre:"b_",color:"c-coral",major:"num",sub:"num",fixedNum:true,
   desc:"책을 읽고 정해진 10가지 질문에 답하며 독서록을 써요.",
   subLabel:null,
   secs:[
@@ -792,7 +792,8 @@ function teamField(){
   if(topicKind()==="stat") return fld("team","우리 조 이름","예: 빌런없조","(조원 모두 같은 이름을 쓰면 포스터·PPT·발표 영상이 선생님 페이지에 한 조로 모여요 · 띄어쓰기는 달라도 괜찮아요)");
   return fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요 · 같은 팀은 이름을 똑같이 쓰면 선생님 페이지에 함께 묶여요)");
 }
-const teamTag=()=>{ if(K()&&K().solo&&!isOwn()) return ""; const t=val("team").replace(/[_\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,20); return t?"__조_"+t:""; };
+const soloNow=()=>(K()&&K().solo&&!isOwn())||(isOwn()&&catKey()==="book");
+const teamTag=()=>{ if(soloNow()) return ""; const t=val("team").replace(/[_\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,20); return t?"__조_"+t:""; };
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
   return '<div class="info">'+[["grade","학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
@@ -811,8 +812,8 @@ function ownForm(){
     '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+(topicKind()==="stat"?["stat","sppt",...ORDER]:ORDER).map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
     fld(oid("title"),"보고서 제목","내 보고서의 제목을 그대로 써요")+
     fld(oid("subj"),cat==="book"?"세부구분 (책 제목)":"세부구분 (탐구 주제)","비워 두면 ‘"+topicName()+"’(으)로 들어가요")+
-    teamField()+
-    fld("mates","함께한 친구 이름","예: 김민지, 이서준","(같이 한 친구가 있으면 쉼표로 적어요)")+
+    (cat==="book"?'':teamField()+
+    fld("mates","함께한 친구 이름","예: 김민지, 이서준","(같이 한 친구가 있으면 쉼표로 적어요)"))+
     '<label class="chk" style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="o_cover"'+(S_.v.o_nocover?'':' checked')+'> 맨 앞에 표지 자동으로 붙이기 <span class="opt" style="color:var(--muted);font-size:12.5px">(내 파일에 표지가 이미 있으면 끄세요)</span></label>');
   h+='<section class="page"><div class="ribbon c-dark">내 보고서 파일 올리기</div><div class="pbody">'+
     '<p class="guide">완성한 보고서를 PDF 파일로 올려요. 종이에 쓴 보고서는 쪽마다 사진을 찍어서 올려도 돼요.\n한글(hwp)·워드 파일은 먼저 ‘다른 이름으로 저장 → PDF’로 바꿔서 올려 주세요.\n여러 개를 올리면 올린 순서대로 이어 붙여져요.</p>'+
@@ -1078,12 +1079,12 @@ function buildBlocks(){
   return B;
 }
 function coverHtml(){
-  const w=who(), mates=val("mates").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
+  const w=who(), mates=soloNow()?[]:val("mates").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
   const members=[w.name,...mates].join(", ");
   let sub=(kindKey()==="dream"?val(pid("s15_path")).trim():isOwn()?val(oid("subj")).trim():kindKey()==="book"?val(pid("btitle")).trim():val(pid("subj")).trim())||topicName();
   sub=sub.split(/\n/)[0].trim(); if(sub.length>40) sub=sub.slice(0,40)+"…"; // 표지 칸이 넘치지 않게 한 줄·40자까지만
   const title=isOwn()?val(oid("title")).trim():(val(pid("title")).trim()||(K().autoTitle||""));
-  const rows=[["구분",K()&&K().solo&&!isOwn()?"개인":(val("team").trim()||"개인")],["출품부문",catName()],["세부구분",sub],["구성원",members],["학년·반",w.g+"학년 "+w.c+"반"]];
+  const rows=[["구분",soloNow()?"개인":(val("team").trim()||"개인")],["출품부문",catName()],["세부구분",sub],["구성원",members],["학년·반",w.g+"학년 "+w.c+"반"]];
   return '<div class="pfull pcover"><div class="ct'+(title.length>40?' long':'')+'">'+esc(title)+'</div><table>'+rows.map(([a,b])=>'<tr><th>'+a+'</th><td>'+esc(b)+'</td></tr>').join("")+'</table>'+
     '<div class="brand"><b>Fermat</b> education · '+new Date().getFullYear()+'</div></div>';
 }
