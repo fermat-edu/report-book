@@ -54,7 +54,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .page{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .ribbon{font-family:var(--display);color:#fff;font-size:24px;padding:10px 20px 12px;border-radius:0 0 60px 0;width:fit-content;max-width:calc(100% - 20px);box-sizing:border-box;line-height:1.3}
 .ribbon small{font-family:var(--body);font-size:12px;opacity:.9;margin-left:8px}
-.c-coral{background:var(--coral)} .c-green{background:var(--green)} .c-teal{background:var(--teal)} .c-dark{background:#4a4f52}
+.c-coral{background:#cf4f4a} .c-green{background:#2b8a73} .c-teal{background:#2e8792} .c-dark{background:#4a4f52}
 .pbody{padding:18px 20px 22px;display:flex;flex-direction:column;gap:14px}
 .subhead{font-weight:700;font-size:15.5px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line);padding:8px 2px;display:flex;gap:8px;align-items:center}
 .subhead input{flex:1;font-weight:700}
@@ -333,7 +333,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-16b";
+window.APP_VER="2026-11-16c";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
