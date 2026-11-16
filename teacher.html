@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>보고서·독서록 제출함</title>
@@ -100,7 +101,7 @@ input:focus{outline:2px solid var(--accent);outline-offset:1px}
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-16c";
+window.APP_VER="2026-11-16d";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
