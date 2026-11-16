@@ -40,7 +40,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .topic{font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:999px;padding:7px 14px}
 .topic[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.rec{font-family:var(--body);font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:var(--coral);border-radius:999px;padding:2px 8px;vertical-align:middle}
+.rec{font-family:var(--body);font-style:normal;font-size:11.5px;font-weight:700;color:#fff;background:#c8463f;border-radius:999px;padding:2px 8px;vertical-align:middle}
 .gridw{overflow-x:auto}.grid{width:100%;border-collapse:collapse;min-width:440px}.grid th{background:var(--forest);color:#fff;font-weight:500;font-size:13px;padding:7px}.grid td{border:1px solid var(--line);padding:5px;font-size:13.5px}.grid td.rh{font-weight:700;text-align:center;white-space:nowrap}
 .pb table.pg{width:100%;border-collapse:collapse;font-size:14px}.pb table.pg th{background:#e8ecf7;border:1px solid #888;padding:6px;font-weight:700}.pb table.pg td{border:1px solid #888;padding:6px 8px;min-height:24px;height:30px}.pb table.pg td.rh{text-align:center;font-weight:700;white-space:nowrap}.pb .nt{font-size:13.5px;color:#444}
 .sechead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -196,7 +196,7 @@ img{max-width:100%}[hidden]{display:none!important}
 .nb-card .btn{min-width:140px}
 .guide{font-size:13px;color:var(--muted);white-space:pre-line;margin:0}
 .tip{font-size:13px;white-space:pre-line;margin:2px 0 0;padding:7px 10px;border-radius:8px;background:#fff7dc;border:1px solid #f1dd9b;color:#5a4a12}
-.lesson{border:1px solid #f1dd9b;background:#fffbea;border-radius:12px;padding:10px 14px;font-size:14px}
+.lesson{border:1px solid #f1dd9b;background:#fffbea;color:#3b3312;border-radius:12px;padding:10px 14px;font-size:14px}.lesson .note{color:#6b5a1e}
 .lesson summary{cursor:pointer;font-weight:700;color:#5a4a12}
 .lesson ul{margin:6px 0 8px;padding-left:20px}.lesson li{margin:2px 0}.lesson h4{margin:8px 0 2px;font-size:14px}
 .q{display:flex;flex-direction:column;gap:6px}
@@ -330,7 +330,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-12b";
+window.APP_VER="2026-11-16a";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
