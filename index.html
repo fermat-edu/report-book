@@ -196,6 +196,9 @@ img{max-width:100%}[hidden]{display:none!important}
 .nb-card.bad{border-top-color:var(--coral)}
 .nb-ic{font-size:44px;line-height:1}
 .nb-card h2{font-family:var(--display);font-weight:400;font-size:26px;margin:0}
+section.missing{animation:missBlink .65s ease-in-out 4;}
+@keyframes missBlink{0%,100%{box-shadow:0 0 0 0 rgba(207,79,74,0)}50%{box-shadow:0 0 0 4px rgba(207,79,74,.85)}}
+.nb-card.bad .nb-m{text-align:left}
 .nb-m{margin:0;color:var(--muted);font-size:14.5px;white-space:pre-line}
 .nb-card .btn{min-width:140px}
 .guide{font-size:13px;color:var(--muted);white-space:pre-line;margin:0}
@@ -334,7 +337,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-16d";
+window.APP_VER="2026-11-25a";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -775,7 +778,7 @@ function renderForm(){
   // 본문
   ol.forEach(o=>{
     const off=isOff(o.sec);
-    h+='<section class="page'+(off?' off':'')+'"><div class="sechead"><div class="ribbon '+(off?'c-dark':k.color)+'">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?'<small>선택</small>':'')+'</div>'+
+    h+='<section class="page'+(off?' off':'')+'" data-si="'+o.si+'"><div class="sechead"><div class="ribbon '+(off?'c-dark':k.color)+'">'+esc((o.num?o.num+" ":"")+o.title)+(o.sec.optional?'<small>선택</small>':'')+'</div>'+
       (o.sec.canOff?(off?'<button type="button" class="mini" data-on="'+o.sec.key+'">↩ 다시 넣기</button>':'<button type="button" class="mini" data-off="'+o.sec.key+'">✕ 이 부분 빼기</button>'):'')+'</div>'+
       (off?'<div class="pbody"><p class="guide">이 부분은 PDF에서 빠져요. 쓴 내용은 지워지지 않으니, 다시 넣고 싶으면 ‘↩ 다시 넣기’를 누르세요.</p></div>'
           :'<div class="pbody">'+o.sec.items.map(it=>itemEdit(it,o.subs)).join("")+'</div>')+'</section>';
@@ -1185,6 +1188,36 @@ function updBtn(){ const b=document.getElementById("pdfBtn"); if(b&&b.dataset.mo
 function resetSend(){pdfBtn.dataset.mode="";pdfBtn.textContent=btnLabel();lastPdf=null;saveBtn.hidden=true;saveBtn.textContent="파일로 저장";submitBtn.hidden=true;submitBtn.textContent="다시 제출";}
 function resetSendIfNeeded(){ if(pdfBtn.dataset.mode==="send") resetSend(); }
 saveBtn.addEventListener("click",()=>{ if(!lastPdf) return; if(lastPdf.pptx){ download(lastPdf.pptx.blob,lastPdf.pptx.name); statusEl.textContent="PPT 파일을 저장했어요. 파워포인트나 구글 슬라이드에서 열어 고칠 수 있어요."; } else download(lastPdf.blob,lastPdf.name); });
+/* 제출 전에 꼭 써야 하는 부분 확인: 빠진 곳을 모두 모아 알림으로 보여 줌 */
+function missingParts(){
+  const m=[], add=(t,el)=>m.push({t,el});
+  const fe=id=>document.getElementById("f_"+id);
+  if(!val("cls").trim()) add("표지 – 반",fe("cls"));
+  else if(!who().g) add("표지 – 학년 (7·8·9)",fe("grade"));
+  if(!val("name").trim()) add("표지 – 이름",fe("name"));
+  if(isOwn()) return m;
+  if(!K().autoTitle&&!val(pid("title")).trim()) add(kindKey()==="ai"?"표지 – 작품 제목":kindKey()==="sppt"?"표지 – 발표 제목":"표지 – 보고서 제목",fe(pid("title")));
+  const box=si=>form.querySelector('section[data-si="'+si+'"]');
+  outline(false).forEach(o=>{
+    const sec=o.sec, name=(o.num?o.num+" ":"")+o.title;
+    if(sec.optional||sec.extra||isOff(sec)) return;
+    if(sec.items.every(it=>["PO","SL","VE","V","N"].includes(it.t))) return; // 포스터·슬라이드·영상은 따로 확인
+    if(sec.h==="책 정보"){ for(const [id,l] of [["btitle","책 제목"],["author","지은이"]]) if(!val(pid(id)).trim()) add("책 정보 – "+l,fe(pid(id))); return; }
+    if(!hasContent(sec)){ add(name,box(o.si)); return; }
+    sec.items.forEach(it=>{ if(it.t!=="Q") return;
+      if(!val(pid(it.id)+"_a").trim()) add(name+" – "+it.aLab,fe(pid(it.id)+"_a")||box(o.si));
+      else if(!val(pid(it.id)+"_b").trim()) add(name+" – "+it.bLab,fe(pid(it.id)+"_b")||box(o.si)); });
+  });
+  return m;
+}
+function showMissing(m){
+  const list=m.slice(0,8).map(x=>"• "+x.t).join("\n")+(m.length>8?"\n… 그 밖에 "+(m.length-8)+"곳 더":"");
+  statusEl.textContent="⚠️ 아직 안 쓴 부분이 있어요: "+m[0].t+(m.length>1?" 외 "+(m.length-1)+"곳":"");
+  notice(false,"아직 안 쓴 부분이 "+m.length+"곳 있어요","아래 부분을 채워야 제출할 수 있어요.\n\n"+list+"\n\n'확인'을 누르면 첫 번째 빈 곳으로 이동해요.",()=>{
+    const el=m[0].el; if(!el) return; el.scrollIntoView({block:"center",behavior:"smooth"});
+    const box=el.closest("section")||el; box.classList.remove("missing"); void box.offsetWidth; box.classList.add("missing");
+    setTimeout(()=>box.classList.remove("missing"),2600); if(el.focus&&/INPUT|TEXTAREA/.test(el.tagName)) el.focus({preventScroll:true}); });
+}
 function goTo(id,msg){statusEl.textContent=msg; const f=document.getElementById("f_"+id); if(f){f.scrollIntoView({block:"center"}); f.focus();}}
 
 
@@ -1267,15 +1300,13 @@ pdfBtn.addEventListener("click",async()=>{
   if((kindKey()==="svid"||kindKey()==="dvid")&&!isOwn()) return submitVideo();
   if(!tk()||(!kindKey()&&!isOwn())){ statusEl.textContent="먼저 맨 위에서 비교과 주제와 보고서 종류를 골라 주세요."; scrollTo({top:0,behavior:"smooth"}); return; }
   if(!window.html2canvas||!window.jspdf){statusEl.textContent="PDF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.";return;}
-  if(val("cls").trim()&&!who().g) return goTo("grade","학년(7·8·9)을 써 주세요.");
-  for(const [id,l] of [["cls","반"],["name","이름"]]) if(!val(id).trim()) return goTo(id,"표지의 "+l+"을(를) 먼저 써 주세요. 선생님께 이 이름으로 제출돼요.");
+  { const m=missingParts(); if(m.length) return showMissing(m); }
   if(isOwn()){
     if(!catKey()){ statusEl.textContent="출품부문(주제탐구 / 교과연계 / 독서연계)을 골라 주세요."; const b=form.querySelector("[data-cat]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
     if(!val(oid("title")).trim()) return goTo(oid("title"),"보고서 제목을 써 주세요.");
     if(!OWN.length){ statusEl.textContent="보고서 파일을 먼저 올려 주세요."; const b=document.getElementById("ownAdd"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
     return makeOwn();
   }
-  if(!val(pid("title")).trim()&&!K().autoTitle) return goTo(pid("title"),kindKey()==="ai"?"표지의 작품 제목을 써 주세요.":kindKey()==="sppt"?"표지의 발표 제목을 써 주세요.":"표지의 보고서 제목을 써 주세요.");
   if(kindKey()==="ai"&&!FX.vfile&&!val(pid("video")).trim()&&!Object.keys(S_.ph).some(x=>x.startsWith(pid(""))&&(S_.ph[x]||[]).length)){
     statusEl.textContent="AI로 만든 완성작 사진(캡처)이나 영상 링크를 하나 이상 넣어 주세요."; const b=form.querySelector("[data-add]"); if(b){b.scrollIntoView({block:"center"}); b.focus();} return; }
   if(kindKey()==="stat"||kindKey()==="sppt"||kindKey()==="dppt") return makePoster();
@@ -1402,13 +1433,16 @@ async function makeOwn(){
 }
 function blobToB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(b);});}
 /* 제출 결과 알림창 */
-function notice(ok,title,msg){
+let noticeAfter=null;
+function notice(ok,title,msg,after){
   let o=document.getElementById("noticeBox");
   if(!o){ o=document.createElement("div"); o.id="noticeBox";
     o.innerHTML='<div class="nb-card" role="alertdialog" aria-modal="true" aria-labelledby="nbT"><div class="nb-ic"></div><h2 id="nbT"></h2><p class="nb-m"></p><button type="button" class="btn primary">확인</button></div>';
     document.body.appendChild(o);
-    o.querySelector("button").addEventListener("click",()=>{o.hidden=true;});
-    o.addEventListener("click",e=>{ if(e.target===o) o.hidden=true; }); }
+    const close=()=>{o.hidden=true; const f=noticeAfter; noticeAfter=null; if(f) setTimeout(f,50);};
+    o.querySelector("button").addEventListener("click",close);
+    o.addEventListener("click",e=>{ if(e.target===o) close(); }); }
+  noticeAfter=after||null;
   o.querySelector(".nb-ic").textContent=ok?"✅":"⚠️";
   o.querySelector(".nb-card").classList.toggle("bad",!ok);
   o.querySelector("h2").textContent=title; o.querySelector(".nb-m").textContent=msg;
