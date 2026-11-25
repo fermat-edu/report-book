@@ -337,7 +337,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;bo
 <script>
 /* 새 버전 확인: 휴대폰·카카오톡 브라우저가 옛 화면을 보여 주는 걸 막아요.
    배포할 때마다 APP_VER와 version.json의 v를 같이 바꿔요. */
-window.APP_VER="2026-11-25a";
+window.APP_VER="2026-11-25b";
 (function(){
   function busy(){ try{ if(window.FVideo&&FVideo.busy()) return true; var b=document.getElementById("pdfBtn"); return !!(b&&b.disabled); }catch(e){ return false; } }
   function check(auto){
@@ -596,11 +596,17 @@ KINDS.dppt={...KINDS.sppt,name:"꿈조사발표PPT",short:"꿈조사 발표 PPT"
 KINDS.dvid={...KINDS.svid,name:"꿈조사발표영상",short:"꿈조사 발표 영상 (다듬어서 올리기)",pre:"t5_",color:"c-green",solo:true,
   desc:"꿈조사 발표를 찍은 영상에서 실수한 부분을 지우고 이어 붙인 뒤, 카카오톡으로 보낼 수 있는 크기로 줄여서 선생님께 올려요.",
   secs:[{h:"발표 영상 다듬기",nonum:true,poster:true,items:[{t:"VE",id:"ve"}]}]};
+/* 초등부 독서록 (독서기록장): 책 정보 + 한 편의 글로 자유롭게. 질문 10개 양식이 어려운 초등학생용 */
+KINDS.ebook={name:"초등부 독서록",short:"초등부 독서록 (독서기록장)",pre:"e_",color:"c-coral",major:"num",sub:"num",solo:true,noToc:true,autoTitle:"독서기록장",
+  desc:"초등학생용이에요. 책 제목·지은이·펴낸곳을 쓰고, 읽은 내용과 내 생각을 한 편의 글로 자유롭게 써요.",
+  secs:[
+   {h:"책 정보",nonum:true,items:[L("btitle","제목","예: 10대를 위한 정의란 무엇인가"),L("author","지은이","예: 마이클 샌델"),L("pub","펴낸곳","예: 미래엔아이세움")]},
+   {h:"독서기록장",nonum:true,items:[P("write",18,"이런 순서로 쓰면 쉬워요 → ① 이 책은 어떤 책인지 소개해요. ② 책의 내용(줄거리)을 내 말로 정리해요. ③ 가장 기억에 남는 장면이나 문장과 그 이유를 써요. ④ 책을 읽고 새로 알게 된 것, 느낀 점, 앞으로 해 보고 싶은 일을 써요. 문단을 나눠서 한 쪽 이상 써 보세요.",{label:"읽고 생각한 것을 자유롭게 써요"})]}]};
 const hkey=t=>Array.from(t).reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);
 Object.values(KINDS).forEach(k=>{
   k.secs=k.secs.filter(s=>!s.extra);
   k.secs.forEach(s=>{ s.key=hkey(s.h);
-    if(k===KINDS.dream||k===KINDS.stat||k===KINDS.sppt||k===KINDS.svid||k===KINDS.dvid||k===KINDS.dppt) return; // 꿈조사·통계포스터는 추가 칸 없음
+    if(k===KINDS.dream||k===KINDS.ebook||k===KINDS.stat||k===KINDS.sppt||k===KINDS.svid||k===KINDS.dvid||k===KINDS.dppt) return; // 꿈조사·통계포스터는 추가 칸 없음
     if(s.h==="책 정보"||s.items.every(i=>i.t==="V"||i.t==="C")) return; // 책 정보·파일 올리는 칸은 제외
     s.canOff=true;
     s.items.push({t:"R",id:"add_"+s.key,label:"내가 추가한 내용",titleHint:"제목을 써요 (예: 더 알아본 점)",guide:"이 부분에 더 쓰고 싶은 내용을 자유롭게 써요. 사진도 넣을 수 있어요.",def:0,num:false,added:true});
@@ -608,7 +614,7 @@ Object.values(KINDS).forEach(k=>{
 });
 const isOff=sec=>!!(sec.canOff&&S_.v[pid("off_"+sec.key)]);
 const EXCL=["ai","dream","stat","sppt","svid","dvid","dppt"];
-const ORDER=["topic","subject","book"];
+const ORDER=["topic","subject","book","ebook"];
 const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 const GA="가나다라마바사아자차카타파하".split("");
 
@@ -799,11 +805,11 @@ function teamField(){
   if(topicKind()==="stat") return fld("team","우리 조 이름","예: 빌런없조","(조원 모두 같은 이름을 쓰면 포스터·PPT·발표 영상이 선생님 페이지에 한 조로 모여요 · 띄어쓰기는 달라도 괜찮아요)");
   return fld("team","팀 이름","","(혼자 했으면 비워 두세요 → ‘개인’으로 들어가요 · 같은 팀은 이름을 똑같이 쓰면 선생님 페이지에 함께 묶여요)");
 }
-const soloNow=()=>(K()&&K().solo&&!isOwn())||(isOwn()&&catKey()==="book");
+const soloNow=()=>(K()&&K().solo&&!isOwn())||(isOwn()&&(catKey()==="book"||catKey()==="ebook"));
 const teamTag=()=>{ if(soloNow()) return ""; const t=val("team").replace(/[_\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim().slice(0,20); return t?"__조_"+t:""; };
 /* 학년·반·이름 + 핸드폰 뒷자리(중간 저장 번호) */
 function infoGrid(){
-  return '<div class="info">'+[["grade","학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
+  return '<div class="info">'+[["grade",kindKey()==="ebook"?"학년 (4·5·6)":"학년 (7·8·9)"],["cls","반"],["name","이름"],["pin","핸드폰 뒷자리 4자리"]].map(([id,l])=>'<label>'+l+'<input type="text" id="f_'+id+'" data-id="'+id+'" value="'+esc(val(id))+'"'+(id==="name"?'':id==="cls"?' list="clsList" placeholder="예: 탈레스"':' inputmode="numeric"')+(id==="pin"?' maxlength="4" placeholder="예: 1234" autocomplete="off"':'')+'></label>').join("")+'</div>'+
     '<div class="savebox"><p class="guide" style="margin:0">📌 <b>중간 저장</b>을 누르면 쓰던 내용이 선생님 쪽에 보관돼요. 다른 기기나 다음에 이어서 쓸 때는 <b>이름 + 핸드폰 뒷자리 4자리</b>를 똑같이 쓰고 ‘불러오기’를 누르세요. 핸드폰이 없으면 부모님 핸드폰 뒷자리를 쓰세요.</p>'+
     '<span id="loadArea"><button type="button" class="mini" id="loadBtn">☁️ 중간 저장한 것 불러오기</button></span>'+(S_.v.savedAt?'<span class="note">마지막 중간 저장: '+esc(S_.v.savedAt)+'</span>':'')+'</div>';
 }
@@ -818,8 +824,8 @@ function ownForm(){
   h+=infoCard(
     '<div class="fld">출품부문 <span class="opt">(내 보고서가 어느 부문인지 골라요)</span><div class="kinds" style="margin-top:4px">'+(topicKind()==="stat"?["stat","sppt",...ORDER]:ORDER).map(k=>'<button type="button" class="kind" data-cat="'+k+'" aria-pressed="'+(k===cat)+'" style="padding:10px"><b style="font-size:17px">'+esc(KINDS[k].name)+'</b></button>').join("")+'</div></div>'+
     fld(oid("title"),"보고서 제목","내 보고서의 제목을 그대로 써요")+
-    fld(oid("subj"),cat==="book"?"세부구분 (책 제목)":"세부구분 (탐구 주제)","비워 두면 ‘"+topicName()+"’(으)로 들어가요")+
-    (cat==="book"?'':teamField()+
+    fld(oid("subj"),(cat==="book"||cat==="ebook")?"세부구분 (책 제목)":"세부구분 (탐구 주제)","비워 두면 ‘"+topicName()+"’(으)로 들어가요")+
+    ((cat==="book"||cat==="ebook")?'':teamField()+
     fld("mates","함께한 친구 이름","예: 김민지, 이서준","(같이 한 친구가 있으면 쉼표로 적어요)"))+
     '<label class="chk" style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="o_cover"'+(S_.v.o_nocover?'':' checked')+'> 맨 앞에 표지 자동으로 붙이기 <span class="opt" style="color:var(--muted);font-size:12.5px">(내 파일에 표지가 이미 있으면 끄세요)</span></label>');
   h+='<section class="page"><div class="ribbon c-dark">내 보고서 파일 올리기</div><div class="pbody">'+
@@ -1060,8 +1066,8 @@ function buildBlocks(){
   outline(true).forEach(o=>{
     add("h1",'<div class="h1">'+esc((o.num?o.num+" ":"")+o.title)+'</div>',40,{lvl:1,text:(o.num?o.num+" ":"")+o.title});
     let first=true;
-    if(kindKey()==="book"&&!B.bookInfo){ B.bookInfo=true; // 첫 문항 앞에 책 정보
-      const bi=[["책 제목","btitle"],["지은이","author"],["출판사","pub"]].filter(([l,id])=>val(pid(id)).trim());
+    if((kindKey()==="book"||kindKey()==="ebook")&&!B.bookInfo){ B.bookInfo=true; // 첫 문항 앞에 책 정보
+      const bi=(kindKey()==="ebook"?[["제목","btitle"],["지은이","author"],["펴낸곳","pub"]]:[["책 제목","btitle"],["지은이","author"],["출판사","pub"]]).filter(([l,id])=>val(pid(id)).trim());
       if(bi.length){ add("p",bi.map(([l,id])=>'<div class="ln"><b>'+l+'</b> : '+T(pid(id))+'</div>').join(""),14); first=false; }
     }
     o.sec.items.forEach((it,ix)=>{
@@ -1088,9 +1094,9 @@ function buildBlocks(){
 function coverHtml(){
   const w=who(), mates=soloNow()?[]:val("mates").split(/[,，、]/).map(x=>x.trim()).filter(Boolean);
   const members=[w.name,...mates].join(", ");
-  let sub=(kindKey()==="dream"?val(pid("s15_path")).trim():isOwn()?val(oid("subj")).trim():kindKey()==="book"?val(pid("btitle")).trim():val(pid("subj")).trim())||topicName();
+  let sub=(kindKey()==="dream"?val(pid("s15_path")).trim():isOwn()?val(oid("subj")).trim():(kindKey()==="book"||kindKey()==="ebook")?val(pid("btitle")).trim():val(pid("subj")).trim())||topicName();
   sub=sub.split(/\n/)[0].trim(); if(sub.length>40) sub=sub.slice(0,40)+"…"; // 표지 칸이 넘치지 않게 한 줄·40자까지만
-  const title=isOwn()?val(oid("title")).trim():(val(pid("title")).trim()||(K().autoTitle||""));
+  const title=isOwn()?val(oid("title")).trim():(val(pid("title")).trim()||(kindKey()==="ebook"&&val(pid("btitle")).trim()?"『"+val(pid("btitle")).trim()+"』 독서기록장":(K().autoTitle||"")));
   const rows=[["구분",soloNow()?"개인":(val("team").trim()||"개인")],["출품부문",catName()],["세부구분",sub],["구성원",members],["학년·반",w.g+"학년 "+w.c+"반"]];
   return '<div class="pfull pcover"><div class="ct'+(title.length>40?' long':'')+'">'+esc(title)+'</div><table>'+rows.map(([a,b])=>'<tr><th>'+a+'</th><td>'+esc(b)+'</td></tr>').join("")+'</table>'+
     '<div class="brand"><b>Fermat</b> education · '+new Date().getFullYear()+'</div></div>';
@@ -1193,7 +1199,7 @@ function missingParts(){
   const m=[], add=(t,el)=>m.push({t,el});
   const fe=id=>document.getElementById("f_"+id);
   if(!val("cls").trim()) add("표지 – 반",fe("cls"));
-  else if(!who().g) add("표지 – 학년 (7·8·9)",fe("grade"));
+  else if(!who().g) add(kindKey()==="ebook"?"표지 – 학년 (4·5·6)":"표지 – 학년 (7·8·9)",fe("grade"));
   if(!val("name").trim()) add("표지 – 이름",fe("name"));
   if(isOwn()) return m;
   if(!K().autoTitle&&!val(pid("title")).trim()) add(kindKey()==="ai"?"표지 – 작품 제목":kindKey()==="sppt"?"표지 – 발표 제목":"표지 – 보고서 제목",fe(pid("title")));
@@ -1320,7 +1326,7 @@ pdfBtn.addEventListener("click",async()=>{
     const {pages,toc,links}=await paginate(buildBlocks(),(i,n)=>{statusEl.textContent="PDF 만드는 중… "+Math.round((i+1)/n*100)+"%";});
     statusEl.textContent="표지와 차례 만드는 중…";
     const cover=await fullPage(coverHtml());
-    const tocImgs=[]; for(const th of tocPages(toc)) tocImgs.push(await fullPage(th));
+    const tocImgs=[]; if(!K().noToc) for(const th of tocPages(toc)) tocImgs.push(await fullPage(th));
     all=[cover,...tocImgs,...pages];
     const {jsPDF}=window.jspdf; pdf=new jsPDF({orientation:"p",unit:"mm",format:"a4"});
     all.forEach((u,i)=>{ if(i) pdf.addPage("a4","p"); pdf.addImage(u,"JPEG",0,0,210,297); });
@@ -1588,13 +1594,15 @@ const DEMO={
   b_learn:"친구의 말 한마디가 큰 힘이 될 수 있다는 것을 알게 되었다. 나도 누군가에게 데미안 같은 친구가 되고 싶다.",
   b_dream:"과학자",b_do1_a:"매일 과학 책 10쪽 읽기",b_do1_b:"많이 알아야 새로운 질문을 할 수 있기 때문이다.",
   b_do2_a:"궁금한 것을 노트에 적기",b_do2_b:"과학자는 질문에서 시작하기 때문이다.",
-  b_do3_a:"수학 공부 꾸준히 하기",b_do3_b:"실험 결과를 정리하려면 수학이 꼭 필요하다."}
+  b_do3_a:"수학 공부 꾸준히 하기",b_do3_b:"실험 결과를 정리하려면 수학이 꼭 필요하다."},
+ ebook:{e_btitle:"10대를 위한 정의란 무엇인가",e_author:"마이클 샌델",e_pub:"미래엔아이세움",
+  e_write:"우리는 공정한 세상에서 살고 싶어 한다. 그래서 갈등이 생겼을 때 옳고 그름을 따지려고 한다. 하지만 “정의가 무엇인가요?”라는 질문을 들으면 잘 대답하기 어렵다. 이 책은 그 질문에 답을 찾도록 도와준다.\n가장 먼저 나오는 공리주의는 ‘최대 다수의 최대 행복’을 기준으로 삼는다. 트롤리 딜레마처럼 한 사람을 희생해 다섯 사람을 구하는 것이 옳다고 보는 생각이다. 나는 다수의 이익을 위해 한 사람의 권리가 쉽게 희생될 수 있다는 점이 마음에 걸렸다.\n두 번째로 나오는 자유주의는 개인의 권리와 자유를 가장 중요하게 생각한다. 다른 사람에게 피해를 주지 않는다면 스스로 삶을 선택할 권리가 있다는 주장이 설득력 있게 느껴졌다.\n마지막으로 공동체주의는 내가 속한 공동체와 함께 살아가는 것을 중요하게 생각한다. 우리는 혼자 살아갈 수 없기 때문에 이 생각에도 고개가 끄덕여졌다.\n이 책을 읽고 정의에는 한 가지 정답만 있는 것이 아니라는 것을 알게 되었다. 앞으로 친구들과 의견이 다를 때 내 생각만 고집하지 않고, 왜 그렇게 생각하는지 먼저 물어보는 사람이 되고 싶다."}
 };
-const dm=location.hash.match(/^#demo(?:-(subject|book|dream))?$/);
+const dm=location.hash.match(/^#demo(?:-(subject|book|ebook|dream))?$/);
 if(dm){
   const k=dm[1]||"topic";
-  const top={topic:"plastic",subject:"light",book:"prince",dream:"dream"}[k], D={};
-  Object.entries(DEMO[k]).forEach(([a,b])=>{D[a.replace(/^([tsbd])_/,"$1_"+top+"_")]=b;});
+  const top={topic:"plastic",subject:"light",book:"prince",ebook:"justice",dream:"dream"}[k], D={};
+  Object.entries(DEMO[k]).forEach(([a,b])=>{D[a.replace(/^([tsbde])_/,"$1_"+top+"_")]=b;});
   S_.v={...S_.v,...D,kind:k,topic:top,grade:"5",cls:"2",name:"예시학생"};
   dirty=true; saveNow(); history.replaceState(null,"",location.pathname);
   setTimeout(()=>{statusEl.textContent="예시 내용으로 채웠어요. 노란 버튼을 누르면 제출 테스트가 돼요.";},0);
